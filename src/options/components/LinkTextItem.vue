@@ -59,7 +59,7 @@ function updateData() {
 <template>
   <div>
     <div class="mb-3 row d-flex align-items-center">
-      <label class="col-2 col-form-label-sm">{{ urlTitle }}</label>
+      <label class="col-2 col-form-label">{{ urlTitle }}</label>
       <div class="col-10">
         <div :class="urlInputClass">
           <input
@@ -84,13 +84,13 @@ function updateData() {
       class="mb-3 row d-flex align-items-center"
       v-if="externalItem.urlUpdatedAt != ''"
     >
-      <label class="col-2 col-form-label-sm">{{ urlUpdatedAtTitle }}</label>
+      <label class="col-2 col-form-label">{{ urlUpdatedAtTitle }}</label>
       <div class="col-10">
         <span>{{ externalItem.urlUpdatedAt }}</span>
       </div>
     </div>
     <div class="mb-3 row d-flex align-items-top">
-      <label class="col-2 col-form-label-sm">{{ dataTitle }}</label>
+      <label class="col-2 col-form-label">{{ dataTitle }}</label>
       <div class="col-10">
         <textarea
           class="form-control form-control-sm"

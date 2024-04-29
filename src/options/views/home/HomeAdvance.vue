@@ -106,7 +106,7 @@ function handleSetSync() {
       </div>
       <div class="card-body">
         <div class="row mb-3 d-flex align-items-center">
-          <label class="col-2 col-form-label-sm">
+          <label class="col-2 col-form-label">
             <span>链接监控</span>
             <PopoverTips
               className="bi bi-question-circle-fill icon-btn ms-2"

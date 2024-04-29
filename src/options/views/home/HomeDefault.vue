@@ -131,7 +131,7 @@ function toGithub() {
       </div>
       <div class="card-body">
         <div class="row mb-3">
-          <label class="col-2 col-form-label-sm"> 界面样式 </label>
+          <label class="col-2 col-form-label">界面样式</label>
           <div class="col-10 d-flex align-items-center">
             <div class="form-check-sm form-check-inline">
               <input
@@ -175,7 +175,7 @@ function toGithub() {
           </div>
         </div>
         <div class="row mb-3">
-          <label class="col-2 col-form-label-sm" for="rejectHost">
+          <label class="col-2 col-form-label" for="rejectHost">
             <span>拒绝地址</span>
             <PopoverTips
               className="bi bi-question-circle-fill icon-btn ms-2"
@@ -198,7 +198,7 @@ function toGithub() {
           </div>
         </div>
         <div class="row mb-3 d-flex align-items-center">
-          <label class="col-2 col-form-label-sm">
+          <label class="col-2 col-form-label">
             <span>规则更新</span>
             <PopoverTips
               className="bi bi-question-circle-fill icon-btn ms-2"
@@ -220,8 +220,8 @@ function toGithub() {
           </div>
         </div>
         <div class="row mb-1">
-          <label class="col-2 col-form-label-sm">版本号</label>
-          <div class="col-10 col-form-label-sm">
+          <label class="col-2 col-form-label">版本号</label>
+          <div class="col-10 col-form-label">
             <i class="bi bi-github me-2 cursor-point" @click="toGithub()"></i>
             <span>{{ version }}</span>
           </div>

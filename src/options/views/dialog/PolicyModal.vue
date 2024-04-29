@@ -91,9 +91,7 @@ async function handleSubmit() {
     <template #default>
       <form action="" id="policyModalForm">
         <div class="mb-3 row">
-          <label class="col-2 col-form-label-sm" for="policyName"
-            >策略名称</label
-          >
+          <label class="col-2 col-form-label" for="policyName">策略名称</label>
           <div class="col-10">
             <input
               type="text"
@@ -110,7 +108,7 @@ async function handleSubmit() {
           </div>
         </div>
         <div class="mb-3 row d-flex align-items-center">
-          <label class="col-2 col-form-label-sm"> 策略模式 </label>
+          <label class="col-2 col-form-label"> 策略模式 </label>
           <div class="col-10 hstack gap-3 d-flex align-items-center">
             <div class="form-check-sm">
               <input

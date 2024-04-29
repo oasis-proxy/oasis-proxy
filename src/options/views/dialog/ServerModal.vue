@@ -85,9 +85,7 @@ async function handleSubmit() {
     <template #default>
       <form action="" id="serverModalForm">
         <div class="mb-3 row">
-          <label class="col-2 col-form-label-sm" for="serverName"
-            >节点名称</label
-          >
+          <label class="col-2 col-form-label" for="serverName">节点名称</label>
           <div class="col-10">
             <input
               type="text"

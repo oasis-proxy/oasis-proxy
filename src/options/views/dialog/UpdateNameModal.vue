@@ -104,9 +104,7 @@ async function handleSubmit() {
     <template #default>
       <form id="updateNameModalForm">
         <div class="mb-3 row">
-          <label class="col-2 col-form-label-sm" for="policyName">
-            新名称
-          </label>
+          <label class="col-2 col-form-label" for="policyName"> 新名称 </label>
           <div class="col-10">
             <input
               type="text"

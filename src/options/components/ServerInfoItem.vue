@@ -47,7 +47,7 @@ const inputDisabled = computed(() => {
     <div class="card-body">
       <div>
         <div class="mb-2 row">
-          <label class="col-2 col-form-label-sm">代理协议</label>
+          <label class="col-2 col-form-label">代理协议</label>
           <div class="col-4">
             <select
               class="form-select form-select-sm"
@@ -62,7 +62,7 @@ const inputDisabled = computed(() => {
               <option value="socks5">socks5</option>
             </select>
           </div>
-          <label class="col-2 col-form-label-sm">
+          <label class="col-2 col-form-label">
             认证用户名
             <PopoverTips
               className="bi bi-question-circle-fill icon-btn ms-1"
@@ -82,7 +82,7 @@ const inputDisabled = computed(() => {
           </div>
         </div>
         <div class="mb-2 row">
-          <label class="col-2 col-form-label-sm">代理节点</label>
+          <label class="col-2 col-form-label">代理节点</label>
           <div class="col-4">
             <input
               type="text"
@@ -94,7 +94,7 @@ const inputDisabled = computed(() => {
               tabindex="2"
             />
           </div>
-          <label class="col-2 col-form-label-sm">认证密码</label>
+          <label class="col-2 col-form-label">认证密码</label>
           <div class="col-4">
             <input
               type="password"
@@ -108,7 +108,7 @@ const inputDisabled = computed(() => {
           </div>
         </div>
         <div class="mb-2 row">
-          <label class="col-2 col-form-label-sm">代理端口</label>
+          <label class="col-2 col-form-label">代理端口</label>
           <div class="col-4">
             <input
               type="number"

@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import ServerInfoItem from '../components/ServerInfoItem.vue'
 
 import Browser from '@/Browser/chrome/chrome.js'
-import { saveForFixed } from '@/core/ProxyConfig'
+import { saveForFixed, proxyUses } from '@/core/ProxyConfig'
 
 const { isUnsaved, resetUnsaved } = inject('isUnsaved')
 const handleUpdate = inject('handleUpdate')
@@ -144,6 +144,13 @@ async function handleSubmit() {
       await Browser.Storage.setLocal({ status_proxyKey: key })
       toast.info(`已生效更新的配置`)
     })
+  } else {
+    const uniqNames = proxyUses(result[result.status_proxyKey])
+    if (uniqNames.includes(encodeName)) {
+      Browser.Proxy.set(result, result.status_proxyKey, async () => {
+        toast.info(`已生效更新的配置`)
+      })
+    }
   }
 }
 

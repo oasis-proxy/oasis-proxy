@@ -1,0 +1,28 @@
+{
+  "name": "Oasis Proxy",
+  "description": "OasisProxy is a browser proxy management extension. A substitute of SwitchOmega for Manifest v3",
+  "version": "0.9.0",
+  "manifest_version": 3,
+  "icons": {
+    "16": "icons/logo.png",
+    "48": "icons/logo.png",
+    "128": "icons/logo-128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": ["*://*/*"],
+  "permissions": [
+    "alarms",
+    "downloads",
+    "webRequest",
+    "webRequestAuthProvider",
+    "unlimitedStorage",
+    "storage",
+    "proxy"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html"
+}

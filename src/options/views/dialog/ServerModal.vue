@@ -1,0 +1,119 @@
+<script setup>
+import { computed, ref, getCurrentInstance, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import ModalBase from '@/components/modal/ModalBase.vue'
+
+import Browser from '@/Browser/chrome/chrome.js'
+import { createProxy } from '@/core/ProxyConfig.js'
+
+const name = ref('')
+const isNameValid = ref(true)
+
+const toast = getCurrentInstance()?.appContext.config.globalProperties.$toast
+const router = useRouter()
+let serverModalInstance = null
+
+onMounted(() => {
+  const modalElement = document.getElementById('serverModal')
+  // eslint-disable-next-line no-undef
+  serverModalInstance = new bootstrap.Modal(modalElement)
+})
+
+const serverNameClass = computed(() => {
+  return isNameValid.value
+    ? 'form-control form-control-sm'
+    : 'form-control form-control-sm is-invalid'
+})
+
+defineExpose({
+  show,
+  hide
+})
+
+function hide() {
+  serverModalInstance.hide()
+}
+function show() {
+  serverModalInstance.show()
+}
+
+function handleCancel() {
+  setTimeout(() => {
+    name.value = ''
+    isNameValid.value = true
+  }, 300)
+  hide()
+}
+
+async function handleSubmit() {
+  isNameValid.value = true
+  if (
+    name.value == '' ||
+    name.value == 'direct' ||
+    name.value == 'system' ||
+    name.value == 'reject'
+  ) {
+    isNameValid.value = false
+    return
+  }
+  const result = await Browser.Storage.getLocalAll()
+  const encodeName = encodeURIComponent(name.value)
+  // eslint-disable-next-line no-prototype-builtins
+  if (result.hasOwnProperty('proxy_' + encodeName)) {
+    isNameValid.value = false
+    return
+  }
+  const proxyConfig = createProxy(encodeName, 'fixed_servers')
+  if (proxyConfig == -1) {
+    toast.warning(`添加代理节点（${name.value}）失败`)
+    handleCancel()
+    return
+  }
+
+  const key = 'proxy_' + encodeName
+  const storeProxy = {}
+  storeProxy[key] = proxyConfig
+  await Browser.Storage.setLocal(storeProxy)
+  toast.info(`添加代理节点（${name.value}）成功`)
+  handleCancel()
+  router.push('/fixed/' + encodeName)
+}
+</script>
+<template>
+  <ModalBase id="serverModal">
+    <template #title>添加代理节点</template>
+    <template #default>
+      <form action="" id="serverModalForm">
+        <div class="mb-3 row">
+          <label class="col-2 col-form-label-sm" for="serverName"
+            >节点名称</label
+          >
+          <div class="col-10">
+            <input
+              type="text"
+              :class="serverNameClass"
+              id="serverName"
+              placeholder="请输入名称"
+              aria-label="name"
+              v-model="name"
+              maxlength="25"
+            />
+            <div class="invalid-feedback">
+              新名称不能为空、direct、system、reject，或新名称已存在
+            </div>
+          </div>
+        </div>
+      </form>
+    </template>
+    <template #operations>
+      <button class="btn btn-sm btn-secondary ms-auto" @click="handleCancel">
+        <i class="bi bi-x-circle-fill me-1"></i>
+        关 闭
+      </button>
+      <button class="btn btn-sm btn-primary" @click="handleSubmit">
+        <i class="bi bi-check-circle-fill me-1"></i>
+        添 加
+      </button>
+    </template>
+  </ModalBase>
+</template>

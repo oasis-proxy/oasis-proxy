@@ -1,0 +1,90 @@
+html {
+  font-size: 14px;
+}
+body {
+  --bs-focus-ring-width: 0;
+  background-color: var(--bs-tertiary-bg);
+}
+#app {
+  width: 100%;
+}
+body i.icon-btn {
+  color: var(--bs-info);
+  cursor: pointer;
+}
+
+body i.icon-btn:hover {
+  color: var(--bs-indigo);
+  cursor: pointer;
+}
+
+.card {
+  --bs-card-border-width: 0;
+  --bs-card-inner-border-radius: 0;
+}
+
+.table {
+  --bs-table-bg: transparent;
+}
+
+.card-header {
+  padding: var(--bs-card-cap-padding-y) 0;
+  --bs-card-cap-bg: transparent;
+  border-bottom: 1px solid var(--bs-card-border-color);
+  border-bottom: 0px;
+}
+.card-body {
+  padding: var(--bs-card-cap-padding-y) 0;
+}
+
+.truncate-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.form-control:focus,
+.form-control.is-invalid:focus,
+.form-select:focus,
+.btn:focus-visible {
+  box-shadow: none;
+}
+.nav-tabs .nav-item.show .nav-link,
+.nav-tabs .nav-link.active {
+  color: var(--bs-body-color);
+  /* font-weight: bolder; */
+}
+
+.nav .nav-link {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  --bs-nav-link-color: var(--bs-body-color);
+}
+
+.btn-custom-group {
+  border-color: var(--bs-border-color);
+}
+
+.popover {
+  --bs-popover-border-color: var(--bs-info);
+}
+
+.cursor-point {
+  cursor: pointer;
+}
+
+.cursor-point:hover {
+  --bs-link-color-rgb: var(--bs-link-hover-color-rgb);
+}
+
+.fixed-width {
+  width: 200px !important; /* 使用 !important 提高优先级 */
+}
+
+.border-warning input {
+  border-color: var(--bs-danger) !important;
+}
+
+.background-info input {
+  color: var(--bs-danger) !important;
+}

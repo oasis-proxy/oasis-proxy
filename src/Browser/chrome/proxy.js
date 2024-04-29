@@ -148,7 +148,7 @@ Proxy._pacConfig = function (proxyConfig) {
   } else if (proxyConfig.rules.data != null && proxyConfig.rules.data !== '') {
     config.pacScript.data = proxyConfig.rules.data
   } else {
-    return -1
+    return { mode: 'direct' }
   }
   return config
 }

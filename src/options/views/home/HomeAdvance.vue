@@ -107,7 +107,7 @@ function handleSetSync() {
       <div class="card-body">
         <div class="row mb-3 d-flex align-items-center">
           <label class="col-2 col-form-label-sm">
-            链接监控
+            <span>链接监控</span>
             <PopoverTips
               className="bi bi-question-circle-fill icon-btn ms-2"
               content="开启后会，对Tab标签的所有请求链接在popup按钮弹出页展示HOST和IP。"
@@ -121,9 +121,9 @@ function handleSetSync() {
                 id="monitorCheck"
                 v-model="configMonitor"
               />
-              <label class="form-check-label ms-1" for="monitorCheck"
-                >开 启</label
-              >
+              <label class="form-check-label ms-2" for="monitorCheck">
+                <span>开 启</span>
+              </label>
             </div>
           </div>
         </div>
@@ -155,14 +155,14 @@ function handleSetSync() {
             <div class="vstack gap-4">
               <div>
                 <button class="btn btn-danger btn-sm" @click="handleSetLocal">
-                  <i class="bi bi-skip-backward-fill me-1 fw-bold"></i>
-                  覆盖本地
+                  <i class="bi bi-skip-backward-fill me-2 fw-bold"></i>
+                  <span>覆盖本地</span>
                 </button>
               </div>
               <div>
                 <button class="btn btn-danger btn-sm" @click="handleSetSync">
-                  覆盖远程
-                  <i class="bi bi-skip-forward-fill ms-1"></i>
+                  <span>覆盖远程</span>
+                  <i class="bi bi-skip-forward-fill ms-2"></i>
                 </button>
               </div>
             </div>

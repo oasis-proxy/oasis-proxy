@@ -175,12 +175,12 @@ function handleCancel() {
         class="btn btn-sm btn-outline-danger ms-auto"
         @click="handleDelete"
       >
-        <i class="bi bi-backspace-reverse me-1"></i>
-        删除配置
+        <i class="bi bi-backspace-reverse me-2"></i>
+        <span>删除配置</span>
       </button>
       <button class="btn btn-sm btn-outline-secondary" @click="handleUpdate">
-        <i class="bi bi-pencil-square me-1"></i>
-        修改名称
+        <i class="bi bi-pencil-square me-2"></i>
+        <span>修改名称</span>
       </button>
     </div>
     <div class="container ps-0 pe-0">
@@ -264,16 +264,16 @@ function handleCancel() {
           @click="handleCancel"
           :disabled="!isUnsaved"
         >
-          <i class="bi bi-reply-fill me-1"></i>
-          恢 复
+          <i class="bi bi-reply-fill me-2"></i>
+          <span>恢 复</span>
         </button>
         <button
           class="btn btn-primary btn-sm"
           @click="handleSubmit"
           :disabled="!isUnsaved"
         >
-          <i class="bi bi-floppy-fill me-1"></i>
-          保 存
+          <i class="bi bi-floppy-fill me-2"></i>
+          <span>保 存</span>
         </button>
       </div>
     </div>

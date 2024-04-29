@@ -326,7 +326,7 @@ function handleCancel() {
           @click="handleCancel"
           :disabled="!isUnsaved"
         >
-          <i class="bi bi-reply-fill me-1"></i>
+          <i class="bi bi-reply-fill me-2"></i>
           <span>恢 复</span>
         </button>
         <button
@@ -334,7 +334,7 @@ function handleCancel() {
           @click="handleSubmit"
           :disabled="!isUnsaved"
         >
-          <i class="bi bi-floppy-fill me-1"></i>
+          <i class="bi bi-floppy-fill me-2"></i>
           <span>保 存</span>
         </button>
       </div>

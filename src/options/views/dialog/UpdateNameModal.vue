@@ -125,12 +125,12 @@ async function handleSubmit() {
     </template>
     <template #operations>
       <button class="btn btn-sm btn-secondary ms-auto" @click="handleCancel">
-        <i class="bi bi-x-circle-fill me-1"></i>
-        关 闭
+        <i class="bi bi-x-circle-fill me-2"></i>
+        <span>关 闭</span>
       </button>
       <button class="btn btn-sm btn-primary" @click="handleSubmit">
-        <i class="bi bi-check-circle-fill me-1"></i>
-        添 加
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span>添 加</span>
       </button>
     </template>
   </ModalBase>

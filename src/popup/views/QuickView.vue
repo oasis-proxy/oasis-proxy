@@ -121,8 +121,8 @@ async function quickAddInternalRules() {
           class="btn btn-sm btn-primary"
           @click="quickAddInternalRules"
         >
-          <i class="bi bi-check-circle-fill me-1"></i>
-          添 加
+          <i class="bi bi-check-circle-fill me-2"></i>
+          <span>添 加</span>
         </button>
       </div>
     </div>

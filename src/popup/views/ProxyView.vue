@@ -64,14 +64,14 @@ function setProxy(proxyConfigs, key) {
       <a
         :class="activeProxyKey == 'direct' ? activeClassName : className"
         @click="setProxy(proxyConfigs, 'direct')"
-        ><i class="bi bi-arrow-left-right mx-2"></i>直连</a
+        ><i class="bi bi-arrow-left-right mx-2"></i><span>直连</span></a
       >
     </li>
     <li class="nav-item">
       <a
         :class="activeProxyKey == 'system' ? activeClassName : className"
         @click="setProxy(proxyConfigs, 'system')"
-        ><i class="bi bi-tools mx-2"></i>系统代理</a
+        ><i class="bi bi-tools mx-2"></i><span>系统代理</span></a
       >
     </li>
     <hr class="my-1" />

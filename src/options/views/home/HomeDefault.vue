@@ -142,8 +142,8 @@ function toGithub() {
                 v-model="configUi"
               />
               <label class="form-check-label" for="uiLight">
-                <i class="bi bi-sun ms-1 me-1"></i>
-                浅色模式
+                <i class="bi bi-sun ms-2 me-1"></i>
+                <span>浅色模式</span>
               </label>
             </div>
             <div class="form-check-sm form-check-inline">
@@ -155,8 +155,8 @@ function toGithub() {
                 v-model="configUi"
               />
               <label class="form-check-label" for="uiDark">
-                <i class="bi bi-moon-stars-fill ms-1 me-1"></i>
-                深色模式
+                <i class="bi bi-moon-stars-fill ms-2 me-1"></i>
+                <span>深色模式</span>
               </label>
             </div>
             <div class="form-check-sm form-check-inline">
@@ -168,17 +168,17 @@ function toGithub() {
                 v-model="configUi"
               />
               <label class="form-check-label" for="uiSystem">
-                <i class="bi bi-circle-half ms-1 me-1"></i>
-                跟随浏览器
+                <i class="bi bi-circle-half ms-2 me-1"></i>
+                <span>跟随浏览器</span>
               </label>
             </div>
           </div>
         </div>
         <div class="row mb-3">
           <label class="col-2 col-form-label-sm" for="rejectHost">
-            拒绝地址
+            <span>拒绝地址</span>
             <PopoverTips
-              className="bi bi-question-circle-fill icon-btn ms-1"
+              className="bi bi-question-circle-fill icon-btn ms-2"
               content="请确保填入地址无法访问，否则拒绝规则可能失效。"
             ></PopoverTips>
           </label>
@@ -199,9 +199,9 @@ function toGithub() {
         </div>
         <div class="row mb-3 d-flex align-items-center">
           <label class="col-2 col-form-label-sm">
-            规则更新
+            <span>规则更新</span>
             <PopoverTips
-              className="bi bi-question-circle-fill icon-btn ms-1"
+              className="bi bi-question-circle-fill icon-btn ms-2"
               content="每日自动更新策略模式中设置的“外部规则地址”、“拒绝规则地址”内容。"
             ></PopoverTips>
           </label>
@@ -213,8 +213,8 @@ function toGithub() {
                 v-model="configUpdateUrl"
                 id="updateUrlCheck"
               />
-              <label class="form-check-label ms-1" for="updateUrlCheck">
-                每日自动更新
+              <label class="form-check-label ms-2" for="updateUrlCheck">
+                <span>每日自动更新</span>
               </label>
             </div>
           </div>
@@ -222,8 +222,8 @@ function toGithub() {
         <div class="row mb-1">
           <label class="col-2 col-form-label-sm">版本号</label>
           <div class="col-10 col-form-label-sm">
+            <i class="bi bi-github me-2 cursor-point" @click="toGithub()"></i>
             <span>{{ version }}</span>
-            <i class="bi bi-github ms-2 cursor-point" @click="toGithub()"></i>
           </div>
         </div>
       </div>
@@ -238,8 +238,8 @@ function toGithub() {
         <div class="hstack gap-3 mb-3">
           <div>
             <button class="btn btn-primary btn-sm" @click="exportConfig">
-              <i class="bi bi-download me-1"></i>
-              备份下载
+              <i class="bi bi-download me-2"></i>
+              <span>备份下载</span>
             </button>
           </div>
           <div>下载配置备份到本地，用于恢复配置信息。</div>
@@ -247,8 +247,8 @@ function toGithub() {
         <div class="hstack gap-3 mb-3">
           <div>
             <label for="fileInput" class="btn btn-primary btn-sm">
-              <i class="bi bi-upload me-1"></i>
-              恢复备份
+              <i class="bi bi-upload me-2"></i>
+              <span>恢复备份</span>
               <input
                 type="file"
                 id="fileInput"
@@ -268,8 +268,8 @@ function toGithub() {
               data-bs-confirm-title="清除配置"
               data-bs-confirm-message="配置删除后无法恢复，建议先下载备份。确认删除?"
             >
-              <i class="bi bi-trash-fill me-1"></i>
-              清除配置
+              <i class="bi bi-trash-fill me-2"></i>
+              <span>清除配置</span>
             </button>
           </div>
           <div>删除后无法恢复，请谨慎操作</div>

@@ -45,7 +45,8 @@ const title = computed(() => {
     ></button>
     <div class="toast-body p-3">
       <div class="mb-2 fw-bold">
-        <i :class="title.icon"></i>{{ title.value }}
+        <i :class="title.icon"></i>
+        <span>{{ title.value }}</span>
       </div>
       {{ props.message }}
     </div>

@@ -187,7 +187,7 @@ function toGithub() {
           </div>
         </div>
         <div class="row mb-3">
-          <label class="col-2 col-form-label" for="rejectHost">
+          <label class="col-2 col-form-label">
             <span>{{ Browser.I18n.getMessage('form_label_reject') }}</span>
             <PopoverTips
               className="bi bi-question-circle-fill icon-btn ms-2"

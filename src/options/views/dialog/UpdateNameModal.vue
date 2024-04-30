@@ -65,7 +65,9 @@ async function handleSubmit() {
   const result = await Browser.Storage.getLocalAll()
   // eslint-disable-next-line no-prototype-builtins
   if (!result.hasOwnProperty(oldKey)) {
-    toast.warning(`（${oldName}）配置不存在，请刷新页面后重新操作`)
+    toast.warning(
+      `${oldName} ${Browser.I18n.getMessage('desc_config_not_found')}`
+    )
     handleCancel()
     return
   }
@@ -90,7 +92,7 @@ async function handleSubmit() {
   }
   await Browser.Storage.setLocal(storeProxy)
   await Browser.Storage.removeLocal(oldKey)
-  toast.info(`代理名称修改成功`)
+  toast.info(Browser.I18n.getMessage('desc_save_success'))
   handleCancel()
   const r = route.path.split('/')
   r.pop()
@@ -100,22 +102,25 @@ async function handleSubmit() {
 </script>
 <template>
   <ModalBase id="updateNameModal">
-    <template #title>修改名称</template>
+    <template #title>{{
+      Browser.I18n.getMessage('btn_label_update_name_config')
+    }}</template>
     <template #default>
       <form id="updateNameModalForm">
         <div class="mb-3 row">
-          <label class="col-2 col-form-label" for="policyName"> 新名称 </label>
-          <div class="col-10">
+          <label class="col-3 col-form-label" for="policyName">
+            {{ Browser.I18n.getMessage('form_label_new_name') }}
+          </label>
+          <div class="col-9">
             <input
               type="text"
               :class="serverNameClass"
-              placeholder="请输入名称"
               aria-label="name"
               v-model="name"
               maxlength="25"
             />
             <div class="invalid-feedback">
-              新名称不能为空、direct、system、reject，或新名称与旧名称一致，或新名称已存在
+              {{ Browser.I18n.getMessage('feedback_update_name_invalid') }}
             </div>
           </div>
         </div>
@@ -124,11 +129,11 @@ async function handleSubmit() {
     <template #operations>
       <button class="btn btn-sm btn-secondary ms-auto" @click="handleCancel">
         <i class="bi bi-x-circle-fill me-2"></i>
-        <span>关 闭</span>
+        <span>{{ Browser.I18n.getMessage('btn_label_close') }}</span>
       </button>
       <button class="btn btn-sm btn-primary" @click="handleSubmit">
         <i class="bi bi-check-circle-fill me-2"></i>
-        <span>添 加</span>
+        <span>{{ Browser.I18n.getMessage('btn_label_add_config') }}</span>
       </button>
     </template>
   </ModalBase>

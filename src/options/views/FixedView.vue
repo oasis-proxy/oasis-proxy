@@ -136,19 +136,19 @@ async function handleSubmit() {
   const storeObj = {}
   storeObj[key] = tmpObj
   await Browser.Storage.setLocal(storeObj)
-  toast.info(`保存代理（${name}）配置信息成功`)
+  toast.info(`${name} ${Browser.I18n.getMessage('desc_save_success')}`)
   resetUnsaved()
   const result = await Browser.Storage.getLocal(null)
   if (result.status_proxyKey == key) {
     Browser.Proxy.set(result, key, async () => {
       await Browser.Storage.setLocal({ status_proxyKey: key })
-      toast.info(`已生效更新的配置`)
+      toast.info(Browser.I18n.getMessage('desc_proxy_update'))
     })
   } else {
     const uniqNames = proxyUses(result[result.status_proxyKey])
     if (uniqNames.includes(encodeName)) {
       Browser.Proxy.set(result, result.status_proxyKey, async () => {
-        toast.info(`已生效更新的配置`)
+        toast.info(Browser.I18n.getMessage('desc_proxy_update'))
       })
     }
   }
@@ -156,8 +156,8 @@ async function handleSubmit() {
 
 function handleCancel() {
   confirmModal.createConfirm(
-    '警告',
-    '页面存在未保存的信息，是否取消修改？',
+    Browser.I18n.getMessage('modal_title_warning'),
+    Browser.I18n.getMessage('modal_desc_reset'),
     function () {
       load('proxy_' + route.params.name)
       resetUnsaved()
@@ -169,48 +169,48 @@ function handleCancel() {
   <div id="profile_fixed">
     <div class="hstack gap-3 pb-4 mb-3">
       <div class="fs-5 fw-bold text-truncate">
-        {{ '代理节点：' + route.params.name }}
+        {{ Browser.I18n.getMessage('page_title_fixed') + route.params.name }}
       </div>
       <button
         class="btn btn-sm btn-outline-danger ms-auto"
         @click="handleDelete"
       >
         <i class="bi bi-backspace-reverse me-2"></i>
-        <span>删除配置</span>
+        <span>{{ Browser.I18n.getMessage('btn_label_delete_config') }}</span>
       </button>
       <button class="btn btn-sm btn-outline-secondary" @click="handleUpdate">
         <i class="bi bi-pencil-square me-2"></i>
-        <span>修改名称</span>
+        <span>{{
+          Browser.I18n.getMessage('btn_label_update_name_config')
+        }}</span>
       </button>
     </div>
     <div class="container ps-0 pe-0">
       <div class="">
         <div class="nav nav-tabs mb-2" id="v-pills-tab" role="tablist">
-          <li class="nav-item">
-            <a
-              class="nav-link active"
-              id="v-pills-default-tab"
-              s
-              data-bs-toggle="pill"
-              data-bs-target="#v-pills-default"
-              role="tab"
-              aria-controls="v-pills-default"
-              aria-selected="true"
-              >默认配置</a
-            >
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              id="v-pills-advance-tab"
-              data-bs-toggle="pill"
-              data-bs-target="#v-pills-advance"
-              role="tab"
-              aria-controls="v-pills-advance"
-              aria-selected="false"
-              >高级配置</a
-            >
-          </li>
+          <button
+            class="nav-link active"
+            id="v-pills-default-tab"
+            s
+            data-bs-toggle="pill"
+            data-bs-target="#v-pills-default"
+            role="tab"
+            aria-controls="v-pills-default"
+            aria-selected="true"
+          >
+            <span>{{ Browser.I18n.getMessage('tab_label_default') }}</span>
+          </button>
+          <button
+            class="nav-link"
+            id="v-pills-advance-tab"
+            data-bs-toggle="pill"
+            data-bs-target="#v-pills-advance"
+            role="tab"
+            aria-controls="v-pills-advance"
+            aria-selected="false"
+          >
+            <span>{{ Browser.I18n.getMessage('tab_label_advance') }}</span>
+          </button>
         </div>
         <div class="tab-content" id="v-pills-tabContent">
           <div
@@ -219,13 +219,17 @@ function handleCancel() {
             tabindex="0"
           >
             <ServerInfoItem
-              groupLabel="默认代理"
+              :groupLabel="
+                Browser.I18n.getMessage('section_label_default_proxy')
+              "
               :main="true"
               v-model:proxyInfo="fallbackProxy"
             ></ServerInfoItem>
             <div class="card">
               <div class="card-header">
-                <span class="fw-bold">代理绕过地址列表</span>
+                <span class="fw-bold">{{
+                  Browser.I18n.getMessage('section_label_bypasslist')
+                }}</span>
               </div>
               <div class="card-body">
                 <textarea
@@ -244,15 +248,15 @@ function handleCancel() {
             tabindex="0"
           >
             <ServerInfoItem
-              groupLabel="HTTP代理"
+              :groupLabel="Browser.I18n.getMessage('section_label_http')"
               v-model:proxyInfo="proxyForHttp"
             ></ServerInfoItem>
             <ServerInfoItem
-              groupLabel="HTTPS代理"
+              :groupLabel="Browser.I18n.getMessage('section_label_https')"
               v-model:proxyInfo="proxyForHttps"
             ></ServerInfoItem>
             <ServerInfoItem
-              groupLabel="FTP代理"
+              :groupLabel="Browser.I18n.getMessage('section_label_ftp')"
               v-model:proxyInfo="proxyForFtp"
             ></ServerInfoItem>
           </div>
@@ -265,7 +269,7 @@ function handleCancel() {
           :disabled="!isUnsaved"
         >
           <i class="bi bi-reply-fill me-2"></i>
-          <span>恢 复</span>
+          <span>{{ Browser.I18n.getMessage('btn_label_reset') }}</span>
         </button>
         <button
           class="btn btn-primary btn-sm"
@@ -273,7 +277,7 @@ function handleCancel() {
           :disabled="!isUnsaved"
         >
           <i class="bi bi-floppy-fill me-2"></i>
-          <span>保 存</span>
+          <span>{{ Browser.I18n.getMessage('btn_label_save') }}</span>
         </button>
       </div>
     </div>

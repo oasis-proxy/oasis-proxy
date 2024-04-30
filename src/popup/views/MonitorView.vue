@@ -45,15 +45,11 @@ async function getMessage() {
 }
 
 async function copyToClipboard(text) {
-  try {
-    await navigator.clipboard.writeText(text)
-    copyShow.value = true
-    setTimeout(() => {
-      copyShow.value = false
-    }, 3000)
-  } catch (err) {
-    console.error('复制失败:', err)
-  }
+  await navigator.clipboard.writeText(text)
+  copyShow.value = true
+  setTimeout(() => {
+    copyShow.value = false
+  }, 3000)
 }
 </script>
 <template>
@@ -63,13 +59,13 @@ async function copyToClipboard(text) {
       @click="router.push('/')"
     >
       <i class="bi bi-send-check me-2"></i>
-      <span>代理选择</span>
+      <span>{{ Browser.I18n.getMessage('desc_proxy_selection') }}</span>
     </div>
     <div class="col-4 d-inline-flex">
       <Transition>
         <div v-show="copyShow">
           <i class="bi bi-check-circle-fill me-2 icon-btn"></i>
-          <span>复制成功</span>
+          <span>{{ Browser.I18n.getMessage('desc_copy') }}</span>
         </div>
       </Transition>
     </div>
@@ -79,7 +75,7 @@ async function copyToClipboard(text) {
         v-if="quickEnabled"
         @click="router.push('/quick')"
       >
-        <span>快速添加</span>
+        <span>{{ Browser.I18n.getMessage('desc_quick_add') }}</span>
         <i class="bi bi-plus-circle ms-2"></i>
       </div>
     </div>

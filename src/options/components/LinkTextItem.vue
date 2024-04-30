@@ -2,6 +2,7 @@
 import { defineModel, computed, ref } from 'vue'
 
 import { downloadUrl } from '@/core/ConfigData.js'
+import Browser from '@/Browser/chrome/chrome'
 
 const externalItem = defineModel('externalItem', {
   type: Object,
@@ -65,7 +66,6 @@ function updateData() {
           <input
             type="text"
             class="form-control form-control-sm"
-            placeholder="请输入URL"
             v-model="externalItem.url"
             @blur="updateData"
             :disabled="urlInputDisabled"
@@ -77,7 +77,9 @@ function updateData() {
             <i class="bi bi-arrow-counterclockwise"></i>
           </button>
         </div>
-        <div class="invalid-feedback">地址获取内容失败</div>
+        <div class="invalid-feedback">
+          {{ Browser.I18n.getMessage('feedback_request_failed') }}
+        </div>
       </div>
     </div>
     <div

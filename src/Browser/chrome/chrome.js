@@ -3,7 +3,7 @@ import Proxy from './proxy.js'
 import Tabs from './tabs.js'
 import WebRequest from './WebRequest.js'
 import Message from './message.js'
-import i18n from './i18n.js'
+import I18n from './i18n.js'
 
 const Runtime = {}
 
@@ -14,7 +14,7 @@ Runtime.getManifest = function () {
   return chrome.runtime.getManifest()
 }
 
-const Browser = { Storage, Proxy, Tabs, WebRequest, Message, Runtime, i18n }
+const Browser = { Storage, Proxy, Tabs, WebRequest, Message, Runtime, I18n }
 
 Browser.saveFile = function (obj, filename) {
   const fileContent = JSON.stringify(obj)

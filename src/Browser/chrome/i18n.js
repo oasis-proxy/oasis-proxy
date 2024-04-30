@@ -1,7 +1,7 @@
-const i18n = {}
+const I18n = {}
 
-i18n.getMessage = function (name) {
+I18n.getMessage = function (name) {
   return chrome.i18n.getMessage(name)
 }
 
-export default i18n
+export default I18n

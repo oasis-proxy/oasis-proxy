@@ -112,8 +112,8 @@ function initApp() {
 
 function handleDelete() {
   confirmModal.createConfirm(
-    '确认删除代理：' + route.params.name,
-    '该代理未被其他规则引用，确定删除？',
+    Browser.I18n.getMessage('modal_title_delete') + route.params.name,
+    Browser.I18n.getMessage('modal_desc_delete'),
     async () => {
       const result = await Browser.Storage.getLocalAll()
       const name = route.params.name
@@ -121,13 +121,13 @@ function handleDelete() {
       const proxyNameList = proxyUsedBy(encodeURIComponent(name), result)
       if (proxyNameList.length > 0) {
         toast.warning(
-          `（${name}）配置被以下策略引用无法删除：${proxyNameList.join(', ')}`
+          `（${name}）${Browser.I18n.getMessage('desc_undeleted_info')}${proxyNameList.join(', ')}`
         )
         return
       }
       const proxyKey = 'proxy_' + encodeURIComponent(name)
       await Browser.Storage.removeLocal(proxyKey)
-      toast.info(`删除（${name}）配置成功`)
+      toast.info(`${name}${Browser.I18n.getMessage('desc_deleted_success')}`)
       if (result.status_proxyKey == proxyKey) {
         Browser.Proxy.setDirect(async () => {
           await Browser.Storage.setLocal({ status_proxyKey: 'direct' })
@@ -143,7 +143,7 @@ function handleDelete() {
 
 function handleUpdate() {
   if (isUnsaved.value) {
-    toast.warning('配置未保存，请保存或刷新页面后修改名称')
+    toast.warning(Browser.I18n.getMessage('desc_unsave_toast'))
     return
   }
 

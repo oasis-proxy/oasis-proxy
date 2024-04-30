@@ -4,6 +4,8 @@ import { useRouter, useRoute } from 'vue-router'
 import PolicyModal from './dialog/PolicyModal.vue'
 import ServerModal from './dialog/ServerModal.vue'
 
+import Browser from '@/Browser/chrome/chrome'
+
 const proxyConfig = inject('proxyConfig')
 const theme = inject('theme')
 const activeProxyKey = inject('activeProxyKey')
@@ -59,12 +61,14 @@ function addServer() {
 }
 </script>
 <template>
-  <div>
-    <img :src="imgPath" class="w-100" alt="" />
+  <div class="w-100 mb-4 d-flex justify-content-center">
+    <img :src="imgPath" alt="" style="width: 193px" />
   </div>
   <div class="card">
     <div class="card-header hstack">
-      <div class="fw-bold">通用设置</div>
+      <div class="fw-bold">
+        {{ Browser.I18n.getMessage('aside_label_setting') }}
+      </div>
     </div>
     <div class="card-body">
       <ul class="nav nav-pills flex-column">
@@ -75,7 +79,9 @@ function addServer() {
           >
             <span
               ><i class="bi bi-house-gear-fill me-3"></i
-              ><span>首页配置</span></span
+              ><span>
+                {{ Browser.I18n.getMessage('aside_label_setting') }}</span
+              ></span
             >
           </a>
         </li>
@@ -84,7 +90,9 @@ function addServer() {
   </div>
   <div class="card">
     <div class="card-header hstack">
-      <div class="fw-bold">代理节点</div>
+      <div class="fw-bold">
+        {{ Browser.I18n.getMessage('aside_label_proxy_server') }}
+      </div>
       <i class="bi bi-plus-circle-fill ms-auto icon-btn" @click="addServer"></i>
     </div>
     <div class="card-body">
@@ -107,7 +115,8 @@ function addServer() {
               ><span
                 v-if="activeProxyKey == 'proxy_' + item"
                 class="badge rounded-pill bg-info ms-3"
-                >使用中
+              >
+                {{ Browser.I18n.getMessage('badge_label_using') }}
               </span>
             </span>
           </a>
@@ -117,7 +126,9 @@ function addServer() {
   </div>
   <div class="card">
     <div class="card-header hstack">
-      <div class="fw-bold">策略模式</div>
+      <div class="fw-bold">
+        {{ Browser.I18n.getMessage('aside_label_proxy_policy') }}
+      </div>
       <i class="bi bi-plus-circle-fill icon-btn ms-auto" @click="addPolicy">
       </i>
     </div>
@@ -141,7 +152,8 @@ function addServer() {
               ><span
                 v-if="activeProxyKey == 'proxy_' + item"
                 class="badge rounded-pill bg-info ms-3"
-                >使用中
+              >
+                {{ Browser.I18n.getMessage('badge_label_using') }}
               </span>
             </span>
           </a>
@@ -164,7 +176,8 @@ function addServer() {
               ><span
                 v-if="activeProxyName == item"
                 class="badge rounded-pill bg-info ms-3"
-                >使用中
+              >
+                {{ Browser.I18n.getMessage('badge_label_using') }}
               </span>
             </span>
           </a>

@@ -48,13 +48,13 @@ function setProxy(proxyConfigs, key) {
       @click="Browser.Runtime.openOptionsPage()"
     >
       <i class="bi bi-gear-wide-connected me-2"></i>
-      <span>选项设置</span>
+      <span>{{ Browser.I18n.getMessage('desc_options') }}</span>
     </div>
     <div
       class="ms-auto d-flex align-items-center cursor-point"
       @click="router.push('/monitor')"
     >
-      <span>监控</span>
+      <span>{{ Browser.I18n.getMessage('desc_monitor') }}</span>
       <i class="bi bi-speedometer ms-2"></i>
     </div>
   </div>
@@ -64,14 +64,16 @@ function setProxy(proxyConfigs, key) {
       <a
         :class="activeProxyKey == 'direct' ? activeClassName : className"
         @click="setProxy(proxyConfigs, 'direct')"
-        ><i class="bi bi-arrow-left-right mx-2"></i><span>直连</span></a
+        ><i class="bi bi-arrow-left-right mx-2"></i
+        ><span>{{ Browser.I18n.getMessage('input_label_direct') }}</span></a
       >
     </li>
     <li class="nav-item">
       <a
         :class="activeProxyKey == 'system' ? activeClassName : className"
         @click="setProxy(proxyConfigs, 'system')"
-        ><i class="bi bi-tools mx-2"></i><span>系统代理</span></a
+        ><i class="bi bi-tools mx-2"></i
+        ><span>{{ Browser.I18n.getMessage('input_label_system') }}</span></a
       >
     </li>
     <hr class="my-1" />

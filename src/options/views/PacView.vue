@@ -60,12 +60,12 @@ async function handleSubmit() {
   const storeObj = {}
   storeObj[key] = tmpObj
   await Browser.Storage.setLocal(storeObj)
-  toast.info(`保存代理（${name}）配置信息成功`)
+  toast.info(`${name} ${Browser.I18n.getMessage('desc_save_success')}`)
   const result = await Browser.Storage.getLocalAll()
   if (result.status_proxyKey == key) {
     Browser.Proxy.set(result, key, async () => {
       await Browser.Storage.setLocal({ status_proxyKey: key })
-      toast.info(`已生效更新的配置`)
+      toast.info(Browser.I18n.getMessage('desc_proxy_update'))
     })
   }
   resetUnsaved()
@@ -73,8 +73,8 @@ async function handleSubmit() {
 
 function handleCancel() {
   confirmModal.createConfirm(
-    '警告',
-    '页面存在未保存的信息，是否取消修改？',
+    Browser.I18n.getMessage('modal_title_warning'),
+    Browser.I18n.getMessage('modal_desc_reset'),
     function () {
       load('proxy_' + route.params.name)
       resetUnsaved()
@@ -86,25 +86,27 @@ function handleCancel() {
   <div id="profile_pac">
     <div class="hstack gap-3 pb-4 mb-3">
       <div class="fs-5 fw-bold text-truncate" id="title">
-        {{ 'Pac策略：' + route.params.name }}
+        {{ Browser.I18n.getMessage('page_title_pac') + route.params.name }}
       </div>
       <button
         class="btn btn-sm btn-outline-danger ms-auto"
         @click="handleDelete"
       >
         <i class="bi bi-backspace-reverse me-2"></i>
-        <span>删除配置</span>
+        <span>{{ Browser.I18n.getMessage('btn_label_delete_config') }}</span>
       </button>
       <button class="btn btn-sm btn-outline-secondary" @click="handleUpdate">
         <i class="bi bi-pencil-square me-2"></i>
-        <span>修改名称</span>
+        <span>{{
+          Browser.I18n.getMessage('btn_label_update_name_config')
+        }}</span>
       </button>
     </div>
     <div class="">
       <LinkTextItem
-        urlTitle="PAC地址"
-        urlUpdatedAtTitle="URL更新时间"
-        dataTitle="PAC脚本"
+        :urlTitle="Browser.I18n.getMessage('form_label_pac_url')"
+        :urlUpdatedAtTitle="Browser.I18n.getMessage('form_label_update_date')"
+        :dataTitle="Browser.I18n.getMessage('form_label_pac_script')"
         v-model:externalItem="pacRule"
       ></LinkTextItem>
       <div class="hstack gap-3">
@@ -114,7 +116,7 @@ function handleCancel() {
           :disabled="!isUnsaved"
         >
           <i class="bi bi-reply-fill me-2"></i>
-          <span>恢 复</span>
+          <span>{{ Browser.I18n.getMessage('btn_label_reset') }}</span>
         </button>
         <button
           class="btn btn-primary btn-sm"
@@ -122,7 +124,7 @@ function handleCancel() {
           :disabled="!isUnsaved"
         >
           <i class="bi bi-floppy-fill me-2"></i>
-          <span>保 存</span>
+          <span>{{ Browser.I18n.getMessage('btn_label_save') }}</span>
         </button>
       </div>
     </div>

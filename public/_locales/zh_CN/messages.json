@@ -1,0 +1,407 @@
+{
+  "btn_label_save": {
+    "message": "保 存",
+    "description": ""
+  },
+  "btn_label_reset": {
+    "message": "恢 复",
+    "description": ""
+  },
+  "btn_label_cancel": {
+    "message": "取 消",
+    "description": ""
+  },
+  "btn_label_close": {
+    "message": "关 闭",
+    "description": ""
+  },
+  "btn_label_submit": {
+    "message": "确 定",
+    "description": ""
+  },
+  "btn_label_delete_config": {
+    "message": "删除配置",
+    "description": ""
+  },
+  "btn_label_update_name_config": {
+    "message": "修改名称",
+    "description": ""
+  },
+  "btn_label_add_config": {
+    "message": "添 加",
+    "description": ""
+  },
+  "btn_label_set_sync_config": {
+    "message": "覆盖远程",
+    "description": ""
+  },
+  "btn_label_set_local_config": {
+    "message": "覆盖本地",
+    "description": ""
+  },
+  "btn_label_export_config": {
+    "message": "备份下载",
+    "description": ""
+  },
+  "btn_label_import_config": {
+    "message": "恢复备份",
+    "description": ""
+  },
+  "btn_label_clear_config": {
+    "message": "清除配置",
+    "description": ""
+  },
+  "tab_label_default": {
+    "message": "默认配置",
+    "description": ""
+  },
+  "tab_label_advance": {
+    "message": "高级配置",
+    "description": ""
+  },
+  "tab_label_debug": {
+    "message": "调试配置",
+    "description": ""
+  },
+  "aside_label_setting": {
+    "message": "通用设置",
+    "description": ""
+  },
+  "aside_label_proxy_server": {
+    "message": "代理节点",
+    "description": ""
+  },
+  "aside_label_proxy_policy": {
+    "message": "策略模式",
+    "description": ""
+  },
+  "badge_label_using": {
+    "message": "使用中",
+    "description": ""
+  },
+  "form_label_ui_config": {
+    "message": "界面样式",
+    "description": ""
+  },
+  "form_label_reject": {
+    "message": "拒绝地址",
+    "description": ""
+  },
+  "form_label_rule_update": {
+    "message": "规则更新",
+    "description": ""
+  },
+  "form_label_version": {
+    "message": "版本号",
+    "description": ""
+  },
+  "form_label_monitor": {
+    "message": "链接监控",
+    "description": ""
+  },
+  "form_label_host": {
+    "message": "代理节点",
+    "description": ""
+  },
+  "form_label_port": {
+    "message": "代理端口",
+    "description": ""
+  },
+  "form_label_scheme": {
+    "message": "代理协议",
+    "description": ""
+  },
+  "form_label_username": {
+    "message": "认证用户名",
+    "description": ""
+  },
+  "form_label_password": {
+    "message": "认证密码",
+    "description": ""
+  },
+  "form_label_pac_url": {
+    "message": "PAC地址",
+    "description": ""
+  },
+  "form_label_pac_script": {
+    "message": "PAC脚本",
+    "description": ""
+  },
+  "form_label_update_date": {
+    "message": "更新时间",
+    "description": ""
+  },
+  "form_label_rule_url": {
+    "message": "规则地址",
+    "description": ""
+  },
+  "form_label_rule_data": {
+    "message": "规则内容",
+    "description": ""
+  },
+  "form_label_policy_mode": {
+    "message": "模式",
+    "description": ""
+  },
+  "form_label_name": {
+    "message": "名称",
+    "description": ""
+  },
+  "form_label_new_name": {
+    "message": "新名称",
+    "description": ""
+  },
+  "section_label_extention_setting": {
+    "message": "插件配置",
+    "description": ""
+  },
+  "section_label_import_export": {
+    "message": "配置导入/导出",
+    "description": ""
+  },
+  "section_label_sync": {
+    "message": "同步配置",
+    "description": ""
+  },
+  "section_label_request": {
+    "message": "链接展示配置",
+    "description": ""
+  },
+  "section_label_default_proxy": {
+    "message": "默认代理",
+    "description": ""
+  },
+  "section_label_bypasslist": {
+    "message": "代理绕过地址列表",
+    "description": ""
+  },
+  "section_label_http": {
+    "message": "HTTP代理",
+    "description": ""
+  },
+  "section_label_https": {
+    "message": "HTTPS代理",
+    "description": ""
+  },
+  "section_label_ftp": {
+    "message": "FTP代理",
+    "description": ""
+  },
+  "section_label_internal": {
+    "message": "本地规则设置",
+    "description": ""
+  },
+  "section_label_external": {
+    "message": "外部规则设置",
+    "description": ""
+  },
+  "section_label_reject": {
+    "message": "拒绝规则设置",
+    "description": ""
+  },
+  "section_label_local_data": {
+    "message": "本地数据",
+    "description": ""
+  },
+  "section_label_sync_data": {
+    "message": "云端数据",
+    "description": ""
+  },
+  "page_title_setting": {
+    "message": "插件设置",
+    "description": ""
+  },
+  "page_title_auto": {
+    "message": "自动策略：",
+    "description": ""
+  },
+  "page_title_pac": {
+    "message": "Pac策略：",
+    "description": ""
+  },
+  "page_title_fixed": {
+    "message": "代理节点：",
+    "description": ""
+  },
+  "input_label_ui_light": {
+    "message": "浅色模式",
+    "description": ""
+  },
+  "input_label_ui_dark": {
+    "message": "深色模式",
+    "description": ""
+  },
+  "input_label_ui_system": {
+    "message": "跟随浏览器",
+    "description": ""
+  },
+  "input_label_rule_update": {
+    "message": "每日自动更新",
+    "description": ""
+  },
+  "input_label_open": {
+    "message": "开 启",
+    "description": ""
+  },
+  "input_label_auto_policy": {
+    "message": "自动切换模式",
+    "description": ""
+  },
+  "input_label_pac_policy": {
+    "message": "Pac脚本模式",
+    "description": ""
+  },
+  "input_label_domain_wildcard": {
+    "message": "域名通配符",
+    "description": ""
+  },
+  "input_label_regex": {
+    "message": "正则表达式",
+    "description": ""
+  },
+  "input_label_direct": {
+    "message": "直连",
+    "description": ""
+  },
+  "input_label_system": {
+    "message": "系统代理",
+    "description": ""
+  },
+  "input_label_default": {
+    "message": "同默认",
+    "description": ""
+  },
+  "input_label_reject": {
+    "message": "拒绝",
+    "description": ""
+  },
+  "modal_title_delete": {
+    "message": "确认删除代理："
+  },
+  "modal_title_add_policy": {
+    "message": "添加策略模式"
+  },
+  "modal_title_add_server": {
+    "message": "添加代理节点"
+  },
+  "modal_desc_delete": {
+    "message": "该代理未被其他规则引用，确定删除？"
+  },
+  "modal_title_warning": {
+    "message": "警告"
+  },
+  "modal_title_info": {
+    "message": "提示"
+  },
+  "modal_desc_reset": {
+    "message": "页面存在未保存的信息，是否取消修改？"
+  },
+  "modal_desc_override_local": {
+    "message": "确认使用远程配置覆盖本地配置？"
+  },
+  "modal_desc_override_sync": {
+    "message": "确认使用本地配置覆盖远程配置？"
+  },
+  "modal_title_resetall": {
+    "message": "清除配置"
+  },
+  "modal_desc_resetall": {
+    "message": "配置删除后无法恢复，建议先下载备份。确认删除?"
+  },
+  "desc_unsaved_info": {
+    "message": "配置未保存，请保存或刷新页面后修改名称"
+  },
+  "desc_undeleted_info": {
+    "message": "配置被以下策略引用无法删除："
+  },
+  "desc_deleted_success": {
+    "message": "删除成功"
+  },
+  "desc_proxy_update": {
+    "message": "已生效更新的配置"
+  },
+  "desc_save_success": {
+    "message": "保存成功"
+  },
+  "desc_save_failed": {
+    "message": "保存失败"
+  },
+  "desc_init_config": {
+    "message": "已初始化所有配置"
+  },
+  "desc_saved_reject": {
+    "message": "已保存，拒绝地址为："
+  },
+  "desc_override_sync": {
+    "message": "已同步配置到远程"
+  },
+  "desc_override_local": {
+    "message": "已同步配置到本地，2s后刷新配置页面"
+  },
+  "desc_export": {
+    "message": "下载配置备份到本地，用于恢复配置信息。"
+  },
+  "desc_import": {
+    "message": "通过文件导入恢复配置信息。"
+  },
+  "desc_clear": {
+    "message": "删除后无法恢复，请谨慎操作"
+  },
+  "desc_options": {
+    "message": "选项设置"
+  },
+  "desc_monitor": {
+    "message": "监控"
+  },
+  "desc_default": {
+    "message": "默认"
+  },
+  "desc_proxy_selection": {
+    "message": "代理选择"
+  },
+  "desc_quick_add": {
+    "message": "快速添加"
+  },
+  "desc_add_rules": {
+    "message": "在当前策略中快速添加以下规则："
+  },
+  "desc_copy": {
+    "message": "已复制"
+  },
+  "desc_external_rules": {
+    "message": "外部规则"
+  },
+  "desc_config_not_found": {
+    "message": "配置不存在，请刷新页面后重新操作"
+  },
+  "feedback_request_failed": {
+    "message": "地址获取内容失败"
+  },
+  "feedback_reject_invalid": {
+    "message": "填写格式：SCHEME[空格]HOST:PORT。建议：HTTPS 127.0.0.1:65432"
+  },
+  "feedback_update_name_invalid": {
+    "message": "新名称不能为空、direct、system、reject，或新名称与旧名称一致，或新名称已存在"
+  },
+  "feedback_name_invalid": {
+    "message": "新名称不能为空、direct、system、reject，或新名称已存在"
+  },
+  "popover_auth": {
+    "message": "非必要，根据代理需求填写"
+  },
+  "popover_priority": {
+    "message": "规则优先级：本地规则 > 拒绝规则 > 外部规则 > 默认规则"
+  },
+  "popover_external_rules_format": {
+    "message": "仅支持autoProxy规则"
+  },
+  "popover_monitor": {
+    "message": "开启后会，对Tab标签的所有请求链接在popup按钮弹出页展示HOST和IP。"
+  },
+  "popover_reject": {
+    "message": "请确保填入地址无法访问，否则拒绝规则可能失效。"
+  },
+  "popover_update_url": {
+    "message": "每日自动更新策略模式中设置的“外部规则地址”、“拒绝规则地址”内容。"
+  }
+}

@@ -71,13 +71,13 @@ async function reloadLocalData() {
 }
 function handleSetLocal() {
   confirmModal.createConfirm(
-    '警告',
-    '确认使用远程配置覆盖本地配置？',
+    Browser.I18n.getMessage('modal_title_warning'),
+    Browser.I18n.getMessage('modal_desc_override_local'),
     async function () {
       const result = await Browser.Storage.getSync(null)
       const enrichConfig = await enrich(result)
       await Browser.Storage.setLocal(enrichConfig)
-      toast.info('已同步配置到本地，2s后刷新配置页面')
+      toast.info(Browser.I18n.getMessage('desc_override_local'))
       setTimeout(() => {
         location.reload()
       }, 2000)
@@ -86,13 +86,13 @@ function handleSetLocal() {
 }
 function handleSetSync() {
   confirmModal.createConfirm(
-    '警告',
-    '确认使用本地配置覆盖远程配置？',
+    Browser.I18n.getMessage('modal_title_warning'),
+    Browser.I18n.getMessage('modal_desc_override_sync'),
     async function () {
       const result = await Browser.Storage.getLocal(null)
       const sConfig = simplify(result)
       await Browser.Storage.setSync(sConfig)
-      toast.info('已同步配置到远程')
+      toast.info(Browser.I18n.getMessage('desc_override_sync'))
       reloadSyncData()
     }
   )
@@ -102,15 +102,17 @@ function handleSetSync() {
   <div class="tab-pane fade show" id="v-pills-advance" tabindex="0">
     <div class="card">
       <div class="card-header">
-        <span class="fw-bold">链接展示配置</span>
+        <span class="fw-bold">{{
+          Browser.I18n.getMessage('section_label_request')
+        }}</span>
       </div>
       <div class="card-body">
         <div class="row mb-3 d-flex align-items-center">
           <label class="col-2 col-form-label">
-            <span>链接监控</span>
+            <span>{{ Browser.I18n.getMessage('form_label_monitor') }}</span>
             <PopoverTips
               className="bi bi-question-circle-fill icon-btn ms-2"
-              content="开启后会，对Tab标签的所有请求链接在popup按钮弹出页展示HOST和IP。"
+              :content="Browser.I18n.getMessage('popover_monitor')"
             ></PopoverTips>
           </label>
           <div class="col-10">
@@ -122,7 +124,7 @@ function handleSetSync() {
                 v-model="configMonitor"
               />
               <label class="form-check-label ms-2" for="monitorCheck">
-                <span>开 启</span>
+                <span>{{ Browser.I18n.getMessage('input_label_open') }}</span>
               </label>
             </div>
           </div>
@@ -131,7 +133,9 @@ function handleSetSync() {
     </div>
     <div class="card">
       <div class="card-header">
-        <span class="fw-bold">同步配置</span>
+        <span class="fw-bold">{{
+          Browser.I18n.getMessage('section_label_sync')
+        }}</span>
       </div>
       <div class="card-body">
         <div
@@ -139,15 +143,26 @@ function handleSetSync() {
         >
           <div class="card flex-grow-1" style="width: 1px">
             <div class="card-body border p-4 rounded">
-              <p class="card-text fw-bold">本地数据</p>
+              <p class="card-text fw-bold">
+                {{ Browser.I18n.getMessage('section_label_local_data') }}
+              </p>
               <p class="card-text" v-if="localFixed.length > 0">
-                代理节点：{{ localFixed.join(', ') }}
+                {{
+                  Browser.I18n.getMessage('page_title_fixed') +
+                  localFixed.join(', ')
+                }}
               </p>
               <p class="card-text" v-if="localPac.length > 0">
-                PAC策略：{{ localPac.join(', ') }}
+                {{
+                  Browser.I18n.getMessage('page_title_pac') +
+                  localPac.join(', ')
+                }}
               </p>
               <p class="card-text" v-if="localAuto.length > 0">
-                自动策略：{{ localAuto.join(', ') }}
+                {{
+                  Browser.I18n.getMessage('page_title_auto') +
+                  localAuto.join(', ')
+                }}
               </p>
             </div>
           </div>
@@ -156,12 +171,16 @@ function handleSetSync() {
               <div>
                 <button class="btn btn-danger btn-sm" @click="handleSetLocal">
                   <i class="bi bi-skip-backward-fill me-2 fw-bold"></i>
-                  <span>覆盖本地</span>
+                  <span>{{
+                    Browser.I18n.getMessage('btn_label_set_local_config')
+                  }}</span>
                 </button>
               </div>
               <div>
                 <button class="btn btn-danger btn-sm" @click="handleSetSync">
-                  <span>覆盖远程</span>
+                  <span>{{
+                    Browser.I18n.getMessage('btn_label_set_sync_config')
+                  }}</span>
                   <i class="bi bi-skip-forward-fill ms-2"></i>
                 </button>
               </div>
@@ -169,15 +188,25 @@ function handleSetSync() {
           </div>
           <div class="card flex-grow-1" style="width: 1px">
             <div class="card-body border p-4 rounded">
-              <p class="card-text fw-bold">云端数据</p>
+              <p class="card-text fw-bold">
+                {{ Browser.I18n.getMessage('section_label_sync_data') }}
+              </p>
               <p class="card-text" v-if="syncFixed.length > 0">
-                代理节点：{{ syncFixed.join(', ') }}
+                {{
+                  Browser.I18n.getMessage('page_title_fixed') +
+                  syncFixed.join(', ')
+                }}
               </p>
               <p class="card-text" v-if="syncPac.length > 0">
-                PAC策略：{{ syncPac.join(', ') }}
+                {{
+                  Browser.I18n.getMessage('page_title_pac') + syncPac.join(', ')
+                }}
               </p>
               <p class="card-text" v-if="syncAuto.length > 0">
-                自动策略：{{ syncAuto.join(', ') }}
+                {{
+                  Browser.I18n.getMessage('page_title_auto') +
+                  syncAuto.join(', ')
+                }}
               </p>
             </div>
           </div>

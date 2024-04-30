@@ -67,7 +67,9 @@ async function handleSubmit() {
   }
   const proxyConfig = createProxy(encodeName, mode.value)
   if (proxyConfig == -1) {
-    toast.warning(`添加策略（${name.value}）失败`)
+    toast.warning(
+      `${name.value} ${Browser.I18n.getMessage('desc_save_failed')}`
+    )
     handleCancel()
     return
   }
@@ -76,7 +78,7 @@ async function handleSubmit() {
   const storeProxy = {}
   storeProxy[key] = proxyConfig
   await Browser.Storage.setLocal(storeProxy)
-  toast.info(`添加策略（${name.value}）成功`)
+  toast.info(`${name.value} ${Browser.I18n.getMessage('desc_save_success')}`)
   handleCancel()
   if (mode.value == 'auto') {
     router.push('/auto/' + encodeName)
@@ -87,29 +89,34 @@ async function handleSubmit() {
 </script>
 <template>
   <ModalBase id="policyModal">
-    <template #title>添加策略模式</template>
+    <template #title>{{
+      Browser.I18n.getMessage('modal_title_add_policy')
+    }}</template>
     <template #default>
       <form action="" id="policyModalForm">
         <div class="mb-3 row">
-          <label class="col-2 col-form-label" for="policyName">策略名称</label>
-          <div class="col-10">
+          <label class="col-3 col-form-label" for="policyName">{{
+            Browser.I18n.getMessage('form_label_name')
+          }}</label>
+          <div class="col-9">
             <input
               type="text"
               :class="policyNameClass"
               id="policyName"
-              placeholder="请输入名称"
               aria-label="name"
               v-model="name"
               maxlength="25"
             />
             <div class="invalid-feedback">
-              新名称不能为空、direct、system、reject，或新名称已存在
+              {{ Browser.I18n.getMessage('feedback_name_invalid') }}
             </div>
           </div>
         </div>
         <div class="mb-3 row d-flex align-items-center">
-          <label class="col-2 col-form-label"> 策略模式 </label>
-          <div class="col-10 hstack gap-3 d-flex align-items-center">
+          <label class="col-3 col-form-label">{{
+            Browser.I18n.getMessage('form_label_policy_mode')
+          }}</label>
+          <div class="col-9 hstack gap-3 d-flex align-items-center">
             <div class="form-check-sm">
               <input
                 class="form-check-input"
@@ -120,7 +127,7 @@ async function handleSubmit() {
                 v-model="mode"
               />
               <label class="form-check-label ms-1" for="policyModeAuto">
-                自动切换模式
+                {{ Browser.I18n.getMessage('input_label_auto_policy') }}
               </label>
             </div>
             <div class="form-check-sm">
@@ -133,7 +140,7 @@ async function handleSubmit() {
                 v-model="mode"
               />
               <label class="form-check-label ms-1" for="policyModePac">
-                Pac脚本模式
+                {{ Browser.I18n.getMessage('input_label_pac_policy') }}
               </label>
             </div>
           </div>
@@ -143,11 +150,11 @@ async function handleSubmit() {
     <template #operations>
       <button class="btn btn-sm btn-secondary ms-auto" @click="handleCancel">
         <i class="bi bi-x-circle-fill me-2"></i>
-        <span>关 闭</span>
+        <span>{{ Browser.I18n.getMessage('btn_label_close') }}</span>
       </button>
       <button class="btn btn-sm btn-primary" @click="handleSubmit">
         <i class="bi bi-check-circle-fill me-2"></i>
-        <span>添 加</span>
+        <span>{{ Browser.I18n.getMessage('btn_label_add_config') }}</span>
       </button>
     </template>
   </ModalBase>

@@ -1,4 +1,5 @@
 <script setup>
+import Browser from '@/Browser/chrome/chrome'
 import { computed, onMounted, getCurrentInstance } from 'vue'
 
 const props = defineProps(['message', 'mode'])
@@ -23,11 +24,11 @@ const title = computed(() => {
   switch (props.mode) {
     case 'info':
       title.icon = title.icon + 'bi-info-circle-fill'
-      title.value = '提示'
+      title.value = Browser.I18n.getMessage('modal_title_info')
       break
     case 'warning':
       title.icon = title.icon + 'bi-info-circle-fill text-warning'
-      title.value = '警告'
+      title.value = Browser.I18n.getMessage('modal_title_warning')
       break
     default:
       break

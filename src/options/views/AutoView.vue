@@ -135,21 +135,21 @@ async function handleSubmit() {
   const storeObj = {}
   storeObj[key] = tmpObj
   await Browser.Storage.setLocal(storeObj)
-  toast.info(`保存代理（${name}）配置信息成功`)
+  toast.info(`${name} ${Browser.I18n.getMessage('desc_save_success')}`)
   resetUnsaved()
   const result = await Browser.Storage.getLocalAll()
   if (result.status_proxyKey == key) {
     Browser.Proxy.set(result, key, async () => {
       await Browser.Storage.setLocal({ status_proxyKey: key })
-      toast.info(`已生效更新的配置`)
+      toast.info(Browser.I18n.getMessage('desc_proxy_update'))
     })
   }
 }
 
 function handleCancel() {
   confirmModal.createConfirm(
-    '警告',
-    '页面存在未保存的信息，是否取消修改？',
+    Browser.I18n.getMessage('modal_title_warning'),
+    Browser.I18n.getMessage('modal_desc_reset'),
     function () {
       load('proxy_' + route.params.name)
       resetUnsaved()
@@ -161,50 +161,50 @@ function handleCancel() {
   <div id="profileAuto">
     <div class="hstack gap-3 pb-4 mb-3">
       <div class="fs-5 fw-bold text-truncate" id="title">
-        {{ '自动策略：' + route.params.name }}
+        {{ Browser.I18n.getMessage('page_title_auto') + route.params.name }}
       </div>
       <button
         class="btn btn-sm btn-outline-danger ms-auto"
         @click="handleDelete"
       >
         <i class="bi bi-backspace-reverse me-2"></i>
-        <span>删除配置</span>
+        <span>{{ Browser.I18n.getMessage('btn_label_delete_config') }}</span>
       </button>
       <button class="btn btn-sm btn-outline-secondary" @click="handleUpdate">
         <i class="bi bi-pencil-square me-2"></i>
-        <span>修改名称</span>
+        <span>{{
+          Browser.I18n.getMessage('btn_label_update_name_config')
+        }}</span>
       </button>
     </div>
     <div>
       <div class="nav nav-tabs mb-2" id="v-pills-tab" role="tablist">
-        <li class="nav-item">
-          <a
-            class="nav-link active"
-            id="v-pills-default-tab"
-            data-bs-toggle="pill"
-            data-bs-target="#v-pills-default"
-            role="tab"
-            aria-controls="v-pills-default"
-            aria-selected="true"
-            >默认配置</a
-          >
-        </li>
-        <li class="nav-item">
-          <a
-            class="nav-link"
-            id="v-pills-advance-tab"
-            data-bs-toggle="pill"
-            data-bs-target="#v-pills-advance"
-            role="tab"
-            aria-controls="v-pills-advance"
-            aria-selected="false"
-            >高级配置</a
-          >
-        </li>
+        <button
+          class="nav-link active"
+          id="v-pills-default-tab"
+          data-bs-toggle="pill"
+          data-bs-target="#v-pills-default"
+          role="tab"
+          aria-controls="v-pills-default"
+          aria-selected="true"
+        >
+          {{ Browser.I18n.getMessage('tab_label_default') }}
+        </button>
+        <button
+          class="nav-link"
+          id="v-pills-advance-tab"
+          data-bs-toggle="pill"
+          data-bs-target="#v-pills-advance"
+          role="tab"
+          aria-controls="v-pills-advance"
+          aria-selected="false"
+        >
+          {{ Browser.I18n.getMessage('tab_label_advance') }}
+        </button>
         <div class="ms-auto d-flex align-items-center">
           <PopoverTips
             className="bi bi-question-circle-fill icon-btn"
-            content="规则优先级：本地规则 > 拒绝规则 > 外部规则 > 默认规则"
+            :content="Browser.I18n.getMessage('popover_priority')"
           ></PopoverTips>
         </div>
       </div>
@@ -217,7 +217,9 @@ function handleCancel() {
           <div class="card">
             <div class="card-header hstack gap-4">
               <div class="fw-bold">
-                <span>本地规则设置</span>
+                <span>{{
+                  Browser.I18n.getMessage('section_label_internal')
+                }}</span>
                 <i
                   class="bi bi-plus-circle-fill icon-btn ms-2"
                   @click="addInternalRule"
@@ -246,7 +248,9 @@ function handleCancel() {
               </div>
               <div>
                 <div class="hstack gap-4 mb-2">
-                  <span class="ms-auto">外部规则</span>
+                  <span class="ms-auto">{{
+                    Browser.I18n.getMessage('desc_external_rules')
+                  }}</span>
                   <div>
                     <ProxySelect
                       style="width: 150px"
@@ -260,7 +264,9 @@ function handleCancel() {
               </div>
               <div>
                 <div class="hstack gap-4">
-                  <span class="ms-auto">默认</span>
+                  <span class="ms-auto">{{
+                    Browser.I18n.getMessage('desc_default')
+                  }}</span>
                   <div>
                     <ProxySelect
                       style="width: 150px"
@@ -276,17 +282,23 @@ function handleCancel() {
           </div>
           <div class="card">
             <div class="card-header">
-              <span class="fw-bold">外部规则设置</span>
+              <span class="fw-bold">{{
+                Browser.I18n.getMessage('section_label_external')
+              }}</span>
               <PopoverTips
                 className="bi bi-question-circle-fill icon-btn ms-2"
-                content="仅支持autoProxy规则"
+                :content="
+                  Browser.I18n.getMessage('popover_external_rules_format')
+                "
               ></PopoverTips>
             </div>
             <div class="card-body">
               <LinkTextItem
-                urlTitle="规则地址"
-                urlUpdatedAtTitle="URL更新时间"
-                dataTitle="规则内容"
+                :urlTitle="Browser.I18n.getMessage('form_label_rule_url')"
+                :urlUpdatedAtTitle="
+                  Browser.I18n.getMessage('form_label_update_date')
+                "
+                :dataTitle="Browser.I18n.getMessage('form_label_rule_data')"
                 v-model:externalItem="externalRule"
               ></LinkTextItem>
             </div>
@@ -301,17 +313,23 @@ function handleCancel() {
         >
           <div class="card">
             <div class="card-header">
-              <span class="fw-bold">拒绝规则设置</span>
+              <span class="fw-bold">{{
+                Browser.I18n.getMessage('section_label_reject')
+              }}</span>
               <PopoverTips
                 className="bi bi-question-circle-fill icon-btn ms-1"
-                content="仅支持autoProxy规则"
+                :content="
+                  Browser.I18n.getMessage('popover_external_rules_format')
+                "
               ></PopoverTips>
             </div>
             <div class="card-body">
               <LinkTextItem
-                urlTitle="拒绝规则地址"
-                urlUpdatedAtTitle="URL更新时间"
-                dataTitle="拒绝规则内容"
+                :urlTitle="Browser.I18n.getMessage('form_label_rule_url')"
+                :urlUpdatedAtTitle="
+                  Browser.I18n.getMessage('form_label_update_date')
+                "
+                :dataTitle="Browser.I18n.getMessage('form_label_rule_data')"
                 v-model:externalItem="rejectRule"
               ></LinkTextItem>
             </div>
@@ -327,7 +345,7 @@ function handleCancel() {
           :disabled="!isUnsaved"
         >
           <i class="bi bi-reply-fill me-2"></i>
-          <span>恢 复</span>
+          <span>{{ Browser.I18n.getMessage('btn_label_reset') }}</span>
         </button>
         <button
           class="btn btn-primary btn-sm"
@@ -335,7 +353,7 @@ function handleCancel() {
           :disabled="!isUnsaved"
         >
           <i class="bi bi-floppy-fill me-2"></i>
-          <span>保 存</span>
+          <span>{{ Browser.I18n.getMessage('btn_label_save') }}</span>
         </button>
       </div>
     </div>

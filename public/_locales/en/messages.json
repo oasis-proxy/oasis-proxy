@@ -1,0 +1,407 @@
+{
+  "btn_label_save": {
+    "message": "Save",
+    "description": ""
+  },
+  "btn_label_reset": {
+    "message": "Reset",
+    "description": ""
+  },
+  "btn_label_cancel": {
+    "message": "Cancel",
+    "description": ""
+  },
+  "btn_label_close": {
+    "message": "Close",
+    "description": ""
+  },
+  "btn_label_submit": {
+    "message": "Submit",
+    "description": ""
+  },
+  "btn_label_delete_config": {
+    "message": "Delete Config",
+    "description": ""
+  },
+  "btn_label_update_name_config": {
+    "message": "Modify Name",
+    "description": ""
+  },
+  "btn_label_add_config": {
+    "message": "Add",
+    "description": ""
+  },
+  "btn_label_set_sync_config": {
+    "message": "Overwrite Cloud",
+    "description": ""
+  },
+  "btn_label_set_local_config": {
+    "message": "Overwrite Local",
+    "description": ""
+  },
+  "btn_label_export_config": {
+    "message": "Export",
+    "description": ""
+  },
+  "btn_label_import_config": {
+    "message": "Import",
+    "description": ""
+  },
+  "btn_label_clear_config": {
+    "message": "Clear Config",
+    "description": ""
+  },
+  "tab_label_default": {
+    "message": "Default Config",
+    "description": ""
+  },
+  "tab_label_advance": {
+    "message": "Advanced Config",
+    "description": ""
+  },
+  "tab_label_debug": {
+    "message": "Debug Config",
+    "description": ""
+  },
+  "aside_label_setting": {
+    "message": "General Settings",
+    "description": ""
+  },
+  "aside_label_proxy_server": {
+    "message": "Server",
+    "description": ""
+  },
+  "aside_label_proxy_policy": {
+    "message": "Policy",
+    "description": ""
+  },
+  "badge_label_using": {
+    "message": "Using",
+    "description": ""
+  },
+  "form_label_ui_config": {
+    "message": "UI Style",
+    "description": ""
+  },
+  "form_label_reject": {
+    "message": "Reject Address",
+    "description": ""
+  },
+  "form_label_rule_update": {
+    "message": "Rule Update",
+    "description": ""
+  },
+  "form_label_version": {
+    "message": "Version",
+    "description": ""
+  },
+  "form_label_monitor": {
+    "message": "Request Monitor",
+    "description": ""
+  },
+  "form_label_host": {
+    "message": "Host",
+    "description": ""
+  },
+  "form_label_port": {
+    "message": "Port",
+    "description": ""
+  },
+  "form_label_scheme": {
+    "message": "Scheme",
+    "description": ""
+  },
+  "form_label_username": {
+    "message": "Auth Username",
+    "description": ""
+  },
+  "form_label_password": {
+    "message": "Auth Password",
+    "description": ""
+  },
+  "form_label_pac_url": {
+    "message": "PAC Address",
+    "description": ""
+  },
+  "form_label_pac_script": {
+    "message": "PAC Script",
+    "description": ""
+  },
+  "form_label_update_date": {
+    "message": "Updated at",
+    "description": ""
+  },
+  "form_label_rule_url": {
+    "message": "Rule Address",
+    "description": ""
+  },
+  "form_label_rule_data": {
+    "message": "Rule Content",
+    "description": ""
+  },
+  "form_label_policy_mode": {
+    "message": "Mode",
+    "description": ""
+  },
+  "form_label_name": {
+    "message": "Name",
+    "description": ""
+  },
+  "form_label_new_name": {
+    "message": "New Name",
+    "description": ""
+  },
+  "section_label_extention_setting": {
+    "message": "Extention Config",
+    "description": ""
+  },
+  "section_label_import_export": {
+    "message": "Configure Import/Export",
+    "description": ""
+  },
+  "section_label_sync": {
+    "message": "Sync Config",
+    "description": ""
+  },
+  "section_label_request": {
+    "message": "Request Display Config",
+    "description": ""
+  },
+  "section_label_default_proxy": {
+    "message": "Default Proxy",
+    "description": ""
+  },
+  "section_label_bypasslist": {
+    "message": "Bypass List",
+    "description": ""
+  },
+  "section_label_http": {
+    "message": "HTTP Proxy",
+    "description": ""
+  },
+  "section_label_https": {
+    "message": "HTTPS Proxy",
+    "description": ""
+  },
+  "section_label_ftp": {
+    "message": "FTP Proxy",
+    "description": ""
+  },
+  "section_label_internal": {
+    "message": "Local Rules Settings",
+    "description": ""
+  },
+  "section_label_external": {
+    "message": "External Rule Settings",
+    "description": ""
+  },
+  "section_label_reject": {
+    "message": "Reject Rules Settings",
+    "description": ""
+  },
+  "section_label_local_data": {
+    "message": "Local Data",
+    "description": ""
+  },
+  "section_label_sync_data": {
+    "message": "Cloud Data",
+    "description": ""
+  },
+  "page_title_setting": {
+    "message": "Extention Setting",
+    "description": ""
+  },
+  "page_title_auto": {
+    "message": "Auto Policy:",
+    "description": ""
+  },
+  "page_title_pac": {
+    "message": "Pac Policy:",
+    "description": ""
+  },
+  "page_title_fixed": {
+    "message": "Proxy Server:",
+    "description": ""
+  },
+  "input_label_ui_light": {
+    "message": "Light Mode",
+    "description": ""
+  },
+  "input_label_ui_dark": {
+    "message": "Dark Mode",
+    "description": ""
+  },
+  "input_label_ui_system": {
+    "message": "System",
+    "description": ""
+  },
+  "input_label_rule_update": {
+    "message": "Daily Update",
+    "description": ""
+  },
+  "input_label_open": {
+    "message": "On",
+    "description": ""
+  },
+  "input_label_auto_policy": {
+    "message": "Auto switch mode",
+    "description": ""
+  },
+  "input_label_pac_policy": {
+    "message": "PacScript Mode",
+    "description": ""
+  },
+  "input_label_domain_wildcard": {
+    "message": "Domain Wildcard",
+    "description": ""
+  },
+  "input_label_regex": {
+    "message": "Regular Expression",
+    "description": ""
+  },
+  "input_label_direct": {
+    "message": "Direct",
+    "description": ""
+  },
+  "input_label_system": {
+    "message": "System Proxy",
+    "description": ""
+  },
+  "input_label_default": {
+    "message": "Default",
+    "description": ""
+  },
+  "input_label_reject": {
+    "message": "Reject",
+    "description": ""
+  },
+  "modal_title_delete": {
+    "message": "Confirm to delete the proxy configuration."
+  },
+  "modal_title_add_policy": {
+    "message": "Add a policy"
+  },
+  "modal_title_add_server": {
+    "message": "Add a proxy server"
+  },
+  "modal_desc_delete": {
+    "message": "Proxy is not referenced by other rules. Confirm to delete"
+  },
+  "modal_title_warning": {
+    "message": "Warning"
+  },
+  "modal_title_info": {
+    "message": "Info"
+  },
+  "modal_desc_reset": {
+    "message": "There has some unsaved information, comfirm to reset the configuration?"
+  },
+  "modal_desc_override_local": {
+    "message": "Are you sure you want to overwrite local configuration with cloud configuration?"
+  },
+  "modal_desc_override_sync": {
+    "message": "Are you sure you want to overwrite the cloud configuration with local configuration?"
+  },
+  "modal_title_resetall": {
+    "message": "Delete all"
+  },
+  "modal_desc_resetall": {
+    "message": "There has some unsaved information, please save or refresh the page first."
+  },
+  "desc_unsaved_info": {
+    "message": "There has some unsaved information, please save or refresh the page first."
+  },
+  "desc_undeleted_info": {
+    "message": "Proxy is referenced by these rules, it can't to be deleted:"
+  },
+  "desc_deleted_success": {
+    "message": "is deleted"
+  },
+  "desc_proxy_update": {
+    "message": "Configuration is updated"
+  },
+  "desc_save_success": {
+    "message": "is saved successfully"
+  },
+  "desc_save_failed": {
+    "message": "Save Failed"
+  },
+  "desc_init_config": {
+    "message": "All configurations initialized for default"
+  },
+  "desc_saved_reject": {
+    "message": "Saved, rejected address is："
+  },
+  "desc_override_sync": {
+    "message": "Synchronized configuration to cloud"
+  },
+  "desc_override_local": {
+    "message": "Synchronized configuration to local. Will be refresh the page after 2s"
+  },
+  "desc_export": {
+    "message": "Download the configuration for backup."
+  },
+  "desc_import": {
+    "message": "Import configuration for restore."
+  },
+  "desc_clear": {
+    "message": "Warning! Unable to restore after deletion."
+  },
+  "desc_options": {
+    "message": "Options"
+  },
+  "desc_monitor": {
+    "message": "Monitor"
+  },
+  "desc_default": {
+    "message": "Default"
+  },
+  "desc_proxy_selection": {
+    "message": "Selection"
+  },
+  "desc_quick_add": {
+    "message": "Quick Add"
+  },
+  "desc_add_rules": {
+    "message": "Quick add the following rules in current active proxy policy"
+  },
+  "desc_copy": {
+    "message": "Copied"
+  },
+  "desc_external_rules": {
+    "message": "External rules"
+  },
+  "desc_config_not_found": {
+    "message": "Configuration does not exist, please refresh the page"
+  },
+  "feedback_request_failed": {
+    "message": "Failed to get the content"
+  },
+  "feedback_reject_invalid": {
+    "message": "Formatted like SCHEME[space]HOST:PORT. Recommended：HTTPS 127.0.0.1:65432"
+  },
+  "feedback_update_name_invalid": {
+    "message": "The new name cannot be \"\", \"direct\", \"system\", \"reject\", or equals to the old name, or already exists."
+  },
+  "feedback_name_invalid": {
+    "message": "The new name cannot be \"\", \"direct\", \"system\", \"reject\", or already exists."
+  },
+  "popover_auth": {
+    "message": "Unnecessary, if proxy server do not required"
+  },
+  "popover_priority": {
+    "message": "Rule Priority：Local Rules > Reject Rules > External Rules > Default Rules"
+  },
+  "popover_external_rules_format": {
+    "message": "Only autoProxy rules are supported"
+  },
+  "popover_monitor": {
+    "message": "Display the Host and IP for acitve tab on the popup butto."
+  },
+  "popover_reject": {
+    "message": "Please make sure that the fill address is inaccessible. Otherwise, the rejection rule may be accessable."
+  },
+  "popover_update_url": {
+    "message": "Daily updated the \"External Rule Address\" and \"Reject Rule Address\""
+  }
+}

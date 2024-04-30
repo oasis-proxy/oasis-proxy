@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import ModalBase from '@/components/modal/ModalBase.vue'
-
+import Browser from '@/Browser/chrome/chrome'
 defineExpose({
   createConfirm
 })
@@ -52,11 +52,11 @@ function handleSubmit() {
     <template #operations>
       <button class="btn btn-sm btn-secondary ms-auto" @click="handleCancel">
         <i class="bi bi-x-circle-fill me-2"></i>
-        <span>关 闭</span>
+        <span>{{ Browser.I18n.getMessage('btn_label_cancel') }}</span>
       </button>
       <button class="btn btn-sm btn-primary" @click="handleSubmit">
         <i class="bi bi-check-circle-fill me-2"></i>
-        <span>确 定</span>
+        <span>{{ Browser.I18n.getMessage('btn_label_submit') }}</span>
       </button>
     </template>
   </ModalBase>

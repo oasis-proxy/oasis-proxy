@@ -18,8 +18,12 @@ onMounted(async () => {
 </script>
 <template>
   <select class="form-select form-select-sm" v-model="proxy">
-    <option value="direct">直连</option>
-    <option value="+reject">拒绝</option>
+    <option value="direct">
+      {{ Browser.I18n.getMessage('input_label_direct') }}
+    </option>
+    <option value="+reject">
+      {{ Browser.I18n.getMessage('input_label_reject') }}
+    </option>
     <option
       :value="'+' + item"
       v-for="(item, index) in proxyNames"

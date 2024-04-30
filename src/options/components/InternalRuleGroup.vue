@@ -1,6 +1,7 @@
 <script setup>
 import { defineModel } from 'vue'
 import ProxySelect from '@/components/ProxySelect.vue'
+import Browser from '@/Browser/chrome/chrome'
 const rule = defineModel()
 </script>
 <template>
@@ -11,16 +12,18 @@ const rule = defineModel()
       style="width: 260px"
       v-model="rule.mode"
     >
-      <option value="domain">域名通配符</option>
-      <option value="regex">正则表达式</option>
+      <option value="domain">
+        {{ Browser.I18n.getMessage('input_label_domain_wildcard') }}
+      </option>
+      <option value="regex">
+        {{ Browser.I18n.getMessage('input_label_regex') }}
+      </option>
       <option value="ip">IP/CIDR</option>
     </select>
     <input
       type="text"
       class="form-control form-control-sm"
       v-model="rule.data"
-      placeholder="条件设置"
-      aria-label="条件设置"
       @input="$emit('getFocusText')"
       @blur="$emit('clearFousText')"
       @focus="$emit('getFocusText')"

@@ -2,12 +2,15 @@
 import HomeDefault from './HomeDefault.vue'
 import HomeAdvance from './HomeAdvance.vue'
 import HomeDebug from './HomeDebug.vue'
+import Browser from '@/Browser/chrome/chrome'
 </script>
 
 <template>
   <div id="profileAuto">
     <div class="hstack gap-2 pb-4 mb-3">
-      <div class="fs-5 fw-bold text-truncate" id="title">插件设置</div>
+      <div class="fs-5 fw-bold text-truncate" id="title">
+        {{ Browser.I18n.getMessage('page_title_setting') }}
+      </div>
     </div>
     <div>
       <div class="nav nav-tabs mb-2" id="v-pills-tab" role="tablist">
@@ -20,7 +23,7 @@ import HomeDebug from './HomeDebug.vue'
           aria-controls="v-pills-default"
           aria-selected="true"
         >
-          默认配置
+          <span>{{ Browser.I18n.getMessage('tab_label_default') }}</span>
         </button>
         <button
           class="nav-link"
@@ -31,7 +34,7 @@ import HomeDebug from './HomeDebug.vue'
           aria-controls="v-pills-advance"
           aria-selected="false"
         >
-          高级配置
+          <span>{{ Browser.I18n.getMessage('tab_label_advance') }}</span>
         </button>
         <button
           class="nav-link d-none"
@@ -42,7 +45,7 @@ import HomeDebug from './HomeDebug.vue'
           aria-controls="v-pills-debug"
           aria-selected="false"
         >
-          调试配置
+          <span>{{ Browser.I18n.getMessage('tab_label_debug') }}</span>
         </button>
       </div>
     </div>

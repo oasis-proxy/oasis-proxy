@@ -84,13 +84,13 @@ async function quickAddInternalRules() {
       @click="router.push('/monitor')"
     >
       <i class="bi bi-speedometer me-2"></i>
-      <span>监控</span>
+      <span>{{ Browser.I18n.getMessage('desc_monitor') }}</span>
     </div>
     <div class="ms-auto">{{ activeProxyLabel }}</div>
   </div>
   <hr class="my-1" />
   <div class="px-3 py-2 vstack gap-2 mb-1">
-    <div>在当前策略中快速添加以下规则：</div>
+    <div>{{ Browser.I18n.getMessage('desc_add_rules') }}</div>
     <div id="domainList" class="vstack gap-2">
       <div
         class="form-check-sm d-flex align-items-center"
@@ -122,7 +122,7 @@ async function quickAddInternalRules() {
           @click="quickAddInternalRules"
         >
           <i class="bi bi-check-circle-fill me-2"></i>
-          <span>添 加</span>
+          <span>{{ Browser.I18n.getMessage('btn_label_add_config') }}</span>
         </button>
       </div>
     </div>

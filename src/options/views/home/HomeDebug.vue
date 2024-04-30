@@ -15,7 +15,7 @@ function clearSync() {
 }
 </script>
 <template>
-  <div class="tab-pane fade show" id="v-pills-debug" tabindex="0">
+  <div class="tab-pane fade show" id="v-pills-debug">
     <div class="card">
       <div class="card-header">
         <span class="fw-bold">其他</span>

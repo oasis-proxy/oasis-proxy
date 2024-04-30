@@ -213,11 +213,7 @@ function handleCancel() {
           </button>
         </div>
         <div class="tab-content" id="v-pills-tabContent">
-          <div
-            class="tab-pane fade show active"
-            id="v-pills-default"
-            tabindex="0"
-          >
+          <div class="tab-pane fade show active" id="v-pills-default">
             <ServerInfoItem
               :groupLabel="
                 Browser.I18n.getMessage('section_label_default_proxy')
@@ -245,7 +241,6 @@ function handleCancel() {
             id="v-pills-advance"
             role="tabpanel"
             aria-labelledby="v-pills-advance-tab"
-            tabindex="0"
           >
             <ServerInfoItem
               :groupLabel="Browser.I18n.getMessage('section_label_http')"

@@ -99,7 +99,7 @@ function handleSetSync() {
 }
 </script>
 <template>
-  <div class="tab-pane fade show" id="v-pills-advance" tabindex="0">
+  <div class="tab-pane fade show" id="v-pills-advance">
     <div class="card">
       <div class="card-header">
         <span class="fw-bold">{{

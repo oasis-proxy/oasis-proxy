@@ -209,11 +209,7 @@ function handleCancel() {
         </div>
       </div>
       <div class="tab-content" id="v-pills-tabContent">
-        <div
-          class="tab-pane fade show active"
-          id="v-pills-default"
-          tabindex="0"
-        >
+        <div class="tab-pane fade show active" id="v-pills-default">
           <div class="card">
             <div class="card-header hstack gap-4">
               <div class="fw-bold">
@@ -309,7 +305,6 @@ function handleCancel() {
           id="v-pills-advance"
           role="tabpanel"
           aria-labelledby="v-pills-advance-tab"
-          tabindex="0"
         >
           <div class="card">
             <div class="card-header">

@@ -3,7 +3,6 @@
   <div
     ref="modal"
     class="modal fade"
-    tabindex="-1"
     aria-hidden="true"
     data-bs-backdrop="static"
   >

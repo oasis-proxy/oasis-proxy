@@ -54,7 +54,6 @@ const inputDisabled = computed(() => {
             <select
               class="form-select form-select-sm"
               v-model="proxyInfo.scheme"
-              tabindex="1"
             >
               <option value="direct" v-if="main">
                 {{ Browser.I18n.getMessage('input_label_direct') }}
@@ -81,7 +80,6 @@ const inputDisabled = computed(() => {
               class="form-control form-control-sm"
               v-model="proxyInfo.username"
               :disabled="inputDisabled"
-              tabindex="4"
             />
           </div>
         </div>
@@ -96,7 +94,6 @@ const inputDisabled = computed(() => {
               v-model="proxyInfo.host"
               aria-label="host"
               :disabled="inputDisabled"
-              tabindex="2"
             />
           </div>
           <label class="col-2 col-form-label">{{
@@ -108,7 +105,6 @@ const inputDisabled = computed(() => {
               class="form-control form-control-sm"
               v-model="proxyInfo.password"
               :disabled="inputDisabled"
-              tabindex="5"
             />
           </div>
         </div>
@@ -122,7 +118,6 @@ const inputDisabled = computed(() => {
               class="form-control form-control-sm"
               v-model="proxyInfo.port"
               :disabled="inputDisabled"
-              tabindex="3"
             />
           </div>
         </div>

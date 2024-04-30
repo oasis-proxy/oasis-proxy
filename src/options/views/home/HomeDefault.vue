@@ -126,7 +126,7 @@ function toGithub() {
 </script>
 
 <template>
-  <div class="tab-pane fade show active" id="v-pills-default" tabindex="0">
+  <div class="tab-pane fade show active" id="v-pills-default">
     <div class="card">
       <div class="card-header">
         <span class="fw-bold">{{

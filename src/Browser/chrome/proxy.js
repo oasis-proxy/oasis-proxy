@@ -33,8 +33,8 @@ Proxy.setSystem = async function (afterSuccess) {
 }
 
 Proxy._set = async function (config, afterSuccess, scope = 'regular') {
-  const isIncognito = await chrome.extension.isAllowedIncognitoAccess
-  if (isIncognito) {
+  const context = await chrome.runtime.getContexts({})
+  if (context[0]?.incognito) {
     scope = 'incognito_persistent'
   }
   chrome.proxy.settings.set({ value: config, scope: scope }, () => {

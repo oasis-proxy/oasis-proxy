@@ -30,3 +30,11 @@ FAQ WIKI: [FAQ](https://github.com/oasis-proxy/oasis-proxy/wiki/FAQ)
 ## Privacy Policy
 
 Oasis-Proxy WIKI: [Privacy Policy](https://github.com/oasis-proxy/oasis-proxy/wiki/Privacy)
+
+## Project Reference
+
+- JS: [VUE 3](https://vuejs.org/)
+- UI Component: [Bootstrap 5](https://getbootstrap.com/)
+- ICON: [Bootstrap Icon](https://icons.getbootstrap.com/)
+- UI Theme: [Flatly](https://bootswatch.com/flatly/)
+- Chrome API

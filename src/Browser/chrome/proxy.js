@@ -4,12 +4,7 @@ import { pacScriptCreate } from '../../core/PacScript.js'
 
 const Proxy = {}
 
-Proxy.set = async function (
-  proxyConfigs,
-  key,
-  afterSuccess = function () {},
-  scope = 'regular'
-) {
+Proxy.set = async function (proxyConfigs, key, afterSuccess = function () {}) {
   const config = Proxy._createConfig(proxyConfigs, key)
   const authList = getAuthList(proxyConfigs, key)
   if (authList.length > 0) {
@@ -18,26 +13,30 @@ Proxy.set = async function (
       content: { status_auths: authList }
     })
   }
-  Proxy._set(config, afterSuccess, scope)
+  Proxy._set(config, afterSuccess)
 }
 
-Proxy.setDirect = async function (afterSuccess, scope = 'regular') {
+Proxy.setDirect = async function (afterSuccess) {
   const config = Proxy._directConfig()
   const response = await Message.send({
     instruction: 'resetProxyAuths'
   })
-  Proxy._set(config, afterSuccess, scope)
+  Proxy._set(config, afterSuccess)
 }
 
-Proxy.setSystem = async function (afterSuccess, scope = 'regular') {
+Proxy.setSystem = async function (afterSuccess) {
   const config = Proxy._systemConfig()
   const response = await Message.send({
     instruction: 'resetProxyAuths'
   })
-  Proxy._set(config, afterSuccess, scope)
+  Proxy._set(config, afterSuccess)
 }
 
-Proxy._set = function (config, afterSuccess, scope) {
+Proxy._set = async function (config, afterSuccess, scope = 'regular') {
+  const isIncognito = await chrome.extension.isAllowedIncognitoAccess
+  if (isIncognito) {
+    scope = 'incognito_persistent'
+  }
   chrome.proxy.settings.set({ value: config, scope: scope }, () => {
     if (chrome.runtime.lastError) {
       console.error('设置代理失败: ', chrome.runtime.lastError)

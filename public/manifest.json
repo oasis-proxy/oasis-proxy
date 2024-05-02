@@ -22,6 +22,7 @@
     "storage",
     "proxy"
   ],
+  "incognito": "split",
   "action": {
     "default_popup": "popup.html"
   },

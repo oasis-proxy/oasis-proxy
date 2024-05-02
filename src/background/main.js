@@ -1,3 +1,4 @@
+import Browser from '../Browser/chrome/chrome.js'
 let current = new Date().toLocaleString()
 console.log('background:', current)
 
@@ -151,7 +152,7 @@ const endMonitor = async function () {
 /* section 2: update Url */
 
 const startUpdateUrl = async () => {
-  await chrome.alarms.create('updateUrl', { periodInMinutes: 1 })
+  await chrome.alarms.create('updateUrl', { periodInMinutes: 1440 })
   console.info('create updateUrl')
 }
 const endUpdateUrl = async () => {
@@ -211,9 +212,22 @@ const handleUpdateUrl = async function () {
         const storeObj = {}
         storeObj[key] = updateProxyConfig
         await chrome.storage.local.set(storeObj)
-        // todo update the active proxy, if using
       }
     } catch (err) {}
+  }
+  const afterUpdateResult = await chrome.storage.local.get(null)
+  if (afterUpdateResult.status_proxyKey != null) {
+    Browser.Proxy.set(
+      afterUpdateResult,
+      afterUpdateResult.status_proxyKey,
+      async () => {
+        console.info(
+          'Proxy updated after url updated',
+          afterUpdateResult,
+          afterUpdateResult.status_proxyKey
+        )
+      }
+    )
   }
 }
 

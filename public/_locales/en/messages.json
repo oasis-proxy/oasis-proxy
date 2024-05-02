@@ -1,4 +1,12 @@
 {
+  "ext_name": {
+    "message": "Oasis Proxy",
+    "description": ""
+  },
+  "ext_desc": {
+    "message": "Oasis Proxy is a proxy management extension tool similar to SwitchyOmega, supporting Chrome manifest v3.",
+    "description": ""
+  },
   "btn_label_save": {
     "message": "Save",
     "description": ""
@@ -152,7 +160,7 @@
     "description": ""
   },
   "section_label_extention_setting": {
-    "message": "Extention Config",
+    "message": "Extension Config",
     "description": ""
   },
   "section_label_import_export": {

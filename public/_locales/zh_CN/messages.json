@@ -1,4 +1,12 @@
 {
+  "ext_name": {
+    "message": "Oasis Proxy",
+    "description": ""
+  },
+  "ext_desc": {
+    "message": "Oasis Proxy是一款类似于SwitchyOmega，支持Chrome manifest v3的代理管理扩展工具。",
+    "description": ""
+  },
   "btn_label_save": {
     "message": "保 存",
     "description": ""

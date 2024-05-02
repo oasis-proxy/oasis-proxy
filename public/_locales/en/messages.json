@@ -88,7 +88,7 @@
     "description": ""
   },
   "form_label_rule_update": {
-    "message": "Rule Update",
+    "message": "Update URLs",
     "description": ""
   },
   "form_label_version": {
@@ -196,7 +196,7 @@
     "description": ""
   },
   "section_label_reject": {
-    "message": "Reject Rules Settings",
+    "message": "Reject Rule Settings",
     "description": ""
   },
   "section_label_local_data": {
@@ -208,7 +208,7 @@
     "description": ""
   },
   "page_title_setting": {
-    "message": "Extention Setting",
+    "message": "Extension Settings",
     "description": ""
   },
   "page_title_auto": {
@@ -232,7 +232,7 @@
     "description": ""
   },
   "input_label_ui_system": {
-    "message": "System",
+    "message": "System Mode",
     "description": ""
   },
   "input_label_rule_update": {
@@ -244,7 +244,7 @@
     "description": ""
   },
   "input_label_auto_policy": {
-    "message": "Auto switch mode",
+    "message": "Auto Switch Mode",
     "description": ""
   },
   "input_label_pac_policy": {
@@ -276,7 +276,7 @@
     "description": ""
   },
   "modal_title_delete": {
-    "message": "Confirm to delete the proxy configuration."
+    "message": "Are you sure you want to delete the proxy configuration?"
   },
   "modal_title_add_policy": {
     "message": "Add a policy"
@@ -285,7 +285,7 @@
     "message": "Add a proxy server"
   },
   "modal_desc_delete": {
-    "message": "Proxy is not referenced by other rules. Confirm to delete"
+    "message": "This proxy is not referenced by other rules. Are you sure you want to delete it?"
   },
   "modal_title_warning": {
     "message": "Warning"
@@ -294,49 +294,49 @@
     "message": "Info"
   },
   "modal_desc_reset": {
-    "message": "There has some unsaved information, comfirm to reset the configuration?"
+    "message": "Are you sure you want to discard changes?"
   },
   "modal_desc_override_local": {
-    "message": "Are you sure you want to overwrite local configuration with cloud configuration?"
+    "message": "Are you sure you want to overwrite the local configuration with cloud configuration?"
   },
   "modal_desc_override_sync": {
     "message": "Are you sure you want to overwrite the cloud configuration with local configuration?"
   },
   "modal_title_resetall": {
-    "message": "Delete all"
+    "message": "Delete all configurations"
   },
   "modal_desc_resetall": {
-    "message": "There has some unsaved information, please save or refresh the page first."
+    "message": "Are you sure you want to delete it? The configuration could not be restored after deletion, it is recommended to download the backup first."
   },
   "desc_unsaved_info": {
-    "message": "There has some unsaved information, please save or refresh the page first."
+    "message": "There are some unsaved data, please Save or Refresh the page to discard the changes."
   },
   "desc_undeleted_info": {
-    "message": "Proxy is referenced by these rules, it can't to be deleted:"
+    "message": "The configuration can't to be deleted, it is referenced by these rules:"
   },
   "desc_deleted_success": {
-    "message": "is deleted"
+    "message": "is deleted successfully"
   },
   "desc_proxy_update": {
-    "message": "Configuration is updated"
+    "message": "The configuration is updated"
   },
   "desc_save_success": {
     "message": "is saved successfully"
   },
   "desc_save_failed": {
-    "message": "Save Failed"
+    "message": "is save Failed"
   },
   "desc_init_config": {
-    "message": "All configurations initialized for default"
+    "message": "All configurations have been initialized to default."
   },
   "desc_saved_reject": {
-    "message": "Saved, rejected address is："
+    "message": "Saved successfully, the rejected address is:"
   },
   "desc_override_sync": {
-    "message": "Synchronized configuration to cloud"
+    "message": "Upload the local configuration to cloud"
   },
   "desc_override_local": {
-    "message": "Synchronized configuration to local. Will be refresh the page after 2s"
+    "message": "Restore the cloud configuration to local. The page will be refreshed in 2 seconds"
   },
   "desc_export": {
     "message": "Download the configuration for backup."
@@ -363,7 +363,7 @@
     "message": "Quick Add"
   },
   "desc_add_rules": {
-    "message": "Quick add the following rules in current active proxy policy"
+    "message": "Add the following rules to the active proxy policy"
   },
   "desc_copy": {
     "message": "Copied"
@@ -372,34 +372,34 @@
     "message": "External rules"
   },
   "desc_config_not_found": {
-    "message": "Configuration does not exist, please refresh the page"
+    "message": "Please refresh the page, The configuration does not exist."
   },
   "feedback_request_failed": {
     "message": "Failed to get the content"
   },
   "feedback_reject_invalid": {
-    "message": "Formatted like SCHEME[space]HOST:PORT. Recommended：HTTPS 127.0.0.1:65432"
+    "message": "Format to fill in: SCHEME[space]HOST:PORT. Suggestion: HTTPS 127.0.0.1:65432"
   },
   "feedback_update_name_invalid": {
-    "message": "The new name cannot be \"\", \"direct\", \"system\", \"reject\", or equals to the old name, or already exists."
+    "message": "The new name cannot be empty, direct, system, or reject. The new name cannot be the same as the old name, or the new name already exists"
   },
   "feedback_name_invalid": {
-    "message": "The new name cannot be \"\", \"direct\", \"system\", \"reject\", or already exists."
+    "message": "The new name cannot be empty, direct, system, or reject. Or the new name already exists"
   },
   "popover_auth": {
-    "message": "Unnecessary, if proxy server do not required"
+    "message": "Unnecessary, if proxy server authentication do not required"
   },
   "popover_priority": {
-    "message": "Rule Priority：Local Rules > Reject Rules > External Rules > Default Rules"
+    "message": "Rule Priority: Local Rules > Reject Rules > External Rules > Default Rules"
   },
   "popover_external_rules_format": {
-    "message": "Only autoProxy rules are supported"
+    "message": "Only Auto-Proxy rules are supported"
   },
   "popover_monitor": {
-    "message": "Display the request host and IP for acitve tab on the popup button."
+    "message": "Display the request host and IP for active tabs."
   },
   "popover_reject": {
-    "message": "Please make sure that the fill address is inaccessible. Otherwise, the rejection rule may be accessable."
+    "message": "Please ensure that the filled-in address cannot be accessed, otherwise the reject rule may fail."
   },
   "popover_update_url": {
     "message": "Daily updated the \"External Rule Address\" and \"Reject Rule Address\""

@@ -22,7 +22,10 @@ onMounted(async () => {
   const tabs = await Browser.Tabs.query({ active: true, currentWindow: true })
 
   const activeTabId = tabs[0].id
-  let response = await Browser.Message.send({ tabId: activeTabId })
+  let response = await Browser.Message.send({
+    instruction: 'getRequestMap',
+    content: { tabId: activeTabId }
+  })
 
   if (response.data.list == '') {
     return

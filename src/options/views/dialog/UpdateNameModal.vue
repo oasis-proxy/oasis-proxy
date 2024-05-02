@@ -107,7 +107,7 @@ async function handleSubmit() {
     }}</template>
     <template #default>
       <form id="updateNameModalForm">
-        <div class="mb-3 row">
+        <div class="mb-3 row d-flex align-items-center">
           <label class="col-3 col-form-label" for="policyName">
             {{ Browser.I18n.getMessage('form_label_new_name') }}
           </label>

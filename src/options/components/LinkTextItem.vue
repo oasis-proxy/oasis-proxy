@@ -93,7 +93,7 @@ function updateData() {
     </div>
     <div class="mb-3 row d-flex align-items-top">
       <label class="col-2 col-form-label">{{ dataTitle }}</label>
-      <div class="col-10">
+      <div class="col-10 py-1">
         <textarea
           class="form-control form-control-sm"
           rows="10"

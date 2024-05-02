@@ -84,7 +84,7 @@
     "description": ""
   },
   "form_label_reject": {
-    "message": "Reject Address",
+    "message": "Reject Addr",
     "description": ""
   },
   "form_label_rule_update": {
@@ -96,7 +96,7 @@
     "description": ""
   },
   "form_label_monitor": {
-    "message": "Request Monitor",
+    "message": "Req Monitor",
     "description": ""
   },
   "form_label_host": {
@@ -120,7 +120,7 @@
     "description": ""
   },
   "form_label_pac_url": {
-    "message": "PAC Address",
+    "message": "PAC Addr",
     "description": ""
   },
   "form_label_pac_script": {
@@ -132,7 +132,7 @@
     "description": ""
   },
   "form_label_rule_url": {
-    "message": "Rule Address",
+    "message": "Rule Addr",
     "description": ""
   },
   "form_label_rule_data": {
@@ -396,7 +396,7 @@
     "message": "Only autoProxy rules are supported"
   },
   "popover_monitor": {
-    "message": "Display the Host and IP for acitve tab on the popup butto."
+    "message": "Display the request host and IP for acitve tab on the popup button."
   },
   "popover_reject": {
     "message": "Please make sure that the fill address is inaccessible. Otherwise, the rejection rule may be accessable."

@@ -88,7 +88,7 @@ async function handleSubmit() {
     }}</template>
     <template #default>
       <form action="" id="serverModalForm">
-        <div class="mb-3 row">
+        <div class="mb-3 row d-flex align-items-center">
           <label class="col-3 col-form-label" for="serverName">{{
             Browser.I18n.getMessage('form_label_name')
           }}</label>

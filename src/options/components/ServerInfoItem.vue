@@ -46,7 +46,7 @@ const inputDisabled = computed(() => {
     </div>
     <div class="card-body">
       <div>
-        <div class="mb-2 row">
+        <div class="mb-2 row d-flex align-items-center">
           <label class="col-2 col-form-label">
             {{ Browser.I18n.getMessage('form_label_scheme') }}</label
           >
@@ -83,7 +83,7 @@ const inputDisabled = computed(() => {
             />
           </div>
         </div>
-        <div class="mb-2 row">
+        <div class="mb-2 row d-flex align-items-center">
           <label class="col-2 col-form-label">{{
             Browser.I18n.getMessage('form_label_host')
           }}</label>
@@ -108,7 +108,7 @@ const inputDisabled = computed(() => {
             />
           </div>
         </div>
-        <div class="mb-2 row">
+        <div class="mb-2 row d-flex align-items-center">
           <label class="col-2 col-form-label">{{
             Browser.I18n.getMessage('form_label_port')
           }}</label>

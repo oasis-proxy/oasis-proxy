@@ -134,7 +134,7 @@ function toGithub() {
         }}</span>
       </div>
       <div class="card-body">
-        <div class="row mb-3">
+        <div class="row mb-3 d-flex align-items-center">
           <label class="col-2 col-form-label">{{
             Browser.I18n.getMessage('form_label_ui_config')
           }}</label>
@@ -186,7 +186,7 @@ function toGithub() {
             </div>
           </div>
         </div>
-        <div class="row mb-3">
+        <div class="row mb-3 d-flex align-items-center">
           <label class="col-2 col-form-label">
             <span>{{ Browser.I18n.getMessage('form_label_reject') }}</span>
             <PopoverTips
@@ -198,10 +198,8 @@ function toGithub() {
             <input
               type="text"
               :class="rejectInputClass"
-              id="rejectHost"
               v-model="configReject"
               @blur="handleBlur"
-              aria-label="name"
             />
             <div class="invalid-feedback">
               {{ Browser.I18n.getMessage('feedback_reject_invalid') }}
@@ -232,7 +230,7 @@ function toGithub() {
             </div>
           </div>
         </div>
-        <div class="row mb-1">
+        <div class="row mb-1 d-flex align-items-center">
           <label class="col-2 col-form-label">{{
             Browser.I18n.getMessage('form_label_version')
           }}</label>

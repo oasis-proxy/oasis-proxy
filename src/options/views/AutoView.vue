@@ -77,9 +77,14 @@ async function load(proxyKey) {
     result[proxyKey].config.rules.reject.urlUpdatedAt
   rejectRule.value.data = result[proxyKey].config.rules.reject.data
 
-  internalRules.value = JSON.parse(
+  const tmpInternalRules = JSON.parse(
     JSON.stringify(result[proxyKey].config.rules.internal)
   )
+  for (const e of tmpInternalRules) {
+    if (e.valid == undefined) e.valid = true
+    internalRules.value.push(e)
+  }
+  console.log(internalRules.value)
 }
 
 function resetData() {

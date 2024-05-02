@@ -108,7 +108,7 @@ const createAutoExternalRules = function (externalRule) {
 
 const createAutoInternalRules = function (internalRules) {
   const rules = internalRules.filter(function (element) {
-    return element.data !== ''
+    return element.data !== '' && element.valid != false
   })
   let block = ''
   block = rules

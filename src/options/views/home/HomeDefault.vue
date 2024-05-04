@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, getCurrentInstance, onMounted, computed } from 'vue'
+import { ref, watch, getCurrentInstance, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import PopoverTips from '@/components/PopoverTips.vue'
 
@@ -11,16 +11,8 @@ const toast = instance?.appContext.config.globalProperties.$toast
 const confirmModal = instance?.appContext.config.globalProperties.$confirm
 
 const configUi = ref('light')
-const configReject = ref('HTTPS 127.0.0.1:65432')
-const isRejectValid = ref(true)
 const configUpdateUrl = ref(true)
 const version = ref('')
-
-const rejectInputClass = computed(() => {
-  return isRejectValid.value
-    ? 'form-control form-control-sm'
-    : 'form-control form-control-sm is-invalid'
-})
 
 onMounted(async () => {
   version.value = Browser.Runtime.getManifest().version
@@ -32,9 +24,6 @@ onMounted(async () => {
 
   if (result.config_ui != null) {
     configUi.value = result.config_ui
-  }
-  if (result.reject != null) {
-    configReject.value = result.reject.config.rules
   }
   if (result.config_updateUrl != null) {
     configUpdateUrl.value = result.config_updateUrl
@@ -48,34 +37,6 @@ watch(configUi, async (newValue) => {
 watch(configUpdateUrl, async (newValue) => {
   await Browser.Storage.setLocal({ config_updateUrl: newValue })
 })
-
-async function handleBlur() {
-  isRejectValid.value = true
-  let tmp = configReject.value
-  let scheme = tmp.split(' ')[0]
-  let port = tmp.split(':')[1]
-  if (
-    (scheme == 'HTTPS' ||
-      scheme == 'HTTP' ||
-      scheme == 'http' ||
-      scheme == 'https') &&
-    parseInt(port) > 0 &&
-    parseInt(port) < 65536
-  ) {
-    await Browser.Storage.setLocal({
-      reject: {
-        mode: 'reject',
-        name: 'reject',
-        config: { mode: 'reject', rules: configReject.value }
-      }
-    })
-    toast.info(
-      `${Browser.I18n.getMessage('desc_saved_reject')} ${configReject.value}`
-    )
-  } else {
-    isRejectValid.value = false
-  }
-}
 
 async function exportConfig() {
   const result = await Browser.Storage.getLocalAll()
@@ -183,26 +144,6 @@ function toGithub() {
                   Browser.I18n.getMessage('input_label_ui_system')
                 }}</span>
               </label>
-            </div>
-          </div>
-        </div>
-        <div class="row mb-3 d-flex align-items-center">
-          <label class="col-2 col-form-label">
-            <span>{{ Browser.I18n.getMessage('form_label_reject') }}</span>
-            <PopoverTips
-              className="bi bi-question-circle-fill icon-btn ms-2"
-              :content="Browser.I18n.getMessage('popover_reject')"
-            ></PopoverTips>
-          </label>
-          <div class="col-10">
-            <input
-              type="text"
-              :class="rejectInputClass"
-              v-model="configReject"
-              @blur="handleBlur"
-            />
-            <div class="invalid-feedback">
-              {{ Browser.I18n.getMessage('feedback_reject_invalid') }}
             </div>
           </div>
         </div>

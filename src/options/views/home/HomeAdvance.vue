@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, getCurrentInstance, onMounted } from 'vue'
+import { ref, watch, getCurrentInstance, onMounted, computed } from 'vue'
 import PopoverTips from '@/components/PopoverTips.vue'
 
 import Browser from '@/Browser/chrome/chrome.js'
@@ -10,12 +10,20 @@ const toast = instance?.appContext.config.globalProperties.$toast
 const confirmModal = instance?.appContext.config.globalProperties.$confirm
 
 const configMonitor = ref(false)
+const configReject = ref('HTTPS 127.0.0.1:65432')
+const isRejectValid = ref(true)
 const localFixed = ref([])
 const localPac = ref([])
 const localAuto = ref([])
 const syncFixed = ref([])
 const syncPac = ref([])
 const syncAuto = ref([])
+
+const rejectInputClass = computed(() => {
+  return isRejectValid.value
+    ? 'form-control form-control-sm'
+    : 'form-control form-control-sm is-invalid'
+})
 
 onMounted(() => {
   reloadLocalData()
@@ -50,6 +58,7 @@ async function reloadLocalData() {
   const result = await Browser.Storage.getLocalAll()
   if (result.config_monitor != null) {
     configMonitor.value = result.config_monitor
+    configReject.value = result.reject.config.rules
   }
   Object.keys(result).forEach((key) => {
     if (key.startsWith('proxy_')) {
@@ -97,6 +106,34 @@ function handleSetSync() {
     }
   )
 }
+
+async function handleBlur() {
+  isRejectValid.value = true
+  let tmp = configReject.value
+  let scheme = tmp.split(' ')[0]
+  let port = tmp.split(':')[1]
+  if (
+    (scheme == 'HTTPS' ||
+      scheme == 'HTTP' ||
+      scheme == 'http' ||
+      scheme == 'https') &&
+    parseInt(port) > 0 &&
+    parseInt(port) < 65536
+  ) {
+    await Browser.Storage.setLocal({
+      reject: {
+        mode: 'reject',
+        name: 'reject',
+        config: { mode: 'reject', rules: configReject.value }
+      }
+    })
+    toast.info(
+      `${Browser.I18n.getMessage('desc_saved_reject')} ${configReject.value}`
+    )
+  } else {
+    isRejectValid.value = false
+  }
+}
 </script>
 <template>
   <div class="tab-pane fade show" id="v-pills-advance">
@@ -126,6 +163,26 @@ function handleSetSync() {
               <label class="form-check-label ms-2" for="monitorCheck">
                 <span>{{ Browser.I18n.getMessage('input_label_open') }}</span>
               </label>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3 d-flex align-items-center">
+          <label class="col-2 col-form-label">
+            <span>{{ Browser.I18n.getMessage('form_label_reject') }}</span>
+            <PopoverTips
+              className="bi bi-question-circle-fill icon-btn ms-2"
+              :content="Browser.I18n.getMessage('popover_reject')"
+            ></PopoverTips>
+          </label>
+          <div class="col-10">
+            <input
+              type="text"
+              :class="rejectInputClass"
+              v-model="configReject"
+              @blur="handleBlur"
+            />
+            <div class="invalid-feedback">
+              {{ Browser.I18n.getMessage('feedback_reject_invalid') }}
             </div>
           </div>
         </div>

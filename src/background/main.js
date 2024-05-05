@@ -1,4 +1,4 @@
-import Browser from '../Browser/chrome/chrome.js'
+import Browser from '../Browser/main'
 let current = new Date().toLocaleString()
 console.log('background:', current)
 
@@ -279,8 +279,8 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
     await chrome.storage.local.set({
       config_ui: 'dark',
       config_updateUrl: true,
-      config_reject: 'HTTPS 127.0.0.1:65432',
       config_monitor: false,
+      config_autoSync: false,
       direct: { mode: 'direct', name: 'direct', config: { mode: 'direct' } },
       system: { mode: 'system', name: 'system', config: { mode: 'system' } },
       reject: {

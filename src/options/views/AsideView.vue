@@ -4,7 +4,7 @@ import { useRouter, useRoute } from 'vue-router'
 import PolicyModal from './dialog/PolicyModal.vue'
 import ServerModal from './dialog/ServerModal.vue'
 
-import Browser from '@/Browser/chrome/chrome'
+import Browser from '@/Browser/main'
 
 const proxyConfig = inject('proxyConfig')
 const theme = inject('theme')

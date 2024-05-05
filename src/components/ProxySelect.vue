@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, defineModel } from 'vue'
 
-import Browser from '@/Browser/chrome/chrome.js'
+import Browser from '@/Browser/main'
 
 const proxy = defineModel()
 

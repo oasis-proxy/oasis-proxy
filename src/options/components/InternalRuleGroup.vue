@@ -1,7 +1,7 @@
 <script setup>
 import { defineModel } from 'vue'
 import ProxySelect from '@/components/ProxySelect.vue'
-import Browser from '@/Browser/chrome/chrome'
+import Browser from '@/Browser/main'
 const rule = defineModel()
 </script>
 <template>

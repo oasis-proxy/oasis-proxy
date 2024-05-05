@@ -1,5 +1,5 @@
 <script setup>
-import Browser from '@/Browser/chrome/chrome'
+import Browser from '@/Browser/main'
 import { computed, onMounted, getCurrentInstance } from 'vue'
 
 const props = defineProps(['message', 'mode'])

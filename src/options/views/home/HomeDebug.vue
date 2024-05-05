@@ -1,5 +1,5 @@
 <script setup>
-import Browser from '@/Browser/chrome/chrome.js'
+import Browser from '@/Browser/main'
 import { ref } from 'vue'
 const message = ref('')
 async function getLocal() {

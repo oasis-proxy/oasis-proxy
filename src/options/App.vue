@@ -1,5 +1,5 @@
 <script setup>
-import Browser from '@/Browser/chrome/chrome.js'
+import Browser from '@/Browser/main'
 import { provide, ref, inject, getCurrentInstance, onMounted } from 'vue'
 import { useRoute, useRouter, RouterView } from 'vue-router'
 import AsideView from './views/AsideView.vue'

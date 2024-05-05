@@ -1,5 +1,5 @@
 <script setup>
-import Browser from '@/Browser/chrome/chrome.js'
+import Browser from '@/Browser/main'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 

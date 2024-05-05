@@ -10,7 +10,7 @@ import {
 import PopoverTips from '@/components/PopoverTips.vue'
 import ConfigDisplay from '@/options/components/ConfigDisplay.vue'
 
-import Browser from '@/Browser/chrome/chrome.js'
+import Browser from '@/Browser/main'
 const showSyncConflictModal = inject('showSyncConflictModal')
 const instance = getCurrentInstance()
 const toast = instance?.appContext.config.globalProperties.$toast

@@ -3,7 +3,7 @@ import { getCurrentInstance, inject, ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import ServerInfoItem from '../components/ServerInfoItem.vue'
 
-import Browser from '@/Browser/chrome/chrome.js'
+import Browser from '@/Browser/main'
 import { saveForFixed, proxyUses } from '@/core/ProxyConfig'
 import { getNextLocalVersion } from '@/core/VersionControl'
 const { isUnsaved, resetUnsaved } = inject('isUnsaved')

@@ -1,7 +1,7 @@
 <script setup>
 import { defineModel, computed, watch } from 'vue'
 import PopoverTips from '@/components/PopoverTips.vue'
-import Browser from '@/Browser/chrome/chrome'
+import Browser from '@/Browser/main'
 defineProps({
   groupLabel: String,
   main: { type: Boolean, default: false }

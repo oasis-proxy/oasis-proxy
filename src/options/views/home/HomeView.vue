@@ -2,7 +2,7 @@
 import HomeDefault from './HomeDefault.vue'
 import HomeAdvance from './HomeAdvance.vue'
 import HomeDebug from './HomeDebug.vue'
-import Browser from '@/Browser/chrome/chrome'
+import Browser from '@/Browser/main'
 </script>
 
 <template>

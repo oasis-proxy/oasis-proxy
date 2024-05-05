@@ -7,7 +7,7 @@ import ProxySelect from '@/components/ProxySelect.vue'
 import InternalRuleGroup from '../components/InternalRuleGroup.vue'
 import PopoverTips from '@/components/PopoverTips.vue'
 
-import Browser from '@/Browser/chrome/chrome.js'
+import Browser from '@/Browser/main'
 import { saveForAuto } from '@/core/ProxyConfig'
 import { getNextLocalVersion } from '@/core/VersionControl'
 

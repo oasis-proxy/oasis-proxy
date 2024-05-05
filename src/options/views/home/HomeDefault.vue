@@ -3,7 +3,7 @@ import { ref, watch, getCurrentInstance, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import PopoverTips from '@/components/PopoverTips.vue'
 
-import Browser from '@/Browser/chrome/chrome.js'
+import Browser from '@/Browser/main'
 
 const instance = getCurrentInstance()
 const router = useRouter()

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import ModalBase from '@/components/modal/ModalBase.vue'
-import Browser from '@/Browser/chrome/chrome'
+import Browser from '@/Browser/main'
 defineExpose({
   createConfirm
 })

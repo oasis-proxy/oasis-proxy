@@ -1,4 +1,4 @@
-import Browser from '@/Browser/chrome/chrome'
+import Browser from '@/Browser/main'
 import { enrich, simplify } from '@/core/ConfigData'
 
 const MAX_VERSION = 1000000

@@ -3,7 +3,7 @@ import { ref, inject, getCurrentInstance, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import LinkTextItem from '../components/LinkTextItem.vue'
 
-import Browser from '@/Browser/chrome/chrome.js'
+import Browser from '@/Browser/main'
 import { saveForPac } from '@/core/ProxyConfig'
 import { getNextLocalVersion } from '@/core/VersionControl'
 const { isUnsaved, resetUnsaved } = inject('isUnsaved')

@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
-import Browser from '@/Browser/chrome/chrome'
+import Browser from '@/Browser/main'
 
 onMounted(async () => {
   const result = await Browser.Storage.getLocal('config_ui')

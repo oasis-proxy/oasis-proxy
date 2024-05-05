@@ -1,7 +1,6 @@
 <script setup>
 import { ref, getCurrentInstance, onMounted } from 'vue'
-import Browser from '@/Browser/chrome/chrome.js'
-import { enrich, simplify } from '@/core/ConfigData'
+import Browser from '@/Browser/main'
 import { overWriteToCloud, overWriteToLocal } from '@/core/VersionControl'
 defineProps({
   isModal: Boolean

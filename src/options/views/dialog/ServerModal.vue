@@ -3,7 +3,7 @@ import { computed, ref, getCurrentInstance, onMounted, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import ModalBase from '@/components/modal/ModalBase.vue'
 import { getNextLocalVersion } from '@/core/VersionControl'
-import Browser from '@/Browser/chrome/chrome.js'
+import Browser from '@/Browser/main'
 import { createProxy } from '@/core/ProxyConfig.js'
 
 const showUploadConflictModal = inject('showUploadConflictModal')

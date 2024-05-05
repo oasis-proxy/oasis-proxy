@@ -1,10 +1,12 @@
 <script setup>
-import { computed, ref, getCurrentInstance, onMounted } from 'vue'
+import { computed, ref, getCurrentInstance, onMounted, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import ModalBase from '@/components/modal/ModalBase.vue'
-
+import { getNextLocalVersion } from '@/core/VersionControl'
 import Browser from '@/Browser/chrome/chrome.js'
 import { createProxy } from '@/core/ProxyConfig.js'
+
+const showUploadConflictModal = inject('showUploadConflictModal')
 
 const name = ref('')
 const isNameValid = ref(true)
@@ -73,16 +75,20 @@ async function handleSubmit() {
   }
 
   const key = 'proxy_' + encodeName
-  const storeProxy = {}
-  storeProxy[key] = proxyConfig
-  await Browser.Storage.setLocal(storeProxy)
+  const version = await getNextLocalVersion()
+  await Browser.Storage.setLocal({
+    [key]: proxyConfig,
+    config_version: version
+  })
   toast.info(`${name.value} ${Browser.I18n.getMessage('desc_save_success')}`)
   handleCancel()
-  router.push('/fixed/' + encodeName)
+  showUploadConflictModal(() => {
+    router.push('/fixed/' + encodeName)
+  })
 }
 </script>
 <template>
-  <ModalBase id="serverModal">
+  <ModalBase id="serverModal" mode="form">
     <template #title>{{
       Browser.I18n.getMessage('modal_title_add_server')
     }}</template>

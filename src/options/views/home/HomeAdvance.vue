@@ -1,23 +1,24 @@
 <script setup>
-import { ref, watch, getCurrentInstance, onMounted, computed } from 'vue'
+import {
+  ref,
+  watch,
+  getCurrentInstance,
+  onMounted,
+  computed,
+  inject
+} from 'vue'
 import PopoverTips from '@/components/PopoverTips.vue'
+import ConfigDisplay from '@/options/components/ConfigDisplay.vue'
 
 import Browser from '@/Browser/chrome/chrome.js'
-import { enrich, simplify } from '@/core/ConfigData'
-
+const showSyncConflictModal = inject('showSyncConflictModal')
 const instance = getCurrentInstance()
 const toast = instance?.appContext.config.globalProperties.$toast
-const confirmModal = instance?.appContext.config.globalProperties.$confirm
 
 const configMonitor = ref(false)
-const configReject = ref('HTTPS 127.0.0.1:65432')
+const reject = ref('HTTPS 127.0.0.1:65432')
+const configAutoSync = ref(false)
 const isRejectValid = ref(true)
-const localFixed = ref([])
-const localPac = ref([])
-const localAuto = ref([])
-const syncFixed = ref([])
-const syncPac = ref([])
-const syncAuto = ref([])
 
 const rejectInputClass = computed(() => {
   return isRejectValid.value
@@ -26,90 +27,34 @@ const rejectInputClass = computed(() => {
 })
 
 onMounted(() => {
-  reloadLocalData()
-  reloadSyncData()
+  init()
 })
 
 watch(configMonitor, async (newValue) => {
   await Browser.Storage.setLocal({ config_monitor: newValue })
 })
 
-async function reloadSyncData() {
-  const result = await Browser.Storage.getSync(null)
-  Object.keys(result).forEach((key) => {
-    if (key.startsWith('proxy_')) {
-      switch (result[key]?.mode) {
-        case 'auto':
-          syncAuto.value.push(decodeURIComponent(key.substring(6)))
-          break
-        case 'pac_script':
-          syncPac.value.push(decodeURIComponent(key.substring(6)))
-          break
-        case 'fixed_servers':
-          syncFixed.value.push(decodeURIComponent(key.substring(6)))
-          break
-        default:
-          break
-      }
-    }
-  })
-}
-async function reloadLocalData() {
+async function init() {
   const result = await Browser.Storage.getLocalAll()
   if (result.config_monitor != null) {
     configMonitor.value = result.config_monitor
-    configReject.value = result.reject.config.rules
+    configAutoSync.value = result.config_autoSync
+    reject.value = result.reject.config.rules
   }
-  Object.keys(result).forEach((key) => {
-    if (key.startsWith('proxy_')) {
-      switch (result[key]?.mode) {
-        case 'auto':
-          localAuto.value.push(decodeURIComponent(key.substring(6)))
-          break
-        case 'pac_script':
-          localPac.value.push(decodeURIComponent(key.substring(6)))
-          break
-        case 'fixed_servers':
-          localFixed.value.push(decodeURIComponent(key.substring(6)))
-          break
-        default:
-          break
-      }
-    }
-  })
 }
-function handleSetLocal() {
-  confirmModal.createConfirm(
-    Browser.I18n.getMessage('modal_title_warning'),
-    Browser.I18n.getMessage('modal_desc_override_local'),
-    async function () {
-      const result = await Browser.Storage.getSync(null)
-      const enrichConfig = await enrich(result)
-      await Browser.Storage.setLocal(enrichConfig)
-      toast.info(Browser.I18n.getMessage('desc_override_local'))
-      setTimeout(() => {
-        location.reload()
-      }, 2000)
-    }
-  )
-}
-function handleSetSync() {
-  confirmModal.createConfirm(
-    Browser.I18n.getMessage('modal_title_warning'),
-    Browser.I18n.getMessage('modal_desc_override_sync'),
-    async function () {
-      const result = await Browser.Storage.getLocal(null)
-      const sConfig = simplify(result)
-      await Browser.Storage.setSync(sConfig)
-      toast.info(Browser.I18n.getMessage('desc_override_sync'))
-      reloadSyncData()
-    }
-  )
+
+async function handleAutoSyncChange(event) {
+  if (configAutoSync.value) {
+    configAutoSync.value = false
+    showSyncConflictModal(Browser.I18n.getMessage('modal_desc_sync'))
+  } else {
+    await Browser.Storage.setLocal({ config_autoSync: false })
+  }
 }
 
 async function handleBlur() {
   isRejectValid.value = true
-  let tmp = configReject.value
+  let tmp = reject.value
   let scheme = tmp.split(' ')[0]
   let port = tmp.split(':')[1]
   if (
@@ -124,11 +69,11 @@ async function handleBlur() {
       reject: {
         mode: 'reject',
         name: 'reject',
-        config: { mode: 'reject', rules: configReject.value }
+        config: { mode: 'reject', rules: reject.value }
       }
     })
     toast.info(
-      `${Browser.I18n.getMessage('desc_saved_reject')} ${configReject.value}`
+      `${Browser.I18n.getMessage('desc_saved_reject')} ${reject.value}`
     )
   } else {
     isRejectValid.value = false
@@ -140,7 +85,7 @@ async function handleBlur() {
     <div class="card">
       <div class="card-header">
         <span class="fw-bold">{{
-          Browser.I18n.getMessage('section_label_request')
+          Browser.I18n.getMessage('tab_label_advance')
         }}</span>
       </div>
       <div class="card-body">
@@ -153,7 +98,7 @@ async function handleBlur() {
             ></PopoverTips>
           </label>
           <div class="col-10">
-            <div class="form-check-sm">
+            <div class="form-check-sm d-flex align-items-center">
               <input
                 class="form-check-input"
                 type="checkbox"
@@ -161,7 +106,7 @@ async function handleBlur() {
                 v-model="configMonitor"
               />
               <label class="form-check-label ms-2" for="monitorCheck">
-                <span>{{ Browser.I18n.getMessage('input_label_open') }}</span>
+                <span>{{ Browser.I18n.getMessage('input_label_on') }}</span>
               </label>
             </div>
           </div>
@@ -178,11 +123,34 @@ async function handleBlur() {
             <input
               type="text"
               :class="rejectInputClass"
-              v-model="configReject"
+              v-model="reject"
               @blur="handleBlur"
             />
             <div class="invalid-feedback">
               {{ Browser.I18n.getMessage('feedback_reject_invalid') }}
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3 d-flex align-items-center">
+          <label class="col-2 col-form-label">
+            <span>{{ Browser.I18n.getMessage('form_label_autosync') }}</span>
+            <PopoverTips
+              className="bi bi-question-circle-fill icon-btn ms-2"
+              :content="Browser.I18n.getMessage('popover_autosync')"
+            ></PopoverTips>
+          </label>
+          <div class="col-10">
+            <div class="form-check-sm d-flex align-items-center">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="autoSyncCheck"
+                v-model="configAutoSync"
+                @change="handleAutoSyncChange"
+              />
+              <label class="form-check-label ms-2" for="autoSyncCheck">
+                <span>{{ Browser.I18n.getMessage('input_label_on') }}</span>
+              </label>
             </div>
           </div>
         </div>
@@ -195,79 +163,7 @@ async function handleBlur() {
         }}</span>
       </div>
       <div class="card-body">
-        <div
-          class="hstack gap-4 d-flex align-items-stretch justify-content-between"
-        >
-          <div class="card flex-grow-1" style="width: 1px">
-            <div class="card-body border p-4 rounded">
-              <p class="card-text fw-bold">
-                {{ Browser.I18n.getMessage('section_label_local_data') }}
-              </p>
-              <p class="card-text" v-if="localFixed.length > 0">
-                {{
-                  Browser.I18n.getMessage('page_title_fixed') +
-                  localFixed.join(', ')
-                }}
-              </p>
-              <p class="card-text" v-if="localPac.length > 0">
-                {{
-                  Browser.I18n.getMessage('page_title_pac') +
-                  localPac.join(', ')
-                }}
-              </p>
-              <p class="card-text" v-if="localAuto.length > 0">
-                {{
-                  Browser.I18n.getMessage('page_title_auto') +
-                  localAuto.join(', ')
-                }}
-              </p>
-            </div>
-          </div>
-          <div class="align-self-center flex-grow-0 flex-shrink-0">
-            <div class="vstack gap-4">
-              <div>
-                <button class="btn btn-danger btn-sm" @click="handleSetLocal">
-                  <i class="bi bi-skip-backward-fill me-2 fw-bold"></i>
-                  <span>{{
-                    Browser.I18n.getMessage('btn_label_set_local_config')
-                  }}</span>
-                </button>
-              </div>
-              <div>
-                <button class="btn btn-danger btn-sm" @click="handleSetSync">
-                  <span>{{
-                    Browser.I18n.getMessage('btn_label_set_sync_config')
-                  }}</span>
-                  <i class="bi bi-skip-forward-fill ms-2"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="card flex-grow-1" style="width: 1px">
-            <div class="card-body border p-4 rounded">
-              <p class="card-text fw-bold">
-                {{ Browser.I18n.getMessage('section_label_sync_data') }}
-              </p>
-              <p class="card-text" v-if="syncFixed.length > 0">
-                {{
-                  Browser.I18n.getMessage('page_title_fixed') +
-                  syncFixed.join(', ')
-                }}
-              </p>
-              <p class="card-text" v-if="syncPac.length > 0">
-                {{
-                  Browser.I18n.getMessage('page_title_pac') + syncPac.join(', ')
-                }}
-              </p>
-              <p class="card-text" v-if="syncAuto.length > 0">
-                {{
-                  Browser.I18n.getMessage('page_title_auto') +
-                  syncAuto.join(', ')
-                }}
-              </p>
-            </div>
-          </div>
-        </div>
+        <ConfigDisplay :isModal="false"></ConfigDisplay>
       </div>
     </div>
   </div>

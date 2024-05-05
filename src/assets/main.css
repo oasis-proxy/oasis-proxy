@@ -88,3 +88,11 @@ body i.icon-btn:hover {
 .background-info input {
   color: var(--bs-danger) !important;
 }
+
+.modal-dialog.form-dialog {
+  max-width: 600px;
+}
+
+.modal-dialog.large-dialog {
+  max-width: 800px;
+}

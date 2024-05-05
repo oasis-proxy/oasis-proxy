@@ -5,10 +5,11 @@ import LinkTextItem from '../components/LinkTextItem.vue'
 
 import Browser from '@/Browser/chrome/chrome.js'
 import { saveForPac } from '@/core/ProxyConfig'
-
+import { getNextLocalVersion } from '@/core/VersionControl'
 const { isUnsaved, resetUnsaved } = inject('isUnsaved')
 const handleUpdate = inject('handleUpdate')
 const handleDelete = inject('handleDelete')
+const showUploadConflictModal = inject('showUploadConflictModal')
 
 const pacRule = ref({
   url: '',
@@ -57,9 +58,11 @@ async function handleSubmit() {
     pacRule.value.url.trim(),
     pacRule.value.urlUpdatedAt
   )
-  const storeObj = {}
-  storeObj[key] = tmpObj
-  await Browser.Storage.setLocal(storeObj)
+  const version = await getNextLocalVersion()
+  await Browser.Storage.setLocal({
+    [key]: tmpObj,
+    config_version: version
+  })
   toast.info(`${name} ${Browser.I18n.getMessage('desc_save_success')}`)
   const result = await Browser.Storage.getLocalAll()
   if (result.status_proxyKey == key) {
@@ -69,6 +72,7 @@ async function handleSubmit() {
     })
   }
   resetUnsaved()
+  showUploadConflictModal()
 }
 
 function handleCancel() {

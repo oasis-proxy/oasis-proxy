@@ -1,10 +1,12 @@
 <script setup>
-import { computed, ref, getCurrentInstance, onMounted } from 'vue'
+import { computed, ref, getCurrentInstance, onMounted, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ModalBase from '@/components/modal/ModalBase.vue'
 
 import Browser from '@/Browser/chrome/chrome.js'
 import { replaceProxyNameForAllProxy } from '@/core/ProxyConfig.js'
+import { getNextLocalVersion } from '@/core/VersionControl'
+const showUploadConflictModal = inject('showUploadConflictModal')
 
 const name = ref('')
 const isNameValid = ref(true)
@@ -90,14 +92,19 @@ async function handleSubmit() {
   if (activeProxyKey == oldKey) {
     storeProxy.status_proxyKey = newKey
   }
+  const version = await getNextLocalVersion()
+  storeProxy.config_version = version
   await Browser.Storage.setLocal(storeProxy)
   await Browser.Storage.removeLocal(oldKey)
   toast.info(Browser.I18n.getMessage('desc_save_success'))
   handleCancel()
-  const r = route.path.split('/')
-  r.pop()
-  r.push(encodeNewName)
-  router.push(r.join('/'))
+
+  showUploadConflictModal(() => {
+    const r = route.path.split('/')
+    r.pop()
+    r.push(encodeNewName)
+    router.push(r.join('/'))
+  })
 }
 </script>
 <template>

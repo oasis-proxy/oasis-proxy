@@ -63,8 +63,8 @@ function clearConfig() {
       const obj = {
         config_ui: 'dark',
         config_updateUrl: true,
-        config_reject: 'HTTPS 127.0.0.1:65432',
         config_monitor: false,
+        config_autoSync: false,
         direct: { mode: 'direct', name: 'direct', config: { mode: 'direct' } },
         system: { mode: 'system', name: 'system', config: { mode: 'system' } },
         reject: {

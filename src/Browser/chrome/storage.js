@@ -24,8 +24,16 @@ Storage.getSync = function (obj) {
   return chrome.storage.sync.get(obj)
 }
 
+Storage.getSyncAll = function () {
+  return chrome.storage.sync.get(null)
+}
+
 Storage.setSync = function (obj) {
   return chrome.storage.sync.set(obj)
+}
+
+Storage.removeSync = function (key) {
+  return chrome.storage.sync.remove(key)
 }
 
 Storage.clearLocal = function () {

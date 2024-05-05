@@ -46,7 +46,7 @@ function handleSubmit() {
     <template #title>{{ title }}</template>
     <template #default>
       <div class="mb-3 row">
-        <div class="comfirm-message">{{ description }}</div>
+        <div>{{ description }}</div>
       </div>
     </template>
     <template #operations>

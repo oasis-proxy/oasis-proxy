@@ -4,13 +4,22 @@ import { provide, ref, inject, getCurrentInstance, onMounted } from 'vue'
 import { useRoute, useRouter, RouterView } from 'vue-router'
 import AsideView from './views/AsideView.vue'
 import UpdateNameModal from './views/dialog/UpdateNameModal.vue'
+import SyncConflictModal from './views/dialog/SyncConflictModal.vue'
+import UploadConflictModal from './views/dialog/UploadConflictModal.vue'
 import { proxyUsedBy } from '@/core/ProxyConfig.js'
+import {
+  getNextLocalVersion,
+  getSyncDownloadStatus,
+  overWriteToLocal
+} from '@/core/VersionControl'
 
 const { isUnsaved, resetUnsaved } = inject('isUnsaved')
 
 const route = useRoute()
 const router = useRouter()
 const updateNameModal = ref(null)
+const uploadConflictModal = ref(null)
+const syncConflictModal = ref(null)
 
 const instance = getCurrentInstance()
 const toast = instance?.appContext.config.globalProperties.$toast
@@ -33,7 +42,19 @@ provide('theme', theme)
 provide('activeProxyKey', activeProxyKey)
 
 onMounted(async () => {
-  const result = await Browser.Storage.getLocalAll()
+  let result = await Browser.Storage.getLocalAll()
+  if (result.config_autoSync) {
+    switch (await getSyncDownloadStatus()) {
+      case 'download':
+        await overWriteToLocal()
+        result = await Browser.Storage.getLocalAll()
+        break
+      case 'conflict':
+        showSyncConflictModal(Browser.I18n.getMessage('modal_desc_conflict'))
+        break
+      default:
+    }
+  }
   Object.keys(result).forEach((key) => {
     if (key.startsWith('proxy_')) {
       localProxyConfigObj.value[key] = result[key]
@@ -127,6 +148,11 @@ function handleDelete() {
       }
       const proxyKey = 'proxy_' + encodeURIComponent(name)
       await Browser.Storage.removeLocal(proxyKey)
+
+      const version = await getNextLocalVersion()
+      await Browser.Storage.setLocal({
+        config_version: version
+      })
       toast.info(`${name}${Browser.I18n.getMessage('desc_deleted_success')}`)
       if (result.status_proxyKey == proxyKey) {
         Browser.Proxy.setDirect(async () => {
@@ -134,10 +160,11 @@ function handleDelete() {
           toast.info(`代理切换为直连`)
         })
       }
-      router.push('/home')
+      showUploadConflictModal(() => {
+        router.push('/home')
+      })
     }
   )
-
   resetUnsaved()
 }
 
@@ -150,8 +177,19 @@ function handleUpdate() {
   if (updateNameModal.value) updateNameModal.value.show()
 }
 
+function showUploadConflictModal(cbAfterHide = () => {}) {
+  if (uploadConflictModal.value)
+    uploadConflictModal.value.createModal(cbAfterHide)
+}
+
+function showSyncConflictModal(desc) {
+  if (syncConflictModal.value) syncConflictModal.value.createModal(desc)
+}
+
 provide('handleUpdate', handleUpdate)
 provide('handleDelete', handleDelete)
+provide('showUploadConflictModal', showUploadConflictModal)
+provide('showSyncConflictModal', showSyncConflictModal)
 </script>
 
 <template>
@@ -169,4 +207,6 @@ provide('handleDelete', handleDelete)
     </div>
   </div>
   <UpdateNameModal ref="updateNameModal"></UpdateNameModal>
+  <UploadConflictModal ref="uploadConflictModal"></UploadConflictModal>
+  <SyncConflictModal ref="syncConflictModal"></SyncConflictModal>
 </template>

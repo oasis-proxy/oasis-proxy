@@ -9,10 +9,12 @@ import PopoverTips from '@/components/PopoverTips.vue'
 
 import Browser from '@/Browser/chrome/chrome.js'
 import { saveForAuto } from '@/core/ProxyConfig'
+import { getNextLocalVersion } from '@/core/VersionControl'
 
 const { isUnsaved, resetUnsaved, setUnsaved } = inject('isUnsaved')
 const handleUpdate = inject('handleUpdate')
 const handleDelete = inject('handleDelete')
+const showUploadConflictModal = inject('showUploadConflictModal')
 
 const route = useRoute()
 
@@ -137,9 +139,11 @@ async function handleSubmit() {
     externalRule.value,
     rejectRule.value
   )
-  const storeObj = {}
-  storeObj[key] = tmpObj
-  await Browser.Storage.setLocal(storeObj)
+  const version = await getNextLocalVersion()
+  await Browser.Storage.setLocal({
+    [key]: tmpObj,
+    config_version: version
+  })
   toast.info(`${name} ${Browser.I18n.getMessage('desc_save_success')}`)
   resetUnsaved()
   const result = await Browser.Storage.getLocalAll()
@@ -149,6 +153,7 @@ async function handleSubmit() {
       toast.info(Browser.I18n.getMessage('desc_proxy_update'))
     })
   }
+  showUploadConflictModal()
 }
 
 function handleCancel() {

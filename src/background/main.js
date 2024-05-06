@@ -1,4 +1,6 @@
 import Browser from '../Browser/main'
+import { startUpdateUrl, endUpdateUrl, handleUpdateUrl } from './updateUrl'
+import { startAutoSync, endAutoSync, handleAutoSync } from './autoSync'
 let current = new Date().toLocaleString()
 console.log('background:', current)
 
@@ -149,88 +151,6 @@ const endMonitor = async function () {
   }
 }
 
-/* section 2: update Url */
-
-const startUpdateUrl = async () => {
-  await chrome.alarms.create('updateUrl', { periodInMinutes: 1440 })
-  console.info('create updateUrl')
-}
-const endUpdateUrl = async () => {
-  await chrome.alarms.clear('updateUrl')
-  console.info('clear updateUrl')
-}
-
-const downloadUrl = async function (url) {
-  try {
-    const response = await fetch(url)
-    if (!response.ok) {
-      throw new Error('Network response was not ok')
-    }
-    var rawdata = await response.text()
-    const curr = new Date().toLocaleString()
-
-    rawdata = rawdata.replace(/\r?\n/g, '')
-    var regstr =
-      /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/
-    var base64data = ''
-    if (regstr.test(rawdata)) {
-      base64data = atob(rawdata)
-    }
-    return { data: base64data, updated: curr }
-  } catch (error) {
-    console.error('There was a problem with the fetch operation:', error)
-  }
-}
-
-const handleUpdateUrl = async function () {
-  const result = await chrome.storage.local.get(null)
-  for (let key of Object.keys(result)) {
-    if (!key.startsWith('proxy_') || result[key].mode != 'auto') continue
-    try {
-      console.info('handleUpdateUrl', key)
-      let updateFlag = false
-      let response
-      const updateProxyConfig = JSON.parse(JSON.stringify(result[key]))
-      console.info('handleUpdateUrl updateProxyConfig', updateProxyConfig)
-      if (updateProxyConfig.config.rules.external.url != '') {
-        response = await downloadUrl(
-          updateProxyConfig.config.rules.external.url
-        )
-        updateProxyConfig.config.rules.external.data = response.data
-        updateProxyConfig.config.rules.external.urlUpdatedAt = response.updated
-        updateFlag = true
-      }
-      if (updateProxyConfig.config.rules.reject.url != '') {
-        response = await downloadUrl(
-          result.proxyConfigObj[key].config.rules.reject.url
-        )
-        updateProxyConfig.config.rules.reject.data = response.data
-        updateProxyConfig.config.rules.reject.urlUpdatedAt = response.updated
-        updateFlag = true
-      }
-      if (updateFlag) {
-        const storeObj = {}
-        storeObj[key] = updateProxyConfig
-        await chrome.storage.local.set(storeObj)
-      }
-    } catch (err) {}
-  }
-  const afterUpdateResult = await chrome.storage.local.get(null)
-  if (afterUpdateResult.status_proxyKey != null) {
-    Browser.Proxy.set(
-      afterUpdateResult,
-      afterUpdateResult.status_proxyKey,
-      async () => {
-        console.info(
-          'Proxy updated after url updated',
-          afterUpdateResult,
-          afterUpdateResult.status_proxyKey
-        )
-      }
-    )
-  }
-}
-
 /* section 3: alarm event */
 const handleMonitor = async function () {
   const result = await chrome.storage.local.get(['config_monitor'])
@@ -254,6 +174,11 @@ chrome.storage.onChanged.addListener(function (changes, areaName) {
     ) {
       changes.config_updateUrl?.newValue ? startUpdateUrl() : endUpdateUrl()
     }
+    if (
+      changes.config_autoSync?.newValue !== changes.config_autoSync?.oldValue
+    ) {
+      changes.config_autoSync?.newValue ? startAutoSync() : endAutoSync()
+    }
   }
 })
 
@@ -266,6 +191,9 @@ chrome.alarms.onAlarm.addListener((alarm) => {
       break
     case 'monitorRequest':
       handleMonitor()
+      break
+    case 'autoSync':
+      handleAutoSync()
       break
     default:
       break
@@ -281,6 +209,7 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
       config_updateUrl: true,
       config_monitor: false,
       config_autoSync: false,
+      config_version: 1,
       direct: { mode: 'direct', name: 'direct', config: { mode: 'direct' } },
       system: { mode: 'system', name: 'system', config: { mode: 'system' } },
       reject: {
@@ -293,11 +222,13 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
   }
   const result = await chrome.storage.local.get([
     'config_monitor',
-    'config_updateUrl'
+    'config_updateUrl',
+    'config_autoSync'
   ])
 
   result.config_monitor ? startMonitor() : endMonitor()
   result.config_updateUrl ? startUpdateUrl() : endUpdateUrl()
+  result.config_autoSync ? startAutoSync() : endAutoSync()
 })
 
 // 启动事件
@@ -307,6 +238,7 @@ chrome.runtime.onStartup.addListener(async () => {
 
   result.config_monitor ? startMonitor() : endMonitor()
   result.config_updateUrl ? startUpdateUrl() : endUpdateUrl()
+  result.config_autoSync ? startAutoSync() : endAutoSync()
 
   chrome.webRequest.onAuthRequired.addListener(
     setProxyAuths,
@@ -366,7 +298,6 @@ async function handleSetProxyAuths(request) {
 }
 
 async function handleResetProxyAuths() {
-  console.info('setProxyAuths', request)
   chrome.webRequest.onAuthRequired.removeListener(setProxyAuths)
   await chrome.storage.local.remove(['status_auths'])
   return { code: 0 }

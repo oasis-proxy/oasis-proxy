@@ -260,6 +260,15 @@ export const addInternalRulesForAuto = function (internalRules, proxyConfig) {
   return null
 }
 
+export const getAllAuthList = function (proxyConfigs) {
+  const AllAuthList = []
+  Object.keys(proxyConfigs).forEach((key) => {
+    if (proxyConfigs[key].mode == 'fixed_servers')
+      AllAuthList.push(...getAuthListInFixed(proxyConfigs[key]))
+  })
+  return AllAuthList
+}
+
 export const getAuthList = function (proxyConfigs, key) {
   switch (proxyConfigs[key].mode) {
     case 'direct':

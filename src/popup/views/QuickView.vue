@@ -3,7 +3,12 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import ProxySelect from '../../components/ProxySelect.vue'
 import { addInternalRulesForAuto } from '@/core/ProxyConfig.js'
-import Browser from '@/Browser/chrome/chrome.js'
+import Browser from '@/Browser/main'
+import {
+  getNextLocalVersion,
+  getSyncUploadStatus,
+  overWriteToCloud
+} from '@/core/VersionControl'
 
 const router = useRouter()
 
@@ -71,12 +76,29 @@ async function quickAddInternalRules() {
     newRules,
     result[result.status_proxyKey]
   )
-  const storeObj = {}
-  storeObj[result.status_proxyKey] = newProxyConfig
-  await Browser.Storage.setLocal(storeObj)
-  // todo close window
+  const version = await getNextLocalVersion()
+  await Browser.Storage.setLocal({
+    [result.status_proxyKey]: newProxyConfig,
+    config_version: version
+  })
+  // todo handle the version conflict
   Browser.Proxy.set(result, result.status_proxyKey)
-  window.close()
+  if (result.config_autoSync) {
+    const url =
+      chrome.runtime.getURL('options.html') +
+      '#/auto/' +
+      result.status_proxyKey.substring(6)
+    switch (await getSyncUploadStatus()) {
+      case 'upload':
+        overWriteToCloud()
+        break
+      case 'conflict':
+        window.open(url)
+        break
+      default:
+    }
+  }
+  // window.close()
 }
 </script>
 

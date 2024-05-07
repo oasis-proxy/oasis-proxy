@@ -39,6 +39,10 @@
     "message": "Add",
     "description": ""
   },
+  "btn_label_modify_config": {
+    "message": "Modify",
+    "description": ""
+  },
   "btn_label_set_sync_config": {
     "message": "Overwrite Cloud",
     "description": ""
@@ -105,6 +109,10 @@
   },
   "form_label_monitor": {
     "message": "Req Monitor",
+    "description": ""
+  },
+  "form_label_autosync": {
+    "message": "Auto-Sync",
     "description": ""
   },
   "form_label_host": {
@@ -227,6 +235,10 @@
     "message": "Pac Policy:",
     "description": ""
   },
+  "page_title_version": {
+    "message": "Version No.:",
+    "description": ""
+  },
   "page_title_fixed": {
     "message": "Proxy Server:",
     "description": ""
@@ -247,8 +259,16 @@
     "message": "Daily Update",
     "description": ""
   },
-  "input_label_open": {
+  "input_label_on": {
     "message": "On",
+    "description": ""
+  },
+  "input_label_off": {
+    "message": "Off",
+    "description": ""
+  },
+  "input_label_divider": {
+    "message": "Section divider, edit the description after dragged up",
     "description": ""
   },
   "input_label_auto_policy": {
@@ -284,13 +304,25 @@
     "description": ""
   },
   "modal_title_delete": {
-    "message": "Are you sure you want to delete the proxy configuration?"
+    "message": "Delete the configuration:"
   },
   "modal_title_add_policy": {
     "message": "Add a policy"
   },
   "modal_title_add_server": {
     "message": "Add a proxy server"
+  },
+  "modal_title_sync": {
+    "message": "Config Sync"
+  },
+  "modal_desc_sync": {
+    "message": "Before auto-sync is enabled, please manually select the main version"
+  },
+  "modal_desc_conflict": {
+    "message": "Auto-sync is enabled. Current local version conflicts with cloud version. Please manually select the master version"
+  },
+  "modal_desc_upload_conflict": {
+    "message": "Auto-sync is enabled. Local versions conflict with cloud versions. Upload the latest local version to remote?"
   },
   "modal_desc_delete": {
     "message": "This proxy is not referenced by other rules. Are you sure you want to delete it?"
@@ -382,6 +414,9 @@
   "desc_config_not_found": {
     "message": "Please refresh the page, The configuration does not exist."
   },
+  "desc_sync_warning": {
+    "message": "Auto-sync will be turned off, if Cancel Button pressed or the page be refreshed."
+  },
   "feedback_request_failed": {
     "message": "Failed to get the content"
   },
@@ -405,6 +440,9 @@
   },
   "popover_monitor": {
     "message": "Display the request host and IP for active tabs."
+  },
+  "popover_autosync": {
+    "message": "Automatic synchronization of proxy servers and proxy policy config, not include the general settings"
   },
   "popover_reject": {
     "message": "Please ensure that the filled-in address cannot be accessed, otherwise the reject rule may fail."

@@ -39,12 +39,16 @@
     "message": "添 加",
     "description": ""
   },
+  "btn_label_modify_config": {
+    "message": "修 改",
+    "description": ""
+  },
   "btn_label_set_sync_config": {
-    "message": "覆盖远程",
+    "message": "本地覆盖远程",
     "description": ""
   },
   "btn_label_set_local_config": {
-    "message": "覆盖本地",
+    "message": "远程覆盖本地",
     "description": ""
   },
   "btn_label_export_config": {
@@ -105,6 +109,10 @@
   },
   "form_label_monitor": {
     "message": "链接监控",
+    "description": ""
+  },
+  "form_label_autosync": {
+    "message": "自动同步",
     "description": ""
   },
   "form_label_host": {
@@ -168,7 +176,7 @@
     "description": ""
   },
   "section_label_sync": {
-    "message": "同步配置",
+    "message": "手动同步",
     "description": ""
   },
   "section_label_request": {
@@ -227,6 +235,10 @@
     "message": "Pac策略：",
     "description": ""
   },
+  "page_title_version": {
+    "message": "配置版本：",
+    "description": ""
+  },
   "page_title_fixed": {
     "message": "代理节点：",
     "description": ""
@@ -247,8 +259,16 @@
     "message": "每日自动更新",
     "description": ""
   },
-  "input_label_open": {
+  "input_label_on": {
     "message": "开 启",
+    "description": ""
+  },
+  "input_label_off": {
+    "message": "关 闭",
+    "description": ""
+  },
+  "input_label_divider": {
+    "message": "段分隔，向上拖动后可点击编辑",
     "description": ""
   },
   "input_label_auto_policy": {
@@ -291,6 +311,18 @@
   },
   "modal_title_add_server": {
     "message": "添加代理节点"
+  },
+  "modal_title_sync": {
+    "message": "配置同步"
+  },
+  "modal_desc_sync": {
+    "message": "自动同步开启前，请手动选择主版本"
+  },
+  "modal_desc_conflict": {
+    "message": "自动同步功能已开启，当前本地版本与云端版本存在冲突，请手动选择主版本"
+  },
+  "modal_desc_upload_conflict": {
+    "message": "自动同步功能已开启，本地版本与云端版本存在版本冲突，是否将最新的本地版本上传至远程云端？"
   },
   "modal_desc_delete": {
     "message": "该代理未被其他规则引用，确定删除？"
@@ -382,6 +414,9 @@
   "desc_config_not_found": {
     "message": "配置不存在，请刷新页面后重新操作"
   },
+  "desc_sync_warning": {
+    "message": "在确定主版本前，点击“取消”按钮或刷新页面，自动同步功能将被关闭"
+  },
   "feedback_request_failed": {
     "message": "地址获取内容失败"
   },
@@ -406,10 +441,16 @@
   "popover_monitor": {
     "message": "开启后会，对Tab标签的所有请求链接在popup按钮弹出页展示HOST和IP。"
   },
+  "popover_autosync": {
+    "message": "自动同步代理节点和策略模式配置，不含通用设置"
+  },
   "popover_reject": {
     "message": "请确保填入地址无法访问，否则拒绝规则可能失效。"
   },
   "popover_update_url": {
     "message": "每日自动更新策略模式中设置的“外部规则地址”、“拒绝规则地址”内容。"
+  },
+  "desc_unsave_toast": {
+    "message": "当前页面存在未保存的信息，保存或刷新页面后再次操作"
   }
 }

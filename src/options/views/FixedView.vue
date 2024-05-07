@@ -191,8 +191,8 @@ function handleCancel() {
         }}</span>
       </button>
     </div>
-    <div class="container ps-0 pe-0">
-      <div class="">
+    <div>
+      <div>
         <div class="nav nav-tabs mb-2" id="v-pills-tab" role="tablist">
           <button
             class="nav-link active"

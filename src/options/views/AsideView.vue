@@ -1,45 +1,37 @@
 <script setup>
-import { inject, computed, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import PolicyModal from './dialog/PolicyModal.vue'
 import ServerModal from './dialog/ServerModal.vue'
+import { useConfigStore } from '@/options/stores/config'
+import { useStatusStore } from '@/options/stores/status'
 
 import Browser from '@/Browser/main'
-
-const proxyConfig = inject('proxyConfig')
-const theme = inject('theme')
-const activeProxyKey = inject('activeProxyKey')
 
 const policyModal = ref(null)
 const serverModal = ref(null)
 const router = useRouter()
 const route = useRoute()
+const storeConfig = useConfigStore()
+const storeStatus = useStatusStore()
 
-const imgPath = computed(() => {
-  if (theme?.value == 'dark') {
-    return '/img/banner-dark.png'
-  }
-  return '/img/banner-light.png'
-})
-
-const activeProxyName = computed(() => {
-  console.log(activeProxyKey.value)
-  return activeProxyKey.value.substring(6)
-})
 const proxyNamesObj = computed(() => {
   const fixed = []
   const pac = []
   const auto = []
-  Object.keys(proxyConfig.value).forEach((key) => {
-    switch (proxyConfig.value[key]?.mode) {
+  Object.keys(storeStatus.proxyConfigs).forEach((key) => {
+    switch (storeStatus.proxyConfigs[key]?.mode) {
       case 'auto':
-        auto.push(proxyConfig.value[key].name)
+        auto.push(storeStatus.proxyConfigs[key].name)
+        auto.sort()
         break
       case 'pac_script':
-        pac.push(proxyConfig.value[key].name)
+        pac.push(storeStatus.proxyConfigs[key].name)
+        pac.sort()
         break
       case 'fixed_servers':
-        fixed.push(proxyConfig.value[key].name)
+        fixed.push(storeStatus.proxyConfigs[key].name)
+        fixed.sort()
         break
       default:
         break
@@ -62,7 +54,18 @@ function addServer() {
 </script>
 <template>
   <div class="w-100 mb-4 d-flex justify-content-center">
-    <img :src="imgPath" alt="" style="width: 193px" />
+    <img
+      v-show="storeConfig.computedTheme == 'dark'"
+      src="/img/banner-dark.png"
+      alt=""
+      style="width: 193px"
+    />
+    <img
+      v-show="storeConfig.computedTheme != 'dark'"
+      src="/img/banner-light.png"
+      alt=""
+      style="width: 193px"
+    />
   </div>
   <div class="card">
     <div class="card-header hstack">
@@ -113,7 +116,7 @@ function addServer() {
               <i class="bi bi-pc-display me-3"></i
               ><span>{{ decodeURIComponent(item) }}</span
               ><span
-                v-if="activeProxyKey == 'proxy_' + item"
+                v-if="storeStatus.activeProxyKey == 'proxy_' + item"
                 class="badge rounded-pill bg-info ms-3"
               >
                 {{ Browser.I18n.getMessage('badge_label_using') }}
@@ -150,7 +153,7 @@ function addServer() {
               <i class="bi bi-file-earmark-ppt-fill me-3"></i
               ><span>{{ decodeURIComponent(item) }}</span
               ><span
-                v-if="activeProxyKey == 'proxy_' + item"
+                v-if="storeStatus.activeProxyKey == 'proxy_' + item"
                 class="badge rounded-pill bg-info ms-3"
               >
                 {{ Browser.I18n.getMessage('badge_label_using') }}
@@ -174,7 +177,7 @@ function addServer() {
               <i class="bi bi-signpost-split-fill me-3"></i
               ><span>{{ decodeURIComponent(item) }}</span
               ><span
-                v-if="activeProxyName == item"
+                v-if="storeStatus.activeProxyKey == 'proxy_' + item"
                 class="badge rounded-pill bg-info ms-3"
               >
                 {{ Browser.I18n.getMessage('badge_label_using') }}

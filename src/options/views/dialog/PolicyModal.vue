@@ -94,17 +94,17 @@ async function handleSubmit() {
 }
 </script>
 <template>
-  <ModalBase id="policyModal">
+  <ModalBase id="policyModal" mode="form">
     <template #title>{{
       Browser.I18n.getMessage('modal_title_add_policy')
     }}</template>
     <template #default>
       <form action="" id="policyModalForm">
         <div class="mb-3 row d-flex align-items-center">
-          <label class="col-3 col-form-label" for="policyName">{{
+          <label class="col-2 col-form-label" for="policyName">{{
             Browser.I18n.getMessage('form_label_name')
           }}</label>
-          <div class="col-9">
+          <div class="col-10">
             <input
               type="text"
               :class="policyNameClass"
@@ -119,10 +119,10 @@ async function handleSubmit() {
           </div>
         </div>
         <div class="mb-3 row d-flex align-items-center">
-          <label class="col-3 col-form-label">{{
+          <label class="col-2 col-form-label">{{
             Browser.I18n.getMessage('form_label_policy_mode')
           }}</label>
-          <div class="col-9 hstack gap-3 d-flex align-items-center">
+          <div class="col-10 hstack gap-3 d-flex align-items-center">
             <div class="form-check-sm">
               <input
                 class="form-check-input"

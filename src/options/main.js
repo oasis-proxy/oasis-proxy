@@ -1,7 +1,7 @@
 import '../assets/main.css'
 
 import { createApp, ref } from 'vue'
-
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import toastPlugin from '@/components/toast/Toast.js'
@@ -15,10 +15,12 @@ function setUnsaved() {
   isUnsaved.value = true
 }
 
+const pinia = createPinia()
 const app = createApp(App)
 
 app.provide('isUnsaved', { isUnsaved, resetUnsaved, setUnsaved })
 
+app.use(pinia)
 app.use(router)
 app.use(toastPlugin)
 

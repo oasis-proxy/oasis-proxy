@@ -1,11 +1,13 @@
 <script setup>
 import Browser from '@/Browser/main'
-import { provide, ref, inject, getCurrentInstance, onMounted } from 'vue'
+import { provide, ref, inject, getCurrentInstance, onMounted, watch } from 'vue'
 import { useRoute, useRouter, RouterView } from 'vue-router'
 import AsideView from './views/AsideView.vue'
 import UpdateNameModal from './views/dialog/UpdateNameModal.vue'
 import SyncConflictModal from './views/dialog/SyncConflictModal.vue'
 import UploadConflictModal from './views/dialog/UploadConflictModal.vue'
+import { useConfigStore } from '@/options/stores/config'
+import { useStatusStore } from '@/options/stores/status'
 import { proxyUsedBy } from '@/core/ProxyConfig.js'
 import {
   getNextLocalVersion,
@@ -15,6 +17,8 @@ import {
 
 const { isUnsaved, resetUnsaved } = inject('isUnsaved')
 
+const storeConfig = useConfigStore()
+const storeStatus = useStatusStore()
 const route = useRoute()
 const router = useRouter()
 const updateNameModal = ref(null)
@@ -25,29 +29,25 @@ const instance = getCurrentInstance()
 const toast = instance?.appContext.config.globalProperties.$toast
 const confirmModal = instance?.appContext.config.globalProperties.$confirm
 
-const localProxyConfigObj = ref({
-  direct: { mode: 'direct', name: 'direct', config: { mode: 'direct' } },
-  system: { mode: 'system', name: 'system', config: { mode: 'system' } },
-  reject: {
-    mode: 'reject',
-    name: 'reject',
-    config: { mode: 'reject', rules: 'HTTPS 127.0.0.1:65432' }
-  }
-})
-const theme = ref('dark')
-const activeProxyKey = ref('')
-
-provide('proxyConfig', localProxyConfigObj)
-provide('theme', theme)
-provide('activeProxyKey', activeProxyKey)
+watch(
+  () => storeConfig.computedTheme,
+  (newValue) => {
+    document.body.setAttribute('data-bs-theme', newValue)
+  },
+  { immediate: true }
+)
 
 onMounted(async () => {
   let result = await Browser.Storage.getLocalAll()
-  if (result.config_autoSync) {
+  storeConfig.configUI = result.config_ui
+  storeConfig.configAutoSync = result.config_autoSync
+  storeConfig.configMonitor = result.config_monitor
+  storeConfig.configUpdateUrl = result.config_updateUrl
+
+  if (storeConfig.configAutoSync) {
     switch (await getSyncDownloadStatus()) {
       case 'download':
         await overWriteToLocal()
-        result = await Browser.Storage.getLocalAll()
         break
       case 'conflict':
         showSyncConflictModal(Browser.I18n.getMessage('modal_desc_conflict'))
@@ -55,81 +55,39 @@ onMounted(async () => {
       default:
     }
   }
+
+  result = await Browser.Storage.getLocalAll()
+  storeStatus.activeProxyKey = result.status_proxyKey
+
+  if (result.reject != null) {
+    storeStatus.proxyConfigs.reject = result.reject
+  }
   Object.keys(result).forEach((key) => {
     if (key.startsWith('proxy_')) {
-      localProxyConfigObj.value[key] = result[key]
-    } else if (key.startsWith('config_')) {
-      if (key == 'config_ui') {
-        switch (result.config_ui) {
-          case 'dark':
-            theme.value = 'dark'
-            break
-          case 'system':
-            if (
-              window.matchMedia &&
-              window.matchMedia('(prefers-color-scheme: dark)').matches
-            ) {
-              theme.value = 'dark'
-            } else {
-              theme.value = 'light'
-            }
-            break
-          default:
-            theme.value = 'light'
-            break
-        }
-        document.body.setAttribute('data-bs-theme', theme.value)
-      }
-    } else if (key.startsWith('status_')) {
-      if (key == 'status_proxyKey')
-        activeProxyKey.value = result.status_proxyKey
+      storeStatus.proxyConfigs[key] = result[key]
     }
   })
-  initApp()
-})
-
-function initApp() {
   Browser.Storage.changed(function (changes, areaName) {
-    console.info('main.js changed:', changes)
+    console.info('app changed:', changes)
     if (areaName === 'local') {
+      if (changes.status_proxyKey != null) {
+        storeStatus.activeProxyKey = changes.status_proxyKey.newValue
+      }
+      if (changes.reject != null) {
+        storeStatus.proxyConfigs.reject = changes.reject.newValue
+      }
       Object.keys(changes).forEach((key) => {
         if (key.startsWith('proxy_')) {
           if (changes[key].newValue != null) {
-            localProxyConfigObj.value[key] = changes[key].newValue
+            storeStatus.proxyConfigs[key] = changes[key].newValue
           } else {
-            delete localProxyConfigObj.value[key]
-          }
-        } else if (key.startsWith('config_')) {
-          if (key == 'config_ui') {
-            switch (changes[key].newValue) {
-              case 'dark':
-                theme.value = 'dark'
-                break
-              case 'system':
-                if (
-                  window.matchMedia &&
-                  window.matchMedia('(prefers-color-scheme: dark)').matches
-                ) {
-                  theme.value = 'dark'
-                } else {
-                  theme.value = 'light'
-                }
-                break
-              default:
-                theme.value = 'light'
-                break
-            }
-            document.body.setAttribute('data-bs-theme', theme.value)
-          }
-        } else if (key.startsWith('status_')) {
-          if (key == 'status_proxyKey') {
-            activeProxyKey.value = changes.status_proxyKey.newValue
+            delete storeStatus.proxyConfigs[key]
           }
         }
       })
     }
   })
-}
+})
 
 function handleDelete() {
   confirmModal.createConfirm(

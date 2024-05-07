@@ -1,13 +1,15 @@
 <script setup>
-import { ref, onMounted, getCurrentInstance } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import ModalBase from '@/components/modal/ModalBase.vue'
 import ConfigDisplay from '../../components/ConfigDisplay.vue'
+import { useConfigStore } from '@/options/stores/config'
 
 import Browser from '@/Browser/main'
 import { overWriteToCloud, getSyncUploadStatus } from '@/core/VersionControl'
 
 defineExpose({ createModal })
 
+const storeConfig = useConfigStore()
 const configDisplay = ref(null)
 
 let modalInstance = null
@@ -19,6 +21,13 @@ onMounted(() => {
   modalInstance = new bootstrap.Modal(modalElement)
 })
 
+watch(
+  () => storeConfig.configAutoSync,
+  async (newValue) => {
+    await Browser.Storage.setLocal({ config_autoSync: newValue })
+  }
+)
+
 function hide() {
   modalInstance.hide()
   cbAfterHide()
@@ -26,13 +35,12 @@ function hide() {
 async function show() {
   configDisplay.value.reload()
   modalInstance.show()
-  await Browser.Storage.setLocal({ config_autoSync: false })
+  storeConfig.configAutoSync = false
 }
 
 async function createModal(afterHide) {
   cbAfterHide = afterHide
-  const result = await Browser.Storage.getLocal(['config_autoSync'])
-  if (!result.config_autoSync) {
+  if (!storeConfig.configAutoSync) {
     hide()
     return
   }
@@ -49,7 +57,7 @@ async function createModal(afterHide) {
 
 async function handleSubmit() {
   overWriteToCloud()
-  await Browser.Storage.setLocal({ config_autoSync: true })
+  storeConfig.configAutoSync = true
   hide()
 }
 

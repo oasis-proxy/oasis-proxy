@@ -1,23 +1,28 @@
 <script setup>
 import {
   ref,
-  watch,
   getCurrentInstance,
   onMounted,
   computed,
-  inject
+  inject,
+  nextTick,
+  watch
 } from 'vue'
 import PopoverTips from '@/components/PopoverTips.vue'
 import ConfigDisplay from '@/options/components/ConfigDisplay.vue'
+import { useConfigStore } from '@/options/stores/config'
+import { useStatusStore } from '@/options/stores/status'
 
 import Browser from '@/Browser/main'
+
+const storeConfig = useConfigStore()
+const storeStatus = useStatusStore()
 const showSyncConflictModal = inject('showSyncConflictModal')
 const instance = getCurrentInstance()
 const toast = instance?.appContext.config.globalProperties.$toast
 
-const configMonitor = ref(false)
-const reject = ref('HTTPS 127.0.0.1:65432')
-const configAutoSync = ref(false)
+// const reject = ref('HTTPS 127.0.0.1:65432')
+
 const isRejectValid = ref(true)
 
 const rejectInputClass = computed(() => {
@@ -26,35 +31,31 @@ const rejectInputClass = computed(() => {
     : 'form-control form-control-sm is-invalid'
 })
 
-onMounted(() => {
-  init()
+const configAutoSync = computed(() => {
+  return storeConfig.configAutoSync
 })
 
-watch(configMonitor, async (newValue) => {
-  await Browser.Storage.setLocal({ config_monitor: newValue })
-})
-
-async function init() {
-  const result = await Browser.Storage.getLocalAll()
-  if (result.config_monitor != null) {
-    configMonitor.value = result.config_monitor
-    configAutoSync.value = result.config_autoSync
-    reject.value = result.reject.config.rules
+watch(
+  () => storeConfig.configMonitor,
+  async (newValue) => {
+    await Browser.Storage.setLocal({ config_monitor: newValue })
   }
-}
+)
 
 async function handleAutoSyncChange(event) {
-  if (configAutoSync.value) {
-    configAutoSync.value = false
+  if (event.target.checked) {
+    storeConfig.configAutoSync = event.target.checked
+    await nextTick()
     showSyncConflictModal(Browser.I18n.getMessage('modal_desc_sync'))
   } else {
-    await Browser.Storage.setLocal({ config_autoSync: false })
+    storeConfig.configAutoSync = false
+    Browser.Storage.setLocal({ config_autoSync: false })
   }
 }
 
-async function handleBlur() {
+async function handleBlur(event) {
   isRejectValid.value = true
-  let tmp = reject.value
+  let tmp = event.target.value
   let scheme = tmp.split(' ')[0]
   let port = tmp.split(':')[1]
   if (
@@ -69,12 +70,10 @@ async function handleBlur() {
       reject: {
         mode: 'reject',
         name: 'reject',
-        config: { mode: 'reject', rules: reject.value }
+        config: { mode: 'reject', rules: tmp }
       }
     })
-    toast.info(
-      `${Browser.I18n.getMessage('desc_saved_reject')} ${reject.value}`
-    )
+    toast.info(`${Browser.I18n.getMessage('desc_saved_reject')} ${tmp}`)
   } else {
     isRejectValid.value = false
   }
@@ -103,7 +102,7 @@ async function handleBlur() {
                 class="form-check-input"
                 type="checkbox"
                 id="monitorCheck"
-                v-model="configMonitor"
+                v-model="storeConfig.configMonitor"
               />
               <label class="form-check-label ms-2" for="monitorCheck">
                 <span>{{ Browser.I18n.getMessage('input_label_on') }}</span>
@@ -123,7 +122,7 @@ async function handleBlur() {
             <input
               type="text"
               :class="rejectInputClass"
-              v-model="reject"
+              :value="storeStatus.proxyConfigs.reject?.config.rules"
               @blur="handleBlur"
             />
             <div class="invalid-feedback">
@@ -145,7 +144,7 @@ async function handleBlur() {
                 class="form-check-input"
                 type="checkbox"
                 id="autoSyncCheck"
-                v-model="configAutoSync"
+                :checked="configAutoSync"
                 @change="handleAutoSyncChange"
               />
               <label class="form-check-label ms-2" for="autoSyncCheck">

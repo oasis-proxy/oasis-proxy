@@ -39,7 +39,6 @@ export const overWriteToCloud = async function () {
   await Browser.Storage.removeSync(clearList)
 
   if (cloudVersion >= localVersion) {
-    // todo ？？？
     simplifiedConfigs.config_version = (cloudVersion + 1) % MAX_VERSION
     await Browser.Storage.setLocal({
       config_version: simplifiedConfigs.config_version

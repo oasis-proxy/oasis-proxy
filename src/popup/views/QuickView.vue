@@ -81,7 +81,6 @@ async function quickAddInternalRules() {
     [result.status_proxyKey]: newProxyConfig,
     config_version: version
   })
-  // todo handle the version conflict
   Browser.Proxy.set(result, result.status_proxyKey)
   if (result.config_autoSync) {
     const url =

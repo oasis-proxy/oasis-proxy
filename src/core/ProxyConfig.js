@@ -117,6 +117,8 @@ export const replaceProxyNameForAllProxy = function (
       proxyConfigs['proxy_' + name]
     )
   })
+  resConfigs['proxy_' + newName] = proxyConfigs['proxy_' + oldName]
+  resConfigs['proxy_' + newName].name = newName
   return resConfigs
 }
 

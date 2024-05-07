@@ -1,42 +1,30 @@
 <script setup>
-import { ref, watch, getCurrentInstance, onMounted } from 'vue'
+import { watch, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router'
 import PopoverTips from '@/components/PopoverTips.vue'
+import { useConfigStore } from '@/options/stores/config'
 
 import Browser from '@/Browser/main'
 
+const storeConfig = useConfigStore()
 const instance = getCurrentInstance()
 const router = useRouter()
 const toast = instance?.appContext.config.globalProperties.$toast
 const confirmModal = instance?.appContext.config.globalProperties.$confirm
 
-const configUi = ref('light')
-const configUpdateUrl = ref(true)
-const version = ref('')
-
-onMounted(async () => {
-  version.value = Browser.Runtime.getManifest().version
-  const result = await Browser.Storage.getLocal([
-    'config_ui',
-    'reject',
-    'config_updateUrl'
-  ])
-
-  if (result.config_ui != null) {
-    configUi.value = result.config_ui
+watch(
+  () => storeConfig.configUI,
+  async (newValue) => {
+    await Browser.Storage.setLocal({ config_ui: newValue })
   }
-  if (result.config_updateUrl != null) {
-    configUpdateUrl.value = result.config_updateUrl
+)
+
+watch(
+  () => storeConfig.configUpdateUrl,
+  async (newValue) => {
+    await Browser.Storage.setLocal({ config_updateUrl: newValue })
   }
-})
-
-watch(configUi, async (newValue) => {
-  await Browser.Storage.setLocal({ config_ui: newValue })
-})
-
-watch(configUpdateUrl, async (newValue) => {
-  await Browser.Storage.setLocal({ config_updateUrl: newValue })
-})
+)
 
 async function exportConfig() {
   const result = await Browser.Storage.getLocalAll()
@@ -106,7 +94,7 @@ function toGithub() {
                 type="radio"
                 value="light"
                 id="uiLight"
-                v-model="configUi"
+                v-model="storeConfig.configUI"
               />
               <label class="form-check-label" for="uiLight">
                 <i class="bi bi-sun ms-2 me-1"></i>
@@ -121,7 +109,7 @@ function toGithub() {
                 type="radio"
                 value="dark"
                 id="uiDark"
-                v-model="configUi"
+                v-model="storeConfig.configUI"
               />
               <label class="form-check-label" for="uiDark">
                 <i class="bi bi-moon-stars-fill ms-2 me-1"></i>
@@ -136,7 +124,7 @@ function toGithub() {
                 type="radio"
                 value="system"
                 id="uiSystem"
-                v-model="configUi"
+                v-model="storeConfig.configUI"
               />
               <label class="form-check-label" for="uiSystem">
                 <i class="bi bi-circle-half ms-2 me-1"></i>
@@ -160,7 +148,7 @@ function toGithub() {
               <input
                 class="form-check-input"
                 type="checkbox"
-                v-model="configUpdateUrl"
+                v-model="storeConfig.configUpdateUrl"
                 id="updateUrlCheck"
               />
               <label class="form-check-label ms-2" for="updateUrlCheck">
@@ -177,7 +165,7 @@ function toGithub() {
           }}</label>
           <div class="col-10 col-form-label">
             <i class="bi bi-github me-2 cursor-point" @click="toGithub()"></i>
-            <span>{{ version }}</span>
+            <span>{{ Browser.Runtime.getManifest().version }}</span>
           </div>
         </div>
       </div>

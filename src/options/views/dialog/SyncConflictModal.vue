@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted, getCurrentInstance } from 'vue'
+import { ref, onMounted, getCurrentInstance, watch } from 'vue'
 import ModalBase from '@/components/modal/ModalBase.vue'
 import ConfigDisplay from '../../components/ConfigDisplay.vue'
+import { useConfigStore } from '@/options/stores/config'
 import Browser from '@/Browser/main'
 
 import { overWriteToLocal, overWriteToCloud } from '@/core/VersionControl'
@@ -12,6 +13,7 @@ const desc = ref('')
 const configDisplay = ref(null)
 let modalInstance = null
 
+const storeConfig = useConfigStore()
 const instance = getCurrentInstance()
 const toast = instance?.appContext.config.globalProperties.$toast
 
@@ -21,12 +23,19 @@ onMounted(() => {
   modalInstance = new bootstrap.Modal(modalElement)
 })
 
+watch(
+  () => storeConfig.configAutoSync,
+  async (newValue) => {
+    await Browser.Storage.setLocal({ config_autoSync: newValue })
+  }
+)
+
 function hide() {
   modalInstance.hide()
 }
 async function createModal(description) {
   desc.value = description
-  await Browser.Storage.setLocal({ config_autoSync: false })
+  storeConfig.configAutoSync = false
   configDisplay.value.reload()
   modalInstance.show()
 }
@@ -36,13 +45,13 @@ function handleCancel() {
 }
 async function handleSetSync() {
   overWriteToCloud()
-  await Browser.Storage.setLocal({ config_autoSync: true })
+  storeConfig.configAutoSync = true
   hide()
   toast.info(Browser.I18n.getMessage('desc_override_sync'))
 }
 async function handleSetLocal() {
   overWriteToLocal()
-  await Browser.Storage.setLocal({ config_autoSync: true })
+  storeConfig.configAutoSync = true
   hide()
   toast.info(Browser.I18n.getMessage('desc_override_local'))
   setTimeout(() => {

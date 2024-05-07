@@ -322,7 +322,7 @@ function handleCancel() {
                 Browser.I18n.getMessage('section_label_reject')
               }}</span>
               <PopoverTips
-                className="bi bi-question-circle-fill icon-btn ms-1"
+                className="bi bi-question-circle-fill icon-btn ms-2"
                 :content="
                   Browser.I18n.getMessage('popover_external_rules_format')
                 "

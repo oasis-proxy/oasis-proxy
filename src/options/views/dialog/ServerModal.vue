@@ -95,10 +95,10 @@ async function handleSubmit() {
     <template #default>
       <form action="" id="serverModalForm">
         <div class="mb-3 row d-flex align-items-center">
-          <label class="col-3 col-form-label" for="serverName">{{
+          <label class="col-2 col-form-label" for="serverName">{{
             Browser.I18n.getMessage('form_label_name')
           }}</label>
-          <div class="col-9">
+          <div class="col-10">
             <input
               type="text"
               :class="serverNameClass"

@@ -49,7 +49,7 @@ import Browser from '@/Browser/main'
         </button>
       </div>
     </div>
-    <div class="tab-content" id="v-pills-tabContent">
+    <div class="tab-content">
       <HomeDefault></HomeDefault>
       <HomeAdvance></HomeAdvance>
       <HomeDebug></HomeDebug>

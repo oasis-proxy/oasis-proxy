@@ -37,6 +37,7 @@ function hide() {
   updateNameModalInstance.hide()
 }
 function show() {
+  name.value = route.params.name
   updateNameModalInstance.show()
 }
 
@@ -86,8 +87,6 @@ async function handleSubmit() {
     encodeNewName,
     result
   )
-  storeProxy[newKey] = result[oldKey]
-  storeProxy[newKey].name = encodeNewName
 
   if (activeProxyKey == oldKey) {
     storeProxy.status_proxyKey = newKey
@@ -108,17 +107,17 @@ async function handleSubmit() {
 }
 </script>
 <template>
-  <ModalBase id="updateNameModal">
+  <ModalBase id="updateNameModal" mode="form">
     <template #title>{{
       Browser.I18n.getMessage('btn_label_update_name_config')
     }}</template>
     <template #default>
       <form id="updateNameModalForm">
         <div class="mb-3 row d-flex align-items-center">
-          <label class="col-3 col-form-label" for="policyName">
+          <label class="col-2 col-form-label" for="policyName">
             {{ Browser.I18n.getMessage('form_label_new_name') }}
           </label>
-          <div class="col-9">
+          <div class="col-10">
             <input
               type="text"
               :class="serverNameClass"
@@ -140,7 +139,7 @@ async function handleSubmit() {
       </button>
       <button class="btn btn-sm btn-primary" @click="handleSubmit">
         <i class="bi bi-check-circle-fill me-2"></i>
-        <span>{{ Browser.I18n.getMessage('btn_label_add_config') }}</span>
+        <span>{{ Browser.I18n.getMessage('btn_label_modify_config') }}</span>
       </button>
     </template>
   </ModalBase>

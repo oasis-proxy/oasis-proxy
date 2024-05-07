@@ -10,6 +10,10 @@ Currently only supports Chrome browser, Firefox is in the plan.
 - Support proxy policies(& reject policy) in autoProxy format or internal-rule format.
 - Support switching of proxy policies in one-click, viewing request IP for debugging, quickly adding proxy rules.
 
+## ChangeLogs
+
+[ChangeLogs](https://github.com/oasis-proxy/oasis-proxy/blob/main/changelogs.md)
+
 ## How to build/test:
 
 ```

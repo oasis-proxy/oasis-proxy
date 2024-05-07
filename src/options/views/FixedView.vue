@@ -220,7 +220,7 @@ function handleCancel() {
             <span>{{ Browser.I18n.getMessage('tab_label_advance') }}</span>
           </button>
         </div>
-        <div class="tab-content" id="v-pills-tabContent">
+        <div class="tab-content mb-3" id="v-pills-tabContent">
           <div class="tab-pane fade show active" id="v-pills-default">
             <ServerInfoItem
               :groupLabel="

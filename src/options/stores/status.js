@@ -12,9 +12,19 @@ export const useStatusStore = defineStore('status', () => {
       config: { mode: 'reject', rules: 'HTTPS 127.0.0.1:65432' }
     }
   })
+  const isUnsaved = ref(false)
+  function setUnsaved() {
+    isUnsaved.value = true
+  }
+  function resetUnsaved() {
+    isUnsaved.value = false
+  }
 
   return {
     activeProxyKey,
-    proxyConfigs
+    proxyConfigs,
+    isUnsaved,
+    setUnsaved,
+    resetUnsaved
   }
 })

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, inject, getCurrentInstance, onMounted, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import draggable from 'vuedraggable'
 import LinkTextItem from '../components/LinkTextItem.vue'
 import ProxySelect from '@/components/ProxySelect.vue'
@@ -8,15 +8,16 @@ import InternalRuleGroup from '../components/InternalRuleGroup.vue'
 import PopoverTips from '@/components/PopoverTips.vue'
 
 import Browser from '@/Browser/main'
+import { useStatusStore } from '@/options/stores/status'
 import { saveForAuto } from '@/core/ProxyConfig'
 import { getNextLocalVersion } from '@/core/VersionControl'
 
-const { isUnsaved, resetUnsaved, setUnsaved } = inject('isUnsaved')
 const handleUpdate = inject('handleUpdate')
 const handleDelete = inject('handleDelete')
 const showUploadConflictModal = inject('showUploadConflictModal')
 
 const route = useRoute()
+const storeStatus = useStatusStore()
 
 const instance = getCurrentInstance()
 const confirmModal = instance?.appContext.config.globalProperties.$confirm
@@ -38,7 +39,13 @@ const rejectRule = ref({
   data: ''
 })
 const occurrences = ref([])
-
+const dragableDivider = ref([
+  {
+    mode: 'divider',
+    data: Browser.I18n.getMessage('input_label_divider'),
+    proxy: 'direct'
+  }
+])
 onMounted(() => {
   load('proxy_' + encodeURIComponent(route.params.name))
 })
@@ -112,9 +119,17 @@ function addInternalRule() {
   internalRules.value.push({ mode: 'domain', data: '', proxy: 'direct' })
 }
 
+function handleClone() {
+  return {
+    mode: 'divider',
+    data: Browser.I18n.getMessage('input_label_divider'),
+    proxy: 'direct'
+  }
+}
+
 function removeInternalRule(index) {
   internalRules.value.splice(index, 1)
-  setUnsaved()
+  storeStatus.setUnsaved()
 }
 function inputClassName(item) {
   if (item.data == '') return
@@ -145,7 +160,7 @@ async function handleSubmit() {
     config_version: version
   })
   toast.info(`${name} ${Browser.I18n.getMessage('desc_save_success')}`)
-  resetUnsaved()
+  storeStatus.resetUnsaved()
   const result = await Browser.Storage.getLocalAll()
   if (result.status_proxyKey == key) {
     Browser.Proxy.set(result, key, async () => {
@@ -162,7 +177,7 @@ function handleCancel() {
     Browser.I18n.getMessage('modal_desc_reset'),
     function () {
       load('proxy_' + route.params.name)
-      resetUnsaved()
+      storeStatus.resetUnsaved()
     }
   )
 }
@@ -236,6 +251,7 @@ function handleCancel() {
               <div id="internalRules">
                 <draggable
                   :list="internalRules"
+                  :group="'shared'"
                   @end="setUnsaved"
                   handle=".drag-handle"
                   item-key="index"
@@ -252,6 +268,28 @@ function handleCancel() {
                   </template>
                 </draggable>
               </div>
+              <draggable
+                :list="dragableDivider"
+                :group="{ name: 'shared', pull: 'clone', put: false }"
+                :clone="handleClone"
+                @end="setUnsaved"
+                handle=".drag-handle"
+                item-key="index"
+              >
+                <template #item="{ element }">
+                  <div class="hstack gap-4 mb-2 d-flex align-items-center">
+                    <span
+                      ><i class="bi bi-arrows-move icon-btn drag-handle"></i
+                    ></span>
+                    <hr class="w-100" />
+                    <span
+                      style="white-space: nowrap"
+                      :textContent="element.data"
+                    ></span>
+                    <hr class="w-100" />
+                  </div>
+                </template>
+              </draggable>
               <div>
                 <div class="hstack gap-4 mb-2">
                   <span class="ms-auto">{{
@@ -347,7 +385,7 @@ function handleCancel() {
         <button
           class="btn btn-outline-secondary btn-sm ms-auto"
           @click="handleCancel"
-          :disabled="!isUnsaved"
+          :disabled="!storeStatus.isUnsaved"
         >
           <i class="bi bi-reply-fill me-2"></i>
           <span>{{ Browser.I18n.getMessage('btn_label_reset') }}</span>
@@ -355,7 +393,7 @@ function handleCancel() {
         <button
           class="btn btn-primary btn-sm"
           @click="handleSubmit"
-          :disabled="!isUnsaved"
+          :disabled="!storeStatus.isUnsaved"
         >
           <i class="bi bi-floppy-fill me-2"></i>
           <span>{{ Browser.I18n.getMessage('btn_label_save') }}</span>

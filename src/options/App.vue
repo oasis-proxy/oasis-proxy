@@ -1,6 +1,6 @@
 <script setup>
 import Browser from '@/Browser/main'
-import { provide, ref, inject, getCurrentInstance, onMounted, watch } from 'vue'
+import { provide, ref, getCurrentInstance, onMounted, watch } from 'vue'
 import { useRoute, useRouter, RouterView } from 'vue-router'
 import AsideView from './views/AsideView.vue'
 import UpdateNameModal from './views/dialog/UpdateNameModal.vue'
@@ -14,8 +14,6 @@ import {
   getSyncDownloadStatus,
   overWriteToLocal
 } from '@/core/VersionControl'
-
-const { isUnsaved, resetUnsaved } = inject('isUnsaved')
 
 const storeConfig = useConfigStore()
 const storeStatus = useStatusStore()
@@ -121,13 +119,13 @@ function handleDelete() {
       showUploadConflictModal(() => {
         router.push('/home')
       })
+      storeStatus.resetUnsaved()
     }
   )
-  resetUnsaved()
 }
 
 function handleUpdate() {
-  if (isUnsaved.value) {
+  if (storeStatus.isUnsaved) {
     toast.warning(Browser.I18n.getMessage('desc_unsave_toast'))
     return
   }

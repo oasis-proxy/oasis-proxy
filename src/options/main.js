@@ -6,19 +6,10 @@ import App from './App.vue'
 import router from './router'
 import toastPlugin from '@/components/toast/Toast.js'
 import ConfirmModal from '@/components/modal/ConfirmModal.vue'
-
-const isUnsaved = ref(false)
-function resetUnsaved() {
-  isUnsaved.value = false
-}
-function setUnsaved() {
-  isUnsaved.value = true
-}
+import { useStatusStore } from '@/options/stores/status'
 
 const pinia = createPinia()
 const app = createApp(App)
-
-app.provide('isUnsaved', { isUnsaved, resetUnsaved, setUnsaved })
 
 app.use(pinia)
 app.use(router)
@@ -29,6 +20,8 @@ document.body.appendChild(document.createElement('div'))
 const confirm = confirmInstance.mount(document.body.lastChild)
 app.config.globalProperties.$confirm = confirm
 
+const storeStatus = useStatusStore()
+
 document.addEventListener('input', function (event) {
   if (event.target.form?.id.lastIndexOf('Modal') > -1) {
     return
@@ -36,7 +29,7 @@ document.addEventListener('input', function (event) {
   if (window.location.hash.startsWith('#/home')) {
     return
   }
-  setUnsaved()
+  storeStatus.setUnsaved()
 })
 
 app.mount('#app')

@@ -3,9 +3,16 @@ import { defineModel } from 'vue'
 import ProxySelect from '@/components/ProxySelect.vue'
 import Browser from '@/Browser/main'
 const rule = defineModel()
+
+function inputDividerLabel(event) {
+  rule.value.data = event.target.textContent
+}
 </script>
 <template>
-  <div class="hstack gap-4 mb-2 d-flex align-items-center">
+  <div
+    class="hstack gap-4 mb-2 d-flex align-items-center"
+    v-if="rule.mode != 'divider'"
+  >
     <span><i class="bi bi-arrows-move icon-btn drag-handle"></i></span>
     <div class="hstack gap-1">
       <div class="form-check form-switch d-flex align-items-center">
@@ -42,6 +49,20 @@ const rule = defineModel()
     <div>
       <ProxySelect v-model="rule.proxy" style="width: 150px"></ProxySelect>
     </div>
+    <div class="hstack gap-1">
+      <i class="bi bi-trash-fill icon-btn" @click="$emit('deleteItem')"></i>
+    </div>
+  </div>
+  <div class="hstack gap-4 mb-2 d-flex align-items-center" v-else>
+    <span><i class="bi bi-arrows-move icon-btn drag-handle"></i></span>
+    <hr class="w-100" />
+    <span
+      contenteditable="true"
+      style="white-space: nowrap"
+      @input="inputDividerLabel"
+      :textContent="rule.data"
+    ></span>
+    <hr class="w-100" />
     <div class="hstack gap-1">
       <i class="bi bi-trash-fill icon-btn" @click="$emit('deleteItem')"></i>
     </div>

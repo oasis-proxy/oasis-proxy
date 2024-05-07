@@ -84,7 +84,9 @@ const createAutoExternalRules = function (externalRule) {
 
 const createAutoInternalRules = function (internalRules) {
   const rules = internalRules.filter(function (element) {
-    return element.data !== '' && element.valid != false
+    return (
+      element.data !== '' && element.valid != false && element.mode != 'divider'
+    )
   })
   let block = ''
   block = rules

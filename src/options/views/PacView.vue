@@ -6,7 +6,8 @@ import LinkTextItem from '../components/LinkTextItem.vue'
 import Browser from '@/Browser/main'
 import { saveForPac } from '@/core/ProxyConfig'
 import { getNextLocalVersion } from '@/core/VersionControl'
-const { isUnsaved, resetUnsaved } = inject('isUnsaved')
+import { useStatusStore } from '@/options/stores/status'
+
 const handleUpdate = inject('handleUpdate')
 const handleDelete = inject('handleDelete')
 const showUploadConflictModal = inject('showUploadConflictModal')
@@ -18,6 +19,7 @@ const pacRule = ref({
 })
 
 const route = useRoute()
+const storeStatus = useStatusStore()
 const instance = getCurrentInstance()
 const confirmModal = instance?.appContext.config.globalProperties.$confirm
 const toast = instance?.appContext.config.globalProperties.$toast
@@ -71,7 +73,7 @@ async function handleSubmit() {
       toast.info(Browser.I18n.getMessage('desc_proxy_update'))
     })
   }
-  resetUnsaved()
+  storeStatus.resetUnsaved()
   showUploadConflictModal()
 }
 
@@ -81,7 +83,7 @@ function handleCancel() {
     Browser.I18n.getMessage('modal_desc_reset'),
     function () {
       load('proxy_' + route.params.name)
-      resetUnsaved()
+      storeStatus.resetUnsaved()
     }
   )
 }
@@ -117,7 +119,7 @@ function handleCancel() {
         <button
           class="btn btn-outline-secondary btn-sm ms-auto"
           @click="handleCancel"
-          :disabled="!isUnsaved"
+          :disabled="!storeStatus.isUnsaved"
         >
           <i class="bi bi-reply-fill me-2"></i>
           <span>{{ Browser.I18n.getMessage('btn_label_reset') }}</span>
@@ -125,7 +127,7 @@ function handleCancel() {
         <button
           class="btn btn-primary btn-sm"
           @click="handleSubmit"
-          :disabled="!isUnsaved"
+          :disabled="!storeStatus.isUnsaved"
         >
           <i class="bi bi-floppy-fill me-2"></i>
           <span>{{ Browser.I18n.getMessage('btn_label_save') }}</span>

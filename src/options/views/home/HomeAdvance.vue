@@ -21,8 +21,6 @@ const showSyncConflictModal = inject('showSyncConflictModal')
 const instance = getCurrentInstance()
 const toast = instance?.appContext.config.globalProperties.$toast
 
-// const reject = ref('HTTPS 127.0.0.1:65432')
-
 const isRejectValid = ref(true)
 
 const rejectInputClass = computed(() => {

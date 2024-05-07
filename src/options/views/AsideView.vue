@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, getCurrentInstance } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import PolicyModal from './dialog/PolicyModal.vue'
 import ServerModal from './dialog/ServerModal.vue'
@@ -14,6 +14,9 @@ const router = useRouter()
 const route = useRoute()
 const storeConfig = useConfigStore()
 const storeStatus = useStatusStore()
+
+const instance = getCurrentInstance()
+const toast = instance?.appContext.config.globalProperties.$toast
 
 const proxyNamesObj = computed(() => {
   const fixed = []
@@ -41,14 +44,26 @@ const proxyNamesObj = computed(() => {
 })
 
 function toPath(path) {
+  if (storeStatus.isUnsaved) {
+    toast.warning(Browser.I18n.getMessage('desc_unsave_toast'))
+    return
+  }
   router.push(path)
 }
 
 function addPolicy() {
+  if (storeStatus.isUnsaved) {
+    toast.warning(Browser.I18n.getMessage('desc_unsave_toast'))
+    return
+  }
   if (policyModal.value) policyModal.value.show()
 }
 
 function addServer() {
+  if (storeStatus.isUnsaved) {
+    toast.warning(Browser.I18n.getMessage('desc_unsave_toast'))
+    return
+  }
   if (serverModal.value) serverModal.value.show()
 }
 </script>

@@ -1,10 +1,12 @@
 import Browser from '../Browser/main'
 import { startUpdateUrl, endUpdateUrl, handleUpdateUrl } from './updateUrl'
 import { startAutoSync, endAutoSync, handleAutoSync } from './autoSync'
+import { getAuthList } from '@/core/ProxyConfig.js'
 let current = new Date().toLocaleString()
 console.log('background:', current)
 
 const requestMap = {}
+const authList = []
 
 /* section 1: request monitor */
 const getHostName = (url) => {
@@ -261,8 +263,8 @@ chrome.runtime.onMessage.addListener(
         sendResponse(resqData)
         break
       case 'resetProxyAuths':
-        resqData = handleResetProxyAuths(request)
-        sendResponse(resqData)
+        authList.splice(0, authList.length)
+        sendResponse({})
         break
       default:
         sendResponse({})
@@ -287,36 +289,27 @@ function handleGetRequestMap(request) {
 
 async function handleSetProxyAuths(request) {
   console.info('setProxyAuths', request)
-  chrome.webRequest.onAuthRequired.removeListener(setProxyAuths)
-  await chrome.storage.local.set(request.content)
-  chrome.webRequest.onAuthRequired.addListener(
-    setProxyAuths,
-    { urls: ['<all_urls>'] },
-    ['blocking']
-  )
+  const result = await chrome.storage.local.get(null)
+  const tmpAuthList = getAuthList(result, request.content.activekey)
+  authList.splice(0, authList.length)
+  authList.push(...tmpAuthList)
+  if (!chrome.webRequest.onAuthRequired.hasListeners()) {
+    chrome.webRequest.onAuthRequired.removeListener(setProxyAuths)
+  }
   return { code: 0 }
 }
 
-async function handleResetProxyAuths() {
-  chrome.webRequest.onAuthRequired.removeListener(setProxyAuths)
-  await chrome.storage.local.remove(['status_auths'])
-  return { code: 0 }
-}
-
-async function setProxyAuths(details) {
-  const result = await chrome.storage.local.get('status_auths')
+function setProxyAuths(details) {
   console.info('Authentication required for URL: ', details)
-  if (result.hasOwnProperty('status_auths')) {
-    for (const item of result.status_auths) {
-      if (
-        details.challenger.host == item.host &&
-        details.challenger.port == item.port
-      ) {
-        return {
-          authCredentials: {
-            username: item.username,
-            password: item.password
-          }
+  for (const item of authList) {
+    if (
+      details.challenger.host == item.host &&
+      details.challenger.port == item.port
+    ) {
+      return {
+        authCredentials: {
+          username: item.username,
+          password: item.password
         }
       }
     }

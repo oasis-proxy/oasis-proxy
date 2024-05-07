@@ -89,7 +89,7 @@ async function quickAddInternalRules() {
       result.status_proxyKey.substring(6)
     switch (await getSyncUploadStatus()) {
       case 'upload':
-        overWriteToCloud()
+        await overWriteToCloud()
         break
       case 'conflict':
         window.open(url)
@@ -97,7 +97,7 @@ async function quickAddInternalRules() {
       default:
     }
   }
-  // window.close()
+  window.close()
 }
 </script>
 

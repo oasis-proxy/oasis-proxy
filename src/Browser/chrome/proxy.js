@@ -6,13 +6,10 @@ const Proxy = {}
 
 Proxy.set = async function (proxyConfigs, key, afterSuccess = function () {}) {
   const config = Proxy._createConfig(proxyConfigs, key)
-  const authList = getAuthList(proxyConfigs, key)
-  if (authList.length > 0) {
-    const response = await Message.send({
-      instruction: 'setProxyAuths',
-      content: { status_auths: authList }
-    })
-  }
+  await Message.send({
+    instruction: 'setProxyAuths',
+    content: { activekey: key }
+  })
   Proxy._set(config, afterSuccess)
 }
 

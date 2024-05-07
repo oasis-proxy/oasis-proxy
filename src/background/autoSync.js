@@ -1,7 +1,7 @@
 import { overWriteToLocal, getSyncDownloadStatus } from '@/core/VersionControl'
 
 export const startAutoSync = async () => {
-  await chrome.alarms.create('autoSync', { periodInMinutes: 1 })
+  await chrome.alarms.create('autoSync', { periodInMinutes: 60 })
   console.info('create autoSync')
 }
 export const endAutoSync = async () => {

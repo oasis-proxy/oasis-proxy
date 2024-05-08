@@ -6,7 +6,6 @@ let current = new Date().toLocaleString()
 console.log('background:', current)
 
 const requestMap = {}
-const authList = []
 
 /* section 1: request monitor */
 const getHostName = (url) => {
@@ -245,7 +244,7 @@ chrome.runtime.onStartup.addListener(async () => {
   chrome.webRequest.onAuthRequired.addListener(
     setProxyAuths,
     { urls: ['<all_urls>'] },
-    ['blocking']
+    ['asyncBlocking']
   )
 })
 
@@ -263,7 +262,6 @@ chrome.runtime.onMessage.addListener(
         sendResponse(resqData)
         break
       case 'resetProxyAuths':
-        authList.splice(0, authList.length)
         sendResponse({})
         break
       default:
@@ -288,31 +286,36 @@ function handleGetRequestMap(request) {
 }
 
 async function handleSetProxyAuths(request) {
-  console.info('setProxyAuths', request)
-  const result = await chrome.storage.local.get(null)
-  const tmpAuthList = getAuthList(result, request.content.activekey)
-  authList.splice(0, authList.length)
-  authList.push(...tmpAuthList)
   if (!chrome.webRequest.onAuthRequired.hasListeners()) {
-    chrome.webRequest.onAuthRequired.removeListener(setProxyAuths)
+    chrome.webRequest.onAuthRequired.addListener(
+      setProxyAuths,
+      { urls: ['<all_urls>'] },
+      ['asyncBlocking']
+    )
   }
   return { code: 0 }
 }
 
-function setProxyAuths(details) {
+async function setProxyAuths(details, callback) {
   console.info('Authentication required for URL: ', details)
-  for (const item of authList) {
-    if (
-      details.challenger.host == item.host &&
-      details.challenger.port == item.port
-    ) {
-      return {
-        authCredentials: {
-          username: item.username,
-          password: item.password
-        }
+  if (details.isProxy) {
+    const result = await chrome.storage.local.get(null)
+    const authList = getAuthList(result, result.status_proxyKey)
+    for (const item of authList) {
+      if (
+        details.challenger.host == item.host &&
+        details.challenger.port == item.port
+      ) {
+        console.info('Authentication required for URL: ', item)
+        callback({
+          authCredentials: {
+            username: item.username,
+            password: item.password
+          }
+        })
       }
     }
+    callback()
   }
-  return null
+  callback()
 }

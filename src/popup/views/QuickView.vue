@@ -97,7 +97,9 @@ async function quickAddInternalRules() {
       default:
     }
   }
-  window.close()
+  if (import.meta.env.VITE_APP_DEBUG != 'debug') {
+    window.close()
+  }
 }
 </script>
 

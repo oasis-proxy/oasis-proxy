@@ -1,8 +1,15 @@
 <script setup>
+import { ref } from 'vue'
 import HomeDefault from './HomeDefault.vue'
 import HomeAdvance from './HomeAdvance.vue'
 import HomeDebug from './HomeDebug.vue'
 import Browser from '@/Browser/main'
+
+const className = ref('nav-link d-none')
+
+if (import.meta.env.VITE_APP_DEBUG == 'debug') {
+  className.value = 'nav-link'
+}
 </script>
 
 <template>
@@ -37,7 +44,7 @@ import Browser from '@/Browser/main'
           <span>{{ Browser.I18n.getMessage('tab_label_advance') }}</span>
         </button>
         <button
-          class="nav-link d-none"
+          :class="className"
           id="v-pills-debug-tab"
           data-bs-toggle="pill"
           data-bs-target="#v-pills-debug"

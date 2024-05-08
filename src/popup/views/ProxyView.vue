@@ -36,7 +36,10 @@ onMounted(async () => {
 function setProxy(proxyConfigs, key) {
   Browser.Proxy.set(proxyConfigs, key, async () => {
     await Browser.Storage.setLocal({ status_proxyKey: key })
-    window.close()
+
+    if (import.meta.env.VITE_APP_DEBUG != 'debug') {
+      window.close()
+    }
   })
   activeProxyKey.value = key
 }

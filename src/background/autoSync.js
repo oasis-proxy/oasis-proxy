@@ -1,8 +1,13 @@
 import { overWriteToLocal, getSyncDownloadStatus } from '@/core/VersionControl'
 
 export const startAutoSync = async () => {
-  await chrome.alarms.create('autoSync', { periodInMinutes: 60 })
-  console.info('create autoSync')
+  let per = 1
+  if (import.meta.env.VITE_APP_DEBUG != 'debug') {
+    per = 60
+  }
+
+  await chrome.alarms.create('autoSync', { periodInMinutes: per })
+  console.info('create autoSync', per)
 }
 export const endAutoSync = async () => {
   await chrome.alarms.clear('autoSync')
@@ -15,7 +20,7 @@ export const handleAutoSync = async function () {
       await overWriteToLocal()
       break
     case 'conflict':
-      // todo: ??
+      chrome.runtime.openOptionsPage()
       break
     default:
   }

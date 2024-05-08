@@ -11,7 +11,8 @@ Improvements:
 
 - Implemented state management using Pinia.
 - Reload proxy rules after external rules are updated automatically every day.
-  Bugs:
+
+BugFix:
 
 - Fixed the issue of updating data every 1440 minutes.
 - Fixed the issue of not being able to retrieve domain information in the PopUP page's quick add function.
@@ -25,7 +26,7 @@ Features:
 - Added the ability to temporarily disable internal rules in automatic rules.
 - Added English language support.
 
-Bugs:
+BugFix:
 
 - Partial interface style optimizations.
 - Automatically update proxy configuration when modifying Proxy Server, if the currently used proxy strategy references the modified Proxy Server.

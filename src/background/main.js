@@ -220,6 +220,42 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
       }
     })
     chrome.runtime.openOptionsPage()
+  } else if (reason === 'update') {
+    const result = await chrome.storage.local.get(null)
+    const add = {}
+    const removeList = []
+    if (result.config_version == null) {
+      add.config_version = 1
+    }
+    if (result.config_autoSync == null) {
+      add.config_autoSync = false
+    }
+    if (result.direct == null) {
+      add.direct = {
+        mode: 'direct',
+        name: 'direct',
+        config: { mode: 'direct' }
+      }
+    }
+    if (result.system == null) {
+      add.system = {
+        mode: 'system',
+        name: 'system',
+        config: { mode: 'system' }
+      }
+    }
+    if (result.reject == null || result.reject?.config.rules == '') {
+      add.reject = {
+        mode: 'reject',
+        name: 'reject',
+        config: { mode: 'reject', rules: 'HTTPS 127.0.0.1:65432' }
+      }
+    }
+    await chrome.storage.local.set(add)
+    if (result.config_reject != null) {
+      removeList.push('config_reject')
+    }
+    await chrome.storage.local.remove(removeList)
   }
   const result = await chrome.storage.local.get([
     'config_monitor',

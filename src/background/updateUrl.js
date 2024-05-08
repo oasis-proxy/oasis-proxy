@@ -2,7 +2,11 @@ import Browser from '../Browser/main'
 import { downloadUrl } from '@/core/ConfigData'
 
 export const startUpdateUrl = async () => {
-  await chrome.alarms.create('updateUrl', { periodInMinutes: 1440 })
+  let per = 3
+  if (import.meta.env.VITE_APP_DEBUG != 'debug') {
+    per = 1440
+  }
+  await chrome.alarms.create('updateUrl', { periodInMinutes: per })
   console.info('create updateUrl')
 }
 export const endUpdateUrl = async () => {

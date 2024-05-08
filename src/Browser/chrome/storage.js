@@ -44,4 +44,11 @@ Storage.clearSync = function () {
   return chrome.storage.sync.clear()
 }
 
+Storage.getSession = function (keyList) {
+  return chrome.storage.session.get(keyList)
+}
+
+Storage.setSession = function (obj) {
+  return chrome.storage.session.set(obj)
+}
 export default Storage

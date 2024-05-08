@@ -5,8 +5,6 @@ import { getAuthList } from '@/core/ProxyConfig.js'
 let current = new Date().toLocaleString()
 console.log('background:', current)
 
-const requestMap = {}
-
 /* section 1: request monitor */
 const getHostName = (url) => {
   if (url.startsWith('http://') || url.startsWith('https://')) {
@@ -23,8 +21,16 @@ const updateTabBadgeText = async () => {
     let tabs = await chrome.tabs.query({ active: true, currentWindow: true })
     if (tabs != null && tabs.length > 0) {
       const activeTabId = tabs[0].id
-      if (requestMap.hasOwnProperty(activeTabId)) {
-        const num = Object.keys(requestMap[activeTabId]).length
+      const requestSession = await chrome.storage.session.get(
+        activeTabId.toString()
+      )
+      console.info(
+        'updateTabBadgeText',
+        requestSession[activeTabId],
+        activeTabId
+      )
+      if (requestSession[activeTabId] != null) {
+        const num = Object.keys(requestSession[activeTabId]).length
         if (num > 0 && mode == 'auto') {
           chrome.action.setPopup({ popup: '/popup.html#/monitor' })
           chrome.action.setBadgeText({ text: num.toString() })
@@ -42,60 +48,66 @@ const updateTabBadgeText = async () => {
   }
 }
 
-const monitorResponse = (details) => {
-  console.debug('monitorResponse: ', details)
+const monitorResponse = async (details) => {
+  console.debug('monitorResponse: ', details, details.tabId.toString())
   if (!details.url.startsWith('http')) {
     return
   }
-  if (requestMap.hasOwnProperty(details.tabId)) {
-    requestMap[details.tabId][getHostName(details.url)] = {
+  const requestSession = await chrome.storage.session.get(
+    details.tabId.toString()
+  )
+  if (requestSession.hasOwnProperty(details.tabId)) {
+    requestSession[details.tabId][getHostName(details.url)] = {
       ip: details.ip,
       status: 'OK'
     }
   } else {
-    requestMap[details.tabId] = {}
-    requestMap[details.tabId][getHostName(details.url)] = {
+    requestSession[details.tabId] = {}
+    requestSession[details.tabId][getHostName(details.url)] = {
       ip: details.ip,
       status: 'OK'
     }
   }
+  await chrome.storage.session.set(requestSession)
   updateTabBadgeText()
 }
 
-const monitorError = (details) => {
-  console.debug('monitorError: ', details)
-  if (requestMap.hasOwnProperty(details.tabId)) {
-    requestMap[details.tabId][getHostName(details.url)] = {
+const monitorError = async (details) => {
+  console.debug('monitorError: ', details, details.tabId.toString())
+  const requestSession = await chrome.storage.session.get(
+    details.tabId.toString()
+  )
+  if (requestSession.hasOwnProperty(details.tabId)) {
+    requestSession[details.tabId][getHostName(details.url)] = {
       ip: details.error,
       status: 'Error'
     }
   } else {
-    requestMap[details.tabId] = {}
-    requestMap[details.tabId][getHostName(details.url)] = {
+    requestSession[details.tabId] = {}
+    requestSession[details.tabId][getHostName(details.url)] = {
       ip: details.error,
       status: 'Error'
     }
   }
+  await chrome.storage.session.set(requestSession)
   updateTabBadgeText()
 }
 
 /* tab section*/
 const tabRemoved = (tabId, removeInfo) => {
-  if (requestMap.hasOwnProperty(tabId)) {
-    setTimeout(() => {
-      delete requestMap[tabId]
-    }, 2000)
-  }
+  setTimeout(async () => {
+    await chrome.storage.session.remove(tabId)
+  }, 2000)
 }
 
 const tabActivated = (activeInfo) => {
   updateTabBadgeText()
 }
 
-const tabUpdated = (tabId, changeInfo, tab) => {
+const tabUpdated = async (tabId, changeInfo, tab) => {
   // clear all request message. If host main url is invalid, nothing will be monitored
   if (changeInfo.status === 'loading') {
-    requestMap[tabId] = {}
+    await chrome.storage.session.set({ [tabId]: {} })
   }
 }
 
@@ -289,10 +301,6 @@ chrome.runtime.onMessage.addListener(
   async function (request, sender, sendResponse) {
     let resqData
     switch (request.instruction) {
-      case 'getRequestMap':
-        resqData = handleGetRequestMap(request)
-        sendResponse(resqData)
-        break
       case 'setProxyAuths':
         resqData = handleSetProxyAuths(request)
         sendResponse(resqData)
@@ -305,21 +313,6 @@ chrome.runtime.onMessage.addListener(
     }
   }
 )
-
-function handleGetRequestMap(request) {
-  console.info(
-    'getRequestMap',
-    JSON.stringify(requestMap[request.content.tabId])
-  )
-  if (requestMap.hasOwnProperty(request.content.tabId)) {
-    return {
-      code: 0,
-      data: { list: JSON.stringify(requestMap[request.content.tabId]) }
-    }
-  } else {
-    return { code: 0, data: { list: '' } }
-  }
-}
 
 async function handleSetProxyAuths(request) {
   if (!chrome.webRequest.onAuthRequired.hasListeners()) {

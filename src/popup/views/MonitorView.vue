@@ -20,25 +20,21 @@ onMounted(async () => {
 async function getMessage() {
   const tabs = await Browser.Tabs.query({ active: true, currentWindow: true })
   const activeTabId = tabs[0].id
-  const response = await Browser.Message.send({
-    instruction: 'getRequestMap',
-    content: { tabId: activeTabId }
-  })
-  if (response.data.list == '') {
-    return
-  }
-  const tmpList = JSON.parse(response.data.list)
-  Object.keys(tmpList).forEach((key) => {
+
+  const requestSession = await Browser.Storage.getSession(
+    activeTabId.toString()
+  )
+  Object.keys(requestSession[activeTabId]).forEach((key) => {
     for (const item of tableList.value) {
       if (item.host == key) return
     }
     // todo delete loading
     tableList.value.push({
       host: key,
-      ip: tmpList[key].ip,
-      status: tmpList[key].status
+      ip: requestSession[activeTabId][key].ip,
+      status: requestSession[activeTabId][key].status
     })
-    if (tmpList[key].status == 'Error') {
+    if (requestSession[activeTabId][key].status == 'Error') {
       quickEnabled.value = true
     }
   })

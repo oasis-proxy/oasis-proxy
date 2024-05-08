@@ -28,17 +28,13 @@ onMounted(async () => {
   const tabs = await Browser.Tabs.query({ active: true, currentWindow: true })
 
   const activeTabId = tabs[0].id
-  let response = await Browser.Message.send({
-    instruction: 'getRequestMap',
-    content: { tabId: activeTabId }
-  })
 
-  if (response.data.list == '') {
-    return
-  }
-  const tmpList = JSON.parse(response.data.list)
-  Object.keys(tmpList).forEach((hostname) => {
-    if (tmpList[hostname].status == 'Error') {
+  const requestSession = await Browser.Storage.getSession(
+    activeTabId.toString()
+  )
+
+  Object.keys(requestSession[activeTabId]).forEach((hostname) => {
+    if (requestSession[activeTabId][hostname].status == 'Error') {
       const parts = hostname.split('.')
       if (parts.length >= 3) {
         parts[0] = '*'

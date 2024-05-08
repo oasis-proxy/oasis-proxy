@@ -57,6 +57,7 @@ function clearConfig() {
         config_updateUrl: true,
         config_monitor: false,
         config_autoSync: false,
+        config_version: 1,
         direct: { mode: 'direct', name: 'direct', config: { mode: 'direct' } },
         system: { mode: 'system', name: 'system', config: { mode: 'system' } },
         reject: {

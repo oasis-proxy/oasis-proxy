@@ -15,12 +15,12 @@ const confirmModal = instance?.appContext.config.globalProperties.$confirm
 const localFixed = ref([])
 const localPac = ref([])
 const localAuto = ref([])
-const localVersion = ref('')
+const localVersion = ref(0)
 
 const syncFixed = ref([])
 const syncPac = ref([])
 const syncAuto = ref([])
-const syncVersion = ref('')
+const syncVersion = ref(0)
 
 onMounted(() => {
   reload()
@@ -53,7 +53,7 @@ async function reloadSyncData() {
       }
     }
   })
-  syncVersion.value = result.config_version
+  if (result.config_version != null) syncVersion.value = result.config_version
 }
 async function reloadLocalData() {
   localAuto.value = []
@@ -77,7 +77,7 @@ async function reloadLocalData() {
       }
     }
   })
-  localVersion.value = result.config_version
+  if (result.config_version != null) localVersion.value = result.config_version
 }
 
 function handleSetLocal() {

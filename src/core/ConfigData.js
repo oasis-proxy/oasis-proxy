@@ -185,7 +185,11 @@ export const parseInternalRule = function (rule) {
       else formatRule = formatRule + '$/'
       return { rule: formatRule, mode: 'host', proxy: rule.proxy }
     case 'regex':
-      return { rule: rule, mode: 'host', proxy: rule.proxy }
+      if (rule.data.startsWith('/') && rule.data.endsWith('/')) {
+        return { rule: rule.data, mode: 'host', proxy: rule.proxy }
+      } else {
+        return { rule: '/' + rule.data + '/', mode: 'host', proxy: rule.proxy }
+      }
     case 'ip':
       let mask
       let subnet

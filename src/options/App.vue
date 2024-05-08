@@ -94,7 +94,6 @@ function handleDelete() {
     async () => {
       const result = await Browser.Storage.getLocalAll()
       const name = route.params.name
-      // 检查是否被其他代理引用
       const proxyNameList = proxyUsedBy(encodeURIComponent(name), result)
       if (proxyNameList.length > 0) {
         toast.warning(

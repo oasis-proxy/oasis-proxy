@@ -1,13 +1,5 @@
 <script setup>
-import {
-  ref,
-  getCurrentInstance,
-  onMounted,
-  computed,
-  inject,
-  nextTick,
-  watch
-} from 'vue'
+import { ref, getCurrentInstance, computed, inject, nextTick, watch } from 'vue'
 import PopoverTips from '@/components/PopoverTips.vue'
 import ConfigDisplay from '@/options/components/ConfigDisplay.vue'
 import { useConfigStore } from '@/options/stores/config'

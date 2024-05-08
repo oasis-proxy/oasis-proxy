@@ -1,6 +1,6 @@
 <script setup>
 import { ref, inject, getCurrentInstance, onMounted, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import LinkTextItem from '../components/LinkTextItem.vue'
 
 import Browser from '@/Browser/main'

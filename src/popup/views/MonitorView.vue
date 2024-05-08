@@ -32,7 +32,7 @@ async function getMessage() {
     for (const item of tableList.value) {
       if (item.host == key) return
     }
-    // todo 删除loading
+    // todo delete loading
     tableList.value.push({
       host: key,
       ip: tmpList[key].ip,

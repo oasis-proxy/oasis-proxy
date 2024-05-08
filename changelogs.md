@@ -2,39 +2,38 @@
 
 ## v0.9.2
 
-功能：
+Features:
 
-- 新增自动同步配置功能
-- 自动策略配置页，新增段分隔
+- Added automatic synchronization of configuration.
+- Added section separators in the automatic policy configuration page.
 
-优化：
+Improvements:
 
-- 使用pinia进行状态管理
-- 在每日自动更新外部规则后，重新加载代理规则
+- Implemented state management using Pinia.
+- Reload proxy rules after external rules are updated automatically every day.
+  Bugs:
 
-Bugs:
-
-- 修复每日更新数据1440分钟/次
-- 修复PopUP页面快速添加功能获取不到域名信息问题
-- 修复手工覆盖远程/本地配置后的页面展示问题
+- Fixed the issue of updating data every 1440 minutes.
+- Fixed the issue of not being able to retrieve domain information in the PopUP page's quick add function.
+- Fixed page display issues after manually overriding remote/local configurations.
 
 ## v0.9.1
 
-功能：
+Features:
 
-- 支持隐身模式使用
-- 在自动规则中，新增临时关闭内部规则功能
-- 新增英文语言支持
+- Support for incognito mode usage.
+- Added the ability to temporarily disable internal rules in automatic rules.
+- Added English language support.
 
 Bugs:
 
-- 界面部分样式优化
-- 修改Proxy Server时，如果当前使用的Proxy策略引用了被修改Proxy Server，自动生效更新的代理配置
+- Partial interface style optimizations.
+- Automatically update proxy configuration when modifying Proxy Server, if the currently used proxy strategy references the modified Proxy Server.
 
 ## v0.9.0
 
-功能：
+Features:
 
-- 支持HTTP/HTTPS/SOCK的Proxy Server代理
-- 支持PAC脚本代理
-- 支持引用Proxy Server的自动策略代理
+- Support for Proxy Server proxies for HTTP/HTTPS/SOCKS protocols.
+- Support for PAC script proxies.
+- Support for automatic policy proxies referencing Proxy Server.

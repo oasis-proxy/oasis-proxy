@@ -14,6 +14,10 @@ Runtime.getManifest = function () {
   return chrome.runtime.getManifest()
 }
 
+Runtime.getURL = function (options) {
+  return chrome.runtime.getURL(options)
+}
+
 const Browser = { Storage, Proxy, Tabs, WebRequest, Message, Runtime, I18n }
 
 Browser.saveFile = function (obj, filename) {

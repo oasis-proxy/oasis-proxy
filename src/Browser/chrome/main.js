@@ -22,7 +22,7 @@ const Browser = { Storage, Proxy, Tabs, WebRequest, Message, Runtime, I18n }
 
 Browser.saveFile = function (obj, filename) {
   const fileContent = JSON.stringify(obj)
-  const blob = new Blob([fileContent], { type: 'text/plain' })
+  const blob = new Blob([fileContent], { type: 'application/octet-stream' })
   chrome.downloads.download({
     url: URL.createObjectURL(blob),
     filename: filename,

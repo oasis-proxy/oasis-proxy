@@ -28,7 +28,7 @@ watch(
 
 async function exportConfig() {
   const result = await Browser.Storage.getLocalAll()
-  Browser.saveFile(result, 'backup.json')
+  Browser.saveFile(result, 'backup.oas')
 }
 
 function handleImportConfig(event) {
@@ -36,8 +36,12 @@ function handleImportConfig(event) {
   const reader = new FileReader()
   reader.onload = async function (event) {
     const tmpObj = JSON.parse(event.target.result)
+    tmpObj.config_autoSync = false
+    const result = await Browser.Storage.getLocalAll()
+    console.log(Object.keys(result))
+    await Browser.Storage.removeLocal(Object.keys(result))
     await Browser.Storage.setLocal(tmpObj)
-    router.replace('/home')
+    location.reload()
   }
   reader.readAsText(file)
 }

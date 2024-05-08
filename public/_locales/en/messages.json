@@ -405,6 +405,9 @@
   "desc_add_rules": {
     "message": "Add the following rules to the active proxy policy"
   },
+  "desc_active_policy": {
+    "message": "Active Policy:"
+  },
   "desc_copy": {
     "message": "Copied"
   },
@@ -449,5 +452,8 @@
   },
   "popover_update_url": {
     "message": "Daily updated the \"External Rule Address\" and \"Reject Rule Address\""
+  },
+  "desc_unsave_toast": {
+    "message": "The current page contains unsaved information, save or refresh the page to cancel"
   }
 }

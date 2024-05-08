@@ -21,7 +21,8 @@ onMounted(async () => {
   const result = await Browser.Storage.getLocal(['status_proxyKey'])
   if (result.status_proxyKey != null && result.status_proxyKey != '') {
     activeProxyLabel.value =
-      '当前策略：' + decodeURIComponent(result.status_proxyKey.substring(6))
+      Browser.I18n.getMessage('desc_active_policy') +
+      decodeURIComponent(result.status_proxyKey.substring(6))
   }
 
   const tabs = await Browser.Tabs.query({ active: true, currentWindow: true })
@@ -84,7 +85,7 @@ async function quickAddInternalRules() {
   Browser.Proxy.set(result, result.status_proxyKey)
   if (result.config_autoSync) {
     const url =
-      chrome.runtime.getURL('options.html') +
+      Browser.Runtime.getURL('options.html') +
       '#/auto/' +
       result.status_proxyKey.substring(6)
     switch (await getSyncUploadStatus()) {

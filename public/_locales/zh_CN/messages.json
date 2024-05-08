@@ -405,6 +405,9 @@
   "desc_add_rules": {
     "message": "在当前策略中快速添加以下规则："
   },
+  "desc_active_policy": {
+    "message": "当前策略："
+  },
   "desc_copy": {
     "message": "已复制"
   },

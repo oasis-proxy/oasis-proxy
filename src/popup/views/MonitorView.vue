@@ -28,7 +28,6 @@ async function getMessage() {
     for (const item of tableList.value) {
       if (item.host == key) return
     }
-    // todo delete loading
     tableList.value.push({
       host: key,
       ip: requestSession[activeTabId][key].ip,

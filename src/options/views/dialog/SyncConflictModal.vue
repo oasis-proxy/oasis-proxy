@@ -48,6 +48,9 @@ async function handleSetSync() {
   storeConfig.configAutoSync = true
   hide()
   toast.info(Browser.I18n.getMessage('desc_override_sync'))
+  setTimeout(() => {
+    location.reload()
+  }, 2000)
 }
 async function handleSetLocal() {
   overWriteToLocal()

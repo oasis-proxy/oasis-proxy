@@ -1,5 +1,9 @@
 import { proxyUses, CONST_DEFAULT_PORT } from './ProxyConfig.js'
-import { parseAutoProxyFile, parseInternalRule } from './ConfigData.js'
+import {
+  parseAutoProxyFile,
+  parseInternalRule,
+  parseBypassRule
+} from './ConfigData.js'
 
 export const pacScriptCreate = function (proxyConfigs, key) {
   const nameList = proxyUses(proxyConfigs[key])
@@ -25,16 +29,16 @@ export const pacScriptCreate = function (proxyConfigs, key) {
   }
   return `var FindProxyForURL = function(init, profiles) {
     return function(url, host) {
-        "use strict";
-        var result = init, scheme = url.substr(0, url.indexOf(":"));
-        do {
-            if(!profiles.hasOwnProperty(result)) {
-              break;
-            } 
-            result = profiles[result];
-            if (typeof result === "function") result = result(url, host, scheme);
-        } while (typeof result !== "string" || result.charCodeAt(0) === 43);
-        return result;
+      "use strict";
+      var result = init, scheme = url.substr(0, url.indexOf(":"));
+      do {
+        if(!profiles.hasOwnProperty(result)) {
+          break;
+        } 
+        result = profiles[result];
+        if (typeof result === "function") result = result(url, host, scheme);
+      } while (typeof result !== "string" || result.charCodeAt(0) === 43);
+      return result;
     };
   }("+${activeName}", {
     ${codeBlock}
@@ -44,7 +48,7 @@ export const pacScriptCreate = function (proxyConfigs, key) {
 const createRejectCodeBlock = function (proxyConfig) {
   const code = `"+reject": function(url, host, scheme) {
     return "${proxyConfig.config.rules}"
-  },`
+  }, `
   return code
 }
 
@@ -55,15 +59,13 @@ const createAutoCodeBlock = function (proxyConfig) {
   const internalStr = createAutoInternalRules(config.rules.internal)
   const tmpl = `"+${proxyConfig.name}": function(url, host, scheme) {
     "use strict";
-    ${internalStr}
-
-    ${rejectStr}
-
-    ${externalStr}
-
+    var urlObj = new URL(url);
+    var port = urlObj.port;
+${internalStr}
+${rejectStr}
+${externalStr}
     return "${config.rules.defaultProxy}"
-  },
-`
+  }, `
   return tmpl
 }
 
@@ -75,9 +77,10 @@ const createAutoExternalRules = function (externalRule) {
     block +
     apFileRules
       .map((item) => {
-        return `    if (${item.rule}.test(${item.mode})) return "${item.proxy}";`
+        return generateConditionCode(item)
       })
-      .join('\n')
+      .join('\n') +
+    '\n'
 
   return block
 }
@@ -89,16 +92,14 @@ const createAutoInternalRules = function (internalRules) {
     )
   })
   let block = ''
-  block = rules
-    .map((rule) => {
-      const formattedRule = parseInternalRule(rule)
-      if (formattedRule.mode != 'ip') {
-        return `    if (${formattedRule.rule}.test(${formattedRule.mode})) return "${formattedRule.proxy}";`
-      } else {
-        return `    if (host[host.length - 1] >= 0 && isInNet(host, "${formattedRule.rule.subnet}", "${formattedRule.rule.mask}")) return "${formattedRule.proxy}";`
-      }
-    })
-    .join('\n')
+  block =
+    rules
+      .map((rule) => {
+        const formattedRule = parseInternalRule(rule)
+        console.info(formattedRule, generateConditionCode(formattedRule))
+        return generateConditionCode(formattedRule)
+      })
+      .join('\n') + '\n'
   return block
 }
 
@@ -112,18 +113,34 @@ const createFixedServerCodeBlock = function (proxyConfig) {
     let scheme = ''
     let port = ''
     let host = ''
+    // todo bypasslist
+    proxyStr =
+      config.rules.bypassList
+        .map((item) => {
+          if (item == '<local>') {
+            return parseBypassRule(item)
+              .map((e) => {
+                return generateConditionCode(e)
+              })
+              .join('\n')
+          }
+          const code = generateConditionCode(parseBypassRule(item))
+          return code
+        })
+        .join('\n') + '\n'
+
     if (config.rules.hasOwnProperty('singleProxy')) {
       if (config.rules.singleProxy.scheme == 'direct') {
-        proxyStr = `return "direct";`
+        proxyStr = proxyStr + `  return "direct";`
       } else {
         scheme = config.rules.singleProxy.scheme
         host = config.rules.singleProxy.host
         port = config.rules.singleProxy.port
         if (port == null) port = CONST_DEFAULT_PORT[scheme]
-        proxyStr = `return "${scheme} ${host}:${port}";`
+        proxyStr = proxyStr + `  return "${scheme} ${host}:${port}";`
       }
     } else {
-      proxyStr = 'switch (scheme) {\n'
+      proxyStr = proxyStr + '  switch (scheme) {\n'
       if (
         config.rules.proxyForHttp?.host != null &&
         config.rules.proxyForHttp?.host != ''
@@ -136,9 +153,9 @@ const createFixedServerCodeBlock = function (proxyConfig) {
         proxyStr =
           proxyStr +
           `
-        case "http":
-          return "${scheme} ${host}:${port}";
-        `
+          case "http":
+            return "${scheme} ${host}:${port}";
+          `
       }
       if (
         config.rules.proxyForHttps?.host != null &&
@@ -152,9 +169,9 @@ const createFixedServerCodeBlock = function (proxyConfig) {
         proxyStr =
           proxyStr +
           `
-        case "https":
-          return "${scheme} ${host}:${port}";
-        `
+          case "https":
+            return "${scheme} ${host}:${port}";
+          `
       }
       if (
         config.rules.proxyForFtp?.host != null &&
@@ -168,9 +185,9 @@ const createFixedServerCodeBlock = function (proxyConfig) {
         proxyStr =
           proxyStr +
           `
-        case "ftp":
-          return "${scheme} ${host}:${port}";
-        `
+          case "ftp":
+            return "${scheme} ${host}:${port}";
+          `
       }
       if (
         config.rules.fallbackProxy?.host != null &&
@@ -183,25 +200,55 @@ const createFixedServerCodeBlock = function (proxyConfig) {
         proxyStr =
           proxyStr +
           `
-        default:
-          return "${scheme} ${host}:${port}";
-      }`
+          default:
+            return "${scheme} ${host}:${port}";
+        }`
       } else {
         proxyStr =
           proxyStr +
           `
-        default:
-          return "direct";
-      }`
+          default:
+            return "direct";
+        }`
       }
     }
   } else {
-    proxyStr = `return "direct";`
+    proxyStr = `  return "direct";`
   }
 
   let tmpl = `"+${name}": function(url, host, scheme) {
     "use strict";
+    var urlObj = new URL(url);
+    var port = urlObj.port;
     ${proxyStr}
-  },`
+  }, `
   return tmpl
+}
+
+const generateConditionCode = function (item) {
+  let code = ''
+  switch (item.mode) {
+    case 'invalid':
+      return ''
+    case 'ip':
+      if (item.rule.ipv4) {
+        code = 'host[host.length - 1] >= 0 && '
+      } else {
+        code = 'host.indexOf(":") >= 0 && '
+      }
+      if (item.rule.port != '') {
+        code = code + `port == "${item.rule.port}" && `
+      }
+      return `    if (${code}isInNet(host, "${item.rule.subnet}", "${item.rule.mask}")) return "${item.proxy}";`
+    case 'url':
+      return `    if ((${item.rule.regex}).test(url)) return "${item.proxy}";`
+    case 'host':
+      console.info('generateConditionCode', item)
+      if (item.rule.port != '') {
+        code = `port == "${item.rule.port}" && `
+      }
+      return `    if (${code}(${item.rule.regex}).test(host)) return "${item.proxy}";`
+    case 'plain':
+      return `    if (isPlainHostName(host)) return "${item.proxy}"`
+  }
 }

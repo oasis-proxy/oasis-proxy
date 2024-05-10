@@ -1,5 +1,4 @@
 import Message from './Message.js'
-import { getAuthList } from '../../core/ProxyConfig.js'
 import { pacScriptCreate } from '../../core/PacScript.js'
 
 const Proxy = {}

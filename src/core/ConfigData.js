@@ -1,3 +1,5 @@
+import * as ipaddr from 'ipaddr.js'
+
 export const downloadUrl = async function (url, format = '') {
   try {
     const response = await fetch(url)
@@ -8,10 +10,11 @@ export const downloadUrl = async function (url, format = '') {
     const curr = new Date().toLocaleString()
     if (format == 'base64') {
       rawdata = rawdata.replace(/\r?\n/g, '')
-      const regstr =
-        /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/
+      const reg = new RegExp(
+        '^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$'
+      )
       let base64data = ''
-      if (regstr.test(rawdata)) {
+      if (reg.test(rawdata)) {
         base64data = atob(rawdata)
       }
       return { data: base64data, updated: curr }
@@ -117,128 +120,196 @@ export const parseAutoProxyFile = function (data, proxy) {
   return [...directRules, ...proxyRules]
 }
 
-export const parseAutoProxyRule = function (rule, proxy) {
-  console.log(rule)
-  if (rule.startsWith('||')) {
+export const parseAutoProxyRule = function (data, proxy) {
+  if (data.startsWith('||')) {
+    return parseAutoProxyDomain({ data, proxy })
+  } else if (data.startsWith('|')) {
+    return parseUrl({ data, proxy })
+  } else if (data.startsWith('/')) {
+    // for regex
+    return { rule: { regex: data }, mode: 'url', proxy: proxy }
+  } else {
+    return parseHttpUrl({ data, proxy })
+  }
+}
+
+export const parseInternalRule = function (rule) {
+  switch (rule.mode) {
+    case 'domain':
+      return parseWildcardDomain(rule)
+    case 'regex':
+      return {
+        rule: { regex: '/' + rule.data + '/', port: '' },
+        mode: 'host',
+        proxy: rule.proxy
+      }
+    case 'ip':
+      return parseIp(rule)
+    default:
+      return {
+        rule: '',
+        mode: 'invalid',
+        proxy: 'direct'
+      }
+  }
+}
+
+export const parseBypassRule = function (item) {
+  // <local>
+  if (item == '<local>') {
+    return parseLocal({ proxy: 'direct' })
+  }
+  // IP_LITERAL/PREFIX_LENGTH_IN_BITS
+  if (ipaddr.isValid(item) || ipaddr.isValidCIDR(item)) {
+    return parseIp({ data: item, proxy: 'direct' })
+  }
+  // IP_LITERAL[:PORT] HOST_PATTERN[:PORT]
+  const url = new URL('https://' + item)
+  if (
+    url.hostname.startsWith('[') &&
+    url.hostname.endsWith(']') &&
+    ipaddr.IPv6.isValid(url.hostname.substring(1, url.hostname.length - 1))
+  ) {
+    return parseIp({
+      data: url.hostname.substring(1, url.hostname.length - 1),
+      port: url.port,
+      proxy: 'direct'
+    })
+  } else {
+    return parseBypassHostname({ data: item, proxy: 'direct', port: url.port })
+  }
+}
+
+const parseIp = function ({ data, proxy, port = '' }) {
+  let subnet = ''
+  let mask = ''
+  let ipv4 = true
+  if (ipaddr.IPv6.isValidCIDR(data)) {
+    subnet = ipaddr.IPv6.networkAddressFromCIDR(data)
+    const prefixlength = ipaddr.IPv6.parseCIDR(data)[1]
+    mask =
+      ipaddr.IPv6.subnetMaskFromPrefixLength(prefixlength).toNormalizedString()
+    ipv4 = false
+  } else if (ipaddr.IPv6.isValid(data)) {
+    subnet = data
+    mask = ipaddr.IPv6.subnetMaskFromPrefixLength(128).toNormalizedString()
+    ipv4 = false
+  } else if (ipaddr.IPv4.isValidCIDR(data)) {
+    subnet = ipaddr.IPv4.networkAddressFromCIDR(data)
+    const prefixlength = ipaddr.IPv4.parseCIDR(data)[1]
+    mask =
+      ipaddr.IPv4.subnetMaskFromPrefixLength(prefixlength).toNormalizedString()
+  } else if (ipaddr.IPv4.isValid(data)) {
+    subnet = data
+    mask = ipaddr.IPv4.subnetMaskFromPrefixLength(32).toNormalizedString()
+  } else {
     return {
-      rule:
-        rule
+      rule: '',
+      mode: 'invalid',
+      proxy: 'direct'
+    }
+  }
+  const res = {
+    rule: { subnet: subnet, mask: mask, ipv4: ipv4, port: port },
+    mode: 'ip',
+    proxy: proxy
+  }
+  return res
+}
+
+const parseLocal = function ({ proxy }) {
+  const res = [{ rule: '', mode: 'plain', proxy: proxy }]
+  res.push(parseIp({ data: '127.0.0.1', proxy: proxy }))
+  res.push(parseIp({ data: '::1', proxy: proxy }))
+  return res
+}
+
+const parseBypassHostname = function ({ data, proxy, port = '' }) {
+  const rule = {}
+  let formatRule = ''
+  if (data.startsWith('.') || data.startsWith('*')) formatRule = '/'
+  else formatRule = '/^'
+  formatRule =
+    formatRule +
+    data.replace(/^\./, '*.').replace(/\./g, '\\.').replace(/\*/g, '.*')
+  rule.regex = formatRule + '/'
+  rule.port = port
+  console.info('parseBypassHostname', {
+    rule: rule,
+    mode: 'host',
+    proxy: proxy
+  })
+  return { rule: rule, mode: 'host', proxy: proxy }
+}
+
+const parseWildcardDomain = function ({ data, proxy, port = '' }) {
+  let formatRule = ''
+  if (data.startsWith('.') || data.startsWith('*')) formatRule = '/'
+  else formatRule = '/^'
+  formatRule =
+    formatRule +
+    data
+      .replace(/^\./, '*.')
+      .replace(/\./g, '\\.')
+      .replace(/\?/g, '.')
+      .replace(/^\*\\\./, '(?:^|\\.)') // '(?:^|\.)'
+      .replace(/^\*\*\\./, '\\.') // '*\.'
+      .replace(/\*/g, '.*')
+  if (data.endsWith('*')) formatRule = formatRule + '/'
+  else formatRule = formatRule + '$/'
+  return { rule: { regex: formatRule, port }, mode: 'host', proxy: proxy }
+}
+
+const parseAutoProxyDomain = function ({ data, proxy, port = '' }) {
+  return {
+    rule: {
+      port: port,
+      regex:
+        data
           .replace(/\*$/, '')
           .replace(/\//g, '\\/')
           .replace(/\./g, '\\.')
           .replace(/^\|\|/, '/(?:^|\\.)')
-          .replace(/\*/g, '.*') + '$/',
-      mode: 'host',
-      proxy: proxy
-    }
-  } else if (rule.startsWith('|')) {
-    return {
-      rule:
+          .replace(/\*/g, '.*') + '$/'
+    },
+    mode: 'host',
+    proxy: proxy
+  }
+}
+
+const parseUrl = function ({ data, proxy }) {
+  return {
+    rule: {
+      regex:
         '/^' +
-        rule
+        data
           .substring(1)
           .replace(/\*$/, '')
           .replace(/\//g, '\\/')
           .replace(/\./g, '\\.')
           .replace(/\?/g, '.')
           .replace(/\*/g, '.*') +
-        '/',
-      mode: 'url',
-      proxy: proxy
-    }
-  } else if (rule.startsWith('/')) {
-    return { rule: rule, mode: 'url' }
-  } else {
-    return {
-      rule:
+        '/'
+    },
+    mode: 'url',
+    proxy: proxy
+  }
+}
+
+const parseHttpUrl = function ({ data, proxy }) {
+  return {
+    rule: {
+      regex:
         '/^http:\\/\\/.*' +
-        rule
+        data
           .replace(/\*$/, '')
           .replace(/\//g, '\\/')
           .replace(/\./g, '\\.')
           .replace(/\?/g, '.')
           .replace(/\*/g, '.*') +
-        '/',
-      mode: 'url',
-      proxy: proxy
-    }
+        '/'
+    },
+    mode: 'url',
+    proxy: proxy
   }
-}
-
-export const parseInternalRule = function (rule) {
-  let formatRule = ''
-  switch (rule.mode) {
-    case 'domain':
-      if (rule.data.startsWith('.') || rule.data.startsWith('*'))
-        formatRule = '/'
-      else formatRule = '/^'
-      formatRule =
-        formatRule +
-        rule.data
-          .replace(/^\./, '*.')
-          .replace(/\./g, '\\.')
-          .replace(/\?/g, '.')
-          .replace(/^\*\\\./, '(?:^|\\.)') // '(?:^|\.)'
-          .replace(/^\*\*\\./, '\\.') // '*\.'
-          .replace(/\*/g, '.*')
-      if (rule.data.endsWith('*')) formatRule = formatRule + '/'
-      else formatRule = formatRule + '$/'
-      return { rule: formatRule, mode: 'host', proxy: rule.proxy }
-    case 'regex':
-      if (rule.data.startsWith('/') && rule.data.endsWith('/')) {
-        return { rule: rule.data, mode: 'host', proxy: rule.proxy }
-      } else {
-        return { rule: '/' + rule.data + '/', mode: 'host', proxy: rule.proxy }
-      }
-    case 'ip':
-      let mask
-      let subnet
-      if (rule.data.lastIndexOf('/') > 0) {
-        subnet = rule.data.split('/')[0]
-        if (subnet.lastIndexOf(':') >= 0) {
-          mask = ipv6CidrToSubnetMask(rule.data.split('/')[1])
-        } else {
-          mask = ipv4CidrToSubnetMask(rule.data.split('/')[1])
-        }
-      } else {
-        subnet = rule.data
-        rule.data.lastIndexOf(':') > 0
-          ? (mask = 'FFFF:FFFF:FFFF:FFFF::')
-          : (mask = '255.255.255.255')
-      }
-      return {
-        rule: { subnet: subnet, mask: mask },
-        mode: 'ip',
-        proxy: rule.proxy
-      }
-    default:
-      return ''
-  }
-}
-
-const ipv4CidrRegex =
-  /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}\/(?:[1-9]|[1-2]\d|3[0-2])$/
-const ipv6CidrRegex =
-  /^(?:[A-f0-9]{0,4}:){2,7}[A-f0-9]{0,4}\/(?:[1-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])$/i
-
-function ipv4CidrToSubnetMask(cidr) {
-  let binaryPrefix = '1'.repeat(cidr) + '0'.repeat(32 - cidr)
-  let binaryGroups = binaryPrefix.match(/.{8}/g)
-  let decimalGroups = binaryGroups.map((group) => parseInt(group, 2))
-  let subnetMask = decimalGroups.join('.')
-  return subnetMask
-}
-
-function ipv6CidrToSubnetMask(cidr) {
-  let binaryPrefix = '1'.repeat(cidr)
-  while (binaryPrefix.length < 128) {
-    binaryPrefix += '0'
-  }
-  let binaryGroups = binaryPrefix.match(/.{1,16}/g)
-  let hexGroups = binaryGroups.map((group) => parseInt(group, 2).toString(16))
-  let subnetMask = hexGroups
-    .join(':')
-    .replace(/(:|^)0(:0)*:/, '$1')
-    .replace(/(0:){2,}/, '0::')
-  return subnetMask
 }

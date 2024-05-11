@@ -1,5 +1,17 @@
 # ChangeLogs
 
+## v1.0.0
+
+优化：
+
+- 完善代理节点BypassList解析
+- 引入ipaddr，替换原IP解析规则
+- 优化监控数据缓存位置，解决因Chrome杀workservice进程引发的链接展示数据丢失问题
+
+BugFix:
+
+- 修复PopUp页面图标问题
+
 ## v0.9.2
 
 功能：

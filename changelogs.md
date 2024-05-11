@@ -1,5 +1,17 @@
 # ChangeLogs
 
+## v1.0.0
+
+Optimization:
+
+- Support the parsing BypassList of proxy node.
+- Introduce ipaddr.js to replace the original IP parsing rules.
+- Optimize the caching location of monitoring data to solve the problem of request display data loss caused by Chrome killing the workservice process.
+
+Bug Fix:
+
+- Fix the icon issue on the PopUp page.
+
 ## v0.9.2
 
 Features:
@@ -7,7 +19,7 @@ Features:
 - Added automatic synchronization of configuration.
 - Added section separators in the automatic policy configuration page.
 
-Improvements:
+Optimization:
 
 - Implemented state management using Pinia.
 - Reload proxy rules after external rules are updated automatically every day.

@@ -104,7 +104,7 @@ function setProxy(proxyConfigs, key) {
       <a
         :class="activeProxyKey == 'proxy_' + item ? activeClassName : className"
       >
-        <i class="bi bi-pc-display mx-2"></i>
+        <i class="bi bi-file-earmark-ppt-fill mx-2"></i>
         <span class="d-inline-block text-truncate">{{
           decodeURIComponent(item)
         }}</span>
@@ -119,7 +119,7 @@ function setProxy(proxyConfigs, key) {
       <a
         :class="activeProxyKey == 'proxy_' + item ? activeClassName : className"
       >
-        <i class="bi bi-pc-display mx-2"></i>
+        <i class="bi bi-signpost-split-fill mx-2"></i>
         <span class="d-inline-block text-truncate">{{
           decodeURIComponent(item)
         }}</span>

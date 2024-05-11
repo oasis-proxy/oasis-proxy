@@ -12,6 +12,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "ipaddr.js": "^2.2.0",
     "jslint": "^0.12.1",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",

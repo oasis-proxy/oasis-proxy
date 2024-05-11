@@ -59,7 +59,6 @@ export const getSyncDownloadStatus = async function () {
   const localVersion = local.config_version == null ? 1 : local.config_version
   const sync = await Browser.Storage.getSync(['config_version'])
   const syncVersion = sync.config_version == null ? 1 : sync.config_version
-  console.log(localVersion, syncVersion)
   if (syncVersion == localVersion) {
     return 'none'
   } else if (

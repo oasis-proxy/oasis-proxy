@@ -139,7 +139,7 @@ export const parseInternalRule = function (rule) {
       return parseWildcardDomain(rule)
     case 'regex':
       return {
-        rule: { regex: '/' + rule.data + '/', port: '' },
+        rule: { regex: '/' + rule.data.replace(/\//g, '\\/') + '/', port: '' },
         mode: 'host',
         proxy: rule.proxy
       }
@@ -163,7 +163,7 @@ export const parseBypassRule = function (item) {
   if (ipaddr.isValid(item) || ipaddr.isValidCIDR(item)) {
     return parseIp({ data: item, proxy: 'direct' })
   }
-  // IP_LITERAL[:PORT] HOST_PATTERN[:PORT]
+  // IP_LITERAL:PORT HOST_PATTERN[:PORT]
   const url = new URL('https://' + item)
   if (
     url.hostname.startsWith('[') &&
@@ -172,11 +172,16 @@ export const parseBypassRule = function (item) {
   ) {
     return parseIp({
       data: url.hostname.substring(1, url.hostname.length - 1),
-      port: url.port,
+      port: item.substring(item.lastIndexOf(']') + 2),
       proxy: 'direct'
     })
   } else {
-    return parseBypassHostname({ data: item, proxy: 'direct', port: url.port })
+    // v4:port hostname[:port]
+    return parseBypassHostname({
+      data: item.split(':')[0],
+      proxy: 'direct',
+      port: item.split(':')[1] == null ? '' : item.split(':')[1]
+    })
   }
 }
 
@@ -234,11 +239,6 @@ const parseBypassHostname = function ({ data, proxy, port = '' }) {
     data.replace(/^\./, '*.').replace(/\./g, '\\.').replace(/\*/g, '.*')
   rule.regex = formatRule + '/'
   rule.port = port
-  console.info('parseBypassHostname', {
-    rule: rule,
-    mode: 'host',
-    proxy: proxy
-  })
   return { rule: rule, mode: 'host', proxy: proxy }
 }
 

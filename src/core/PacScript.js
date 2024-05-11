@@ -47,7 +47,8 @@ export const pacScriptCreate = function (proxyConfigs, key) {
 
 const createRejectCodeBlock = function (proxyConfig) {
   const code = `"+reject": function(url, host, scheme) {
-    return "${proxyConfig.config.rules}"
+    "use strict";
+    return "${proxyConfig.config.rules}";
   }, `
   return code
 }
@@ -59,12 +60,10 @@ const createAutoCodeBlock = function (proxyConfig) {
   const internalStr = createAutoInternalRules(config.rules.internal)
   const tmpl = `"+${proxyConfig.name}": function(url, host, scheme) {
     "use strict";
-    var urlObj = new URL(url);
-    var port = urlObj.port;
 ${internalStr}
 ${rejectStr}
 ${externalStr}
-    return "${config.rules.defaultProxy}"
+    return "${config.rules.defaultProxy}";
   }, `
   return tmpl
 }
@@ -96,7 +95,7 @@ const createAutoInternalRules = function (internalRules) {
     rules
       .map((rule) => {
         const formattedRule = parseInternalRule(rule)
-        console.info(formattedRule, generateConditionCode(formattedRule))
+        console.info(rule, formattedRule, generateConditionCode(formattedRule))
         return generateConditionCode(formattedRule)
       })
       .join('\n') + '\n'
@@ -113,7 +112,6 @@ const createFixedServerCodeBlock = function (proxyConfig) {
     let scheme = ''
     let port = ''
     let host = ''
-    // todo bypasslist
     proxyStr =
       config.rules.bypassList
         .map((item) => {
@@ -218,8 +216,6 @@ const createFixedServerCodeBlock = function (proxyConfig) {
 
   let tmpl = `"+${name}": function(url, host, scheme) {
     "use strict";
-    var urlObj = new URL(url);
-    var port = urlObj.port;
     ${proxyStr}
   }, `
   return tmpl
@@ -236,19 +232,12 @@ const generateConditionCode = function (item) {
       } else {
         code = 'host.indexOf(":") >= 0 && '
       }
-      if (item.rule.port != '') {
-        code = code + `port == "${item.rule.port}" && `
-      }
       return `    if (${code}isInNet(host, "${item.rule.subnet}", "${item.rule.mask}")) return "${item.proxy}";`
     case 'url':
-      return `    if ((${item.rule.regex}).test(url)) return "${item.proxy}";`
+      return `    if (${code}(${item.rule.regex}).test(url)) return "${item.proxy}";`
     case 'host':
-      console.info('generateConditionCode', item)
-      if (item.rule.port != '') {
-        code = `port == "${item.rule.port}" && `
-      }
       return `    if (${code}(${item.rule.regex}).test(host)) return "${item.proxy}";`
     case 'plain':
-      return `    if (isPlainHostName(host)) return "${item.proxy}"`
+      return `    if (isPlainHostName(host)) return "${item.proxy}";`
   }
 }

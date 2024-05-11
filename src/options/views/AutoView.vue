@@ -93,7 +93,6 @@ async function load(proxyKey) {
     if (e.valid == undefined) e.valid = true
     internalRules.value.push(e)
   }
-  console.log(internalRules.value)
 }
 
 function resetData() {

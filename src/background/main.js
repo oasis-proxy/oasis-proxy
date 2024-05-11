@@ -348,3 +348,7 @@ async function setProxyAuths(details, callback) {
   }
   callback()
 }
+
+chrome.proxy.onProxyError.addListener((details) => {
+  console.info('onProxyError', details)
+})

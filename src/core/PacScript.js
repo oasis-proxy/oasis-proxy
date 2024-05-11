@@ -95,7 +95,6 @@ const createAutoInternalRules = function (internalRules) {
     rules
       .map((rule) => {
         const formattedRule = parseInternalRule(rule)
-        console.info(rule, formattedRule, generateConditionCode(formattedRule))
         return generateConditionCode(formattedRule)
       })
       .join('\n') + '\n'

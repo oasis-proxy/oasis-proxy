@@ -1,5 +1,11 @@
 # ChangeLogs
 
+## v1.0.1
+
+Optimization:
+
+- Optimizing the capture and display of request monitor
+
 ## v1.0.0
 
 Optimization:

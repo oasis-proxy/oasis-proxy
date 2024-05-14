@@ -12,10 +12,18 @@ const copyShow = ref(false)
 
 onMounted(async () => {
   getMessage()
-  setInterval(() => {
-    getMessage()
-  }, 2000)
+  chrome.runtime.onMessage.addListener(
+    function (request, sender, sendResponse) {
+      if (request.instruction == 'updateList') getMessage()
+      if (request.instruction == 'clearList') clearMessage()
+    }
+  )
 })
+
+async function clearMessage() {
+  tableList.value = []
+  quickEnabled.value = false
+}
 
 async function getMessage() {
   const tabs = await Browser.Tabs.query({ active: true, currentWindow: true })

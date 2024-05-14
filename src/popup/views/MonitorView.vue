@@ -19,11 +19,9 @@ onMounted(async () => {
 
 async function getMessage() {
   const tabs = await Browser.Tabs.query({ active: true, currentWindow: true })
-  const activeTabId = tabs[0].id
+  const activeTabId = tabs[0].id.toString()
 
-  const requestSession = await Browser.Storage.getSession(
-    activeTabId.toString()
-  )
+  const requestSession = await Browser.Storage.getSession(activeTabId)
   Object.keys(requestSession[activeTabId]).forEach((key) => {
     for (const item of tableList.value) {
       if (item.host == key) return

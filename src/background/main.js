@@ -18,30 +18,25 @@ const updateTabBadgeText = async () => {
     let result = await chrome.storage.local.get(null)
     const activeProxyKey = result.status_proxyKey
     const mode = result[activeProxyKey]?.mode
-    let tabs = await chrome.tabs.query({ active: true, currentWindow: true })
-    if (tabs != null && tabs.length > 0) {
-      const activeTabId = tabs[0].id
-      const requestSession = await chrome.storage.session.get(
-        activeTabId.toString()
-      )
-      console.info(
-        'updateTabBadgeText',
-        requestSession[activeTabId],
-        activeTabId
-      )
-      if (requestSession[activeTabId] != null) {
-        const num = Object.keys(requestSession[activeTabId]).length
-        if (num > 0 && mode == 'auto') {
-          chrome.action.setPopup({ popup: '/popup.html#/monitor' })
-          chrome.action.setBadgeText({ text: num.toString() })
-        } else {
-          chrome.action.setBadgeText({ text: '' })
-          chrome.action.setPopup({ popup: '/popup.html#/' })
+    if (mode == 'auto') {
+      let tabs = await chrome.tabs.query({ active: true, currentWindow: true })
+      if (tabs != null && tabs.length > 0) {
+        const activeTabId = tabs[0].id.toString()
+        const requestSession = await chrome.storage.session.get(activeTabId)
+        if (
+          activeTabId != chrome.tabs.TAB_ID_NONE.toString() &&
+          requestSession[activeTabId] != null
+        ) {
+          const num = Object.keys(requestSession[activeTabId]).length
+          if (num > 0) {
+            chrome.action.setPopup({ popup: '/popup.html#/monitor' })
+            chrome.action.setBadgeText({ text: num.toString() })
+          }
         }
-      } else {
-        chrome.action.setBadgeText({ text: '' })
-        chrome.action.setPopup({ popup: '/popup.html#/' })
       }
+    } else {
+      chrome.action.setBadgeText({ text: '' })
+      chrome.action.setPopup({ popup: '/popup.html#/' })
     }
   } catch (err) {
     console.error('updateTabBadgeText', err)
@@ -49,55 +44,50 @@ const updateTabBadgeText = async () => {
 }
 
 const monitorResponse = async (details) => {
-  console.debug('monitorResponse: ', details, details.tabId.toString())
+  console.debug(
+    'monitorResponse: ',
+    details.tabId.toString(),
+    details.url,
+    details
+  )
   if (!details.url.startsWith('http')) {
     return
   }
-  const requestSession = await chrome.storage.session.get(
-    details.tabId.toString()
-  )
-  if (requestSession.hasOwnProperty(details.tabId)) {
-    requestSession[details.tabId][getHostName(details.url)] = {
+  const tabId = details.tabId.toString()
+  const requestSession = await chrome.storage.session.get(tabId)
+  if (requestSession.hasOwnProperty(tabId)) {
+    requestSession[tabId][getHostName(details.url)] = {
       ip: details.ip,
       status: 'OK'
     }
-  } else {
-    requestSession[details.tabId] = {}
-    requestSession[details.tabId][getHostName(details.url)] = {
-      ip: details.ip,
-      status: 'OK'
-    }
+    await chrome.storage.session.set(requestSession)
+    updateTabBadgeText()
   }
-  await chrome.storage.session.set(requestSession)
-  updateTabBadgeText()
 }
 
 const monitorError = async (details) => {
   console.debug('monitorError: ', details, details.tabId.toString())
-  const requestSession = await chrome.storage.session.get(
-    details.tabId.toString()
-  )
-  if (requestSession.hasOwnProperty(details.tabId)) {
-    requestSession[details.tabId][getHostName(details.url)] = {
+  const tabId = details.tabId.toString()
+  const requestSession = await chrome.storage.session.get(tabId)
+  if (requestSession.hasOwnProperty(tabId)) {
+    requestSession[tabId][getHostName(details.url)] = {
       ip: details.error,
       status: 'Error'
     }
-  } else {
-    requestSession[details.tabId] = {}
-    requestSession[details.tabId][getHostName(details.url)] = {
-      ip: details.error,
-      status: 'Error'
-    }
+    await chrome.storage.session.set(requestSession)
+    updateTabBadgeText()
   }
-  await chrome.storage.session.set(requestSession)
-  updateTabBadgeText()
 }
 
 /* tab section*/
 const tabRemoved = (tabId, removeInfo) => {
   setTimeout(async () => {
-    await chrome.storage.session.remove(tabId)
+    await chrome.storage.session.remove(tabId.toString())
   }, 2000)
+}
+
+const tabCreated = async (tab) => {
+  await chrome.storage.session.set({ [tab.id.toString()]: {} })
 }
 
 const tabActivated = (activeInfo) => {
@@ -106,20 +96,24 @@ const tabActivated = (activeInfo) => {
 
 const tabUpdated = async (tabId, changeInfo, tab) => {
   // clear all request message. If host main url is invalid, nothing will be monitored
-  if (changeInfo.status === 'loading') {
-    await chrome.storage.session.set({ [tabId]: {} })
+  console.info(tabId, changeInfo, tab)
+  if (changeInfo.status === 'loading' && changeInfo.url != null) {
+    // await chrome.storage.session.set({ [tabId.toString()]: {} })
+    await chrome.storage.session.remove(tabId.toString())
   }
 }
 
 const addMonitor = () => {
   console.info('addMonitor')
-  chrome.webRequest.onResponseStarted.addListener(monitorResponse, {
+  chrome.webRequest.onCompleted.addListener(monitorResponse, {
     urls: ['<all_urls>']
   })
 
   chrome.webRequest.onErrorOccurred.addListener(monitorError, {
     urls: ['<all_urls>']
   })
+
+  chrome.tabs.onCreated.addListener(tabCreated)
 
   chrome.tabs.onRemoved.addListener(tabRemoved)
 
@@ -140,6 +134,8 @@ const removeMonitor = () => {
   chrome.tabs.onActivated.removeListener(tabActivated)
 
   chrome.tabs.onUpdated.removeListener(tabUpdated)
+
+  chrome.tabs.onCreated.removeListener(tabCreated)
 }
 
 const isMonitorEffective = () => {
@@ -177,7 +173,6 @@ const handleMonitor = async function () {
 
 // 监听配置变化
 chrome.storage.onChanged.addListener(function (changes, areaName) {
-  console.info('backgroud Storage changed:', changes)
   if (areaName === 'local') {
     if (changes.config_monitor?.newValue !== changes.config_monitor?.oldValue) {
       changes.config_monitor?.newValue ? startMonitor() : endMonitor()

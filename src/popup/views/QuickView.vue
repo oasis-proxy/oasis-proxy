@@ -27,11 +27,9 @@ onMounted(async () => {
 
   const tabs = await Browser.Tabs.query({ active: true, currentWindow: true })
 
-  const activeTabId = tabs[0].id
+  const activeTabId = tabs[0].id.toString()
 
-  const requestSession = await Browser.Storage.getSession(
-    activeTabId.toString()
-  )
+  const requestSession = await Browser.Storage.getSession(activeTabId)
 
   Object.keys(requestSession[activeTabId]).forEach((hostname) => {
     if (requestSession[activeTabId][hostname].status == 'Error') {

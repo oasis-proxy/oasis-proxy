@@ -286,6 +286,7 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
     }
     await chrome.storage.local.remove(removeList)
   }
+  chrome.storage.session.clear()
   const result = await chrome.storage.local.get([
     'config_monitor',
     'config_updateUrl',

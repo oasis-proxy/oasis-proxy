@@ -61,10 +61,10 @@ const inputDisabled = computed(() => {
               <option value="default" v-else>
                 {{ Browser.I18n.getMessage('input_label_default') }}
               </option>
-              <option value="http">http</option>
-              <option value="https">https</option>
-              <option value="socks4">socks4</option>
-              <option value="socks5">socks5</option>
+              <option value="http">HTTP</option>
+              <option value="https">HTTPS</option>
+              <option value="socks4">SOCKS4</option>
+              <option value="socks5">SOCKS5</option>
             </select>
           </div>
           <label class="col-2 col-form-label">

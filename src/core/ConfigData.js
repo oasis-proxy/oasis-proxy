@@ -127,7 +127,12 @@ export const parseAutoProxyRule = function (data, proxy) {
     return parseUrl({ data, proxy })
   } else if (data.startsWith('/')) {
     // for regex
-    return { rule: { regex: data }, mode: 'url', proxy: proxy }
+    return {
+      rule: { regex: data },
+      mode: 'url',
+      proxy: proxy,
+      orgin: { data: data }
+    }
   } else {
     return parseHttpUrl({ data, proxy })
   }
@@ -136,12 +141,13 @@ export const parseAutoProxyRule = function (data, proxy) {
 export const parseInternalRule = function (rule) {
   switch (rule.mode) {
     case 'domain':
-      return parseWildcardDomain(rule)
+      return parseWildcardDomain({ ...rule })
     case 'regex':
       return {
         rule: { regex: '/' + rule.data.replace(/\//g, '\\/') + '/', port: '' },
         mode: 'host',
-        proxy: rule.proxy
+        proxy: rule.proxy,
+        orgin: { data: rule.data }
       }
     case 'ip':
       return parseIp(rule)
@@ -149,7 +155,8 @@ export const parseInternalRule = function (rule) {
       return {
         rule: '',
         mode: 'invalid',
-        proxy: 'direct'
+        proxy: 'direct',
+        orgin: { data: rule.data }
       }
   }
 }
@@ -217,15 +224,20 @@ const parseIp = function ({ data, proxy, port = '' }) {
   const res = {
     rule: { subnet: subnet, mask: mask, ipv4: ipv4, port: port },
     mode: 'ip',
-    proxy: proxy
+    proxy: proxy,
+    orgin: { data: data }
   }
   return res
 }
 
 const parseLocal = function ({ proxy }) {
-  const res = [{ rule: '', mode: 'plain', proxy: proxy }]
-  res.push(parseIp({ data: '127.0.0.1', proxy: proxy }))
-  res.push(parseIp({ data: '::1', proxy: proxy }))
+  const res = [
+    { rule: '', mode: 'plain', proxy: proxy, orgin: { data: '<local>' } }
+  ]
+  res.push(
+    parseIp({ data: '127.0.0.1', proxy: proxy, orgin: { data: '<local>' } })
+  )
+  res.push(parseIp({ data: '::1', proxy: proxy, orgin: { data: '<local>' } }))
   return res
 }
 
@@ -239,7 +251,7 @@ const parseBypassHostname = function ({ data, proxy, port = '' }) {
     data.replace(/^\./, '*.').replace(/\./g, '\\.').replace(/\*/g, '.*')
   rule.regex = formatRule + '/'
   rule.port = port
-  return { rule: rule, mode: 'host', proxy: proxy }
+  return { rule: rule, mode: 'host', proxy: proxy, orgin: { data: data } }
 }
 
 const parseWildcardDomain = function ({ data, proxy, port = '' }) {
@@ -257,7 +269,12 @@ const parseWildcardDomain = function ({ data, proxy, port = '' }) {
       .replace(/\*/g, '.*')
   if (data.endsWith('*')) formatRule = formatRule + '/'
   else formatRule = formatRule + '$/'
-  return { rule: { regex: formatRule, port }, mode: 'host', proxy: proxy }
+  return {
+    rule: { regex: formatRule, port },
+    mode: 'host',
+    proxy: proxy,
+    orgin: { data: data }
+  }
 }
 
 const parseAutoProxyDomain = function ({ data, proxy, port = '' }) {
@@ -273,7 +290,8 @@ const parseAutoProxyDomain = function ({ data, proxy, port = '' }) {
           .replace(/\*/g, '.*') + '$/'
     },
     mode: 'host',
-    proxy: proxy
+    proxy: proxy,
+    orgin: { data: data }
   }
 }
 
@@ -292,7 +310,8 @@ const parseUrl = function ({ data, proxy }) {
         '/'
     },
     mode: 'url',
-    proxy: proxy
+    proxy: proxy,
+    orgin: { data: data }
   }
 }
 
@@ -310,6 +329,7 @@ const parseHttpUrl = function ({ data, proxy }) {
         '/'
     },
     mode: 'url',
-    proxy: proxy
+    proxy: proxy,
+    orgin: { data: data }
   }
 }

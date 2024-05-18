@@ -55,6 +55,10 @@ body i.icon-btn:hover {
   /* font-weight: bolder; */
 }
 
+.nav-item.invalid .nav-link i {
+  color: var(--bs-secondary);
+}
+
 .nav .nav-link {
   padding: 0.5rem 1rem;
   cursor: pointer;

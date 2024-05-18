@@ -7,7 +7,7 @@ export const startUpdateUrl = async () => {
     per = 1440
   }
   await chrome.alarms.create('updateUrl', { periodInMinutes: per })
-  console.info('create updateUrl')
+  console.info('create updateUrl', per)
 }
 export const endUpdateUrl = async () => {
   await chrome.alarms.clear('updateUrl')

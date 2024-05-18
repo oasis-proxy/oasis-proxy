@@ -43,6 +43,14 @@ async function handleAutoSyncChange(event) {
   }
 }
 
+function openMonitor() {
+  if (!storeConfig.configMonitor) {
+    toast.warning(Browser.I18n.getMessage('desc_monitor_disabled'))
+    return
+  }
+  window.open('/monitor.html', '_blank')
+}
+
 async function handleBlur(event) {
   isRejectValid.value = true
   let tmp = event.target.value
@@ -94,9 +102,14 @@ async function handleBlur(event) {
                 id="monitorCheck"
                 v-model="storeConfig.configMonitor"
               />
-              <label class="form-check-label ms-2" for="monitorCheck">
+              <label class="form-check-label ms-2 me-4" for="monitorCheck">
                 <span>{{ Browser.I18n.getMessage('input_label_on') }}</span>
               </label>
+              <PopoverTips
+                className="bi bi-kanban-fill icon-btn ms-2 mt-1"
+                :content="Browser.I18n.getMessage('btn_label_monitor')"
+                @click="openMonitor"
+              ></PopoverTips>
             </div>
           </div>
         </div>

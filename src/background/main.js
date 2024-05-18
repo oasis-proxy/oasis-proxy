@@ -48,12 +48,6 @@ const updateTabBadgeText = async () => {
 }
 
 const monitorResponse = async (details) => {
-  console.debug(
-    'monitorResponse: ',
-    details.url,
-    details,
-    details.tabId.toString()
-  )
   const tabId = details.tabId.toString()
   const requestSession = await chrome.storage.session.get(tabId)
   if (!requestSession.hasOwnProperty(tabId)) {
@@ -70,15 +64,62 @@ const monitorResponse = async (details) => {
       return
     }
   })
+  chrome.runtime.sendMessage(
+    {
+      instruction: 'sendRequestItem',
+      data: { details: details, mode: 'completed' }
+    },
+    () => {
+      if (chrome.runtime.lastError) {
+        return
+      }
+    }
+  )
+}
+
+const monitorBeforeRequest = (details) => {
+  chrome.runtime.sendMessage(
+    {
+      instruction: 'sendRequestItem',
+      data: { details: details, mode: 'beforeRequest' }
+    },
+    () => {
+      if (chrome.runtime.lastError) {
+        return
+      }
+    }
+  )
+}
+
+const monitorBeforeRedirect = (details) => {
+  chrome.runtime.sendMessage(
+    {
+      instruction: 'sendRequestItem',
+      data: { details: details, mode: 'beforeRedirect' }
+    },
+    () => {
+      if (chrome.runtime.lastError) {
+        return
+      }
+    }
+  )
+}
+
+const monitorResponseStart = (details) => {
+  chrome.runtime.sendMessage(
+    {
+      instruction: 'sendRequestItem',
+      data: { details: details, mode: 'responseStart' }
+    },
+    () => {
+      if (chrome.runtime.lastError) {
+        return
+      }
+    }
+  )
 }
 
 const monitorError = async (details) => {
-  console.debug(
-    'monitorError: ',
-    details.url,
-    details,
-    details.tabId.toString()
-  )
   const tabId = details.tabId.toString()
   const requestSession = await chrome.storage.session.get(tabId)
   if (!requestSession.hasOwnProperty(tabId)) {
@@ -95,6 +136,17 @@ const monitorError = async (details) => {
       return
     }
   })
+  chrome.runtime.sendMessage(
+    {
+      instruction: 'sendRequestItem',
+      data: { details: details, mode: 'errorOccurred' }
+    },
+    () => {
+      if (chrome.runtime.lastError) {
+        return
+      }
+    }
+  )
 }
 
 /* tab section*/
@@ -102,11 +154,6 @@ const tabRemoved = (tabId, removeInfo) => {
   setTimeout(async () => {
     await chrome.storage.session.remove(tabId.toString())
   }, 2000)
-}
-
-const tabCreated = async (tab) => {
-  console.log('tabCreated', tab)
-  await chrome.storage.session.set({ [tab.id.toString()]: {} })
 }
 
 const tabActivated = (activeInfo) => {
@@ -127,6 +174,18 @@ const tabUpdated = async (tabId, changeInfo, tab) => {
 
 const addMonitor = () => {
   console.info('addMonitor')
+  chrome.webRequest.onBeforeRequest.addListener(monitorBeforeRequest, {
+    urls: ['<all_urls>']
+  })
+
+  chrome.webRequest.onBeforeRedirect.addListener(monitorBeforeRedirect, {
+    urls: ['<all_urls>']
+  })
+
+  // chrome.webRequest.onResponseStarted.addListener(monitorResponseStart, {
+  //   urls: ['<all_urls>']
+  // })
+
   chrome.webRequest.onCompleted.addListener(monitorResponse, {
     urls: ['<all_urls>']
   })
@@ -135,29 +194,30 @@ const addMonitor = () => {
     urls: ['<all_urls>']
   })
 
-  // chrome.tabs.onCreated.addListener(tabCreated)
-
-  chrome.tabs.onRemoved.addListener(tabRemoved)
-
   chrome.tabs.onActivated.addListener(tabActivated)
 
   chrome.tabs.onUpdated.addListener(tabUpdated)
+
+  chrome.tabs.onRemoved.addListener(tabRemoved)
 }
 
 const removeMonitor = () => {
   console.info('removeMonitor')
+  chrome.webRequest.onBeforeRequest.removeListener(monitorBeforeRequest)
 
-  chrome.webRequest.onResponseStarted.removeListener(monitorResponse)
+  chrome.webRequest.onBeforeRedirect.removeListener(monitorBeforeRedirect)
+
+  // chrome.webRequest.onResponseStarted.removeListener(monitorResponseStart)
+
+  chrome.webRequest.onCompleted.removeListener(monitorResponse)
 
   chrome.webRequest.onErrorOccurred.removeListener(monitorError)
-
-  chrome.tabs.onRemoved.removeListener(tabRemoved)
 
   chrome.tabs.onActivated.removeListener(tabActivated)
 
   chrome.tabs.onUpdated.removeListener(tabUpdated)
 
-  // chrome.tabs.onCreated.removeListener(tabCreated)
+  chrome.tabs.onRemoved.removeListener(tabRemoved)
 }
 
 const isMonitorEffective = () => {

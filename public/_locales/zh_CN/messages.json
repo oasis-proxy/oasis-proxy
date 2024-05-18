@@ -27,6 +27,10 @@
     "message": "确 定",
     "description": ""
   },
+  "btn_label_empty": {
+    "message": "清 空",
+    "description": ""
+  },
   "btn_label_delete_config": {
     "message": "删除配置",
     "description": ""
@@ -63,6 +67,9 @@
     "message": "清除配置",
     "description": ""
   },
+  "btn_label_monitor": {
+    "message": "请求查看器"
+  },
   "tab_label_default": {
     "message": "默认配置",
     "description": ""
@@ -77,6 +84,22 @@
   },
   "aside_label_setting": {
     "message": "通用设置",
+    "description": ""
+  },
+  "aside_label_alltabs": {
+    "message": "请求查看器",
+    "description": ""
+  },
+  "aside_label_alltabs_item": {
+    "message": "所有请求",
+    "description": ""
+  },
+  "aside_label_tabs": {
+    "message": "按标签页",
+    "description": ""
+  },
+  "aside_label_nonetabs": {
+    "message": "无标签页（浏览器后台）",
     "description": ""
   },
   "aside_label_proxy_server": {
@@ -97,6 +120,14 @@
   },
   "form_label_reject": {
     "message": "拒绝地址",
+    "description": ""
+  },
+  "form_label_max_rows": {
+    "message": "保留行数",
+    "description": ""
+  },
+  "form_label_filter": {
+    "message": "筛 选",
     "description": ""
   },
   "form_label_rule_update": {
@@ -156,11 +187,11 @@
     "description": ""
   },
   "form_label_policy_mode": {
-    "message": "模式",
+    "message": "模 式",
     "description": ""
   },
   "form_label_name": {
-    "message": "名称",
+    "message": "名 称",
     "description": ""
   },
   "form_label_new_name": {
@@ -288,7 +319,7 @@
     "description": ""
   },
   "input_label_direct": {
-    "message": "直连",
+    "message": "直 连",
     "description": ""
   },
   "input_label_system": {
@@ -300,7 +331,7 @@
     "description": ""
   },
   "input_label_reject": {
-    "message": "拒绝",
+    "message": "拒 绝",
     "description": ""
   },
   "modal_title_delete": {
@@ -328,10 +359,10 @@
     "message": "该代理未被其他规则引用，确定删除？"
   },
   "modal_title_warning": {
-    "message": "警告"
+    "message": "警 告"
   },
   "modal_title_info": {
-    "message": "提示"
+    "message": "提 示"
   },
   "modal_desc_reset": {
     "message": "页面存在未保存的信息，是否取消修改？"
@@ -391,10 +422,10 @@
     "message": "选项设置"
   },
   "desc_monitor": {
-    "message": "监控"
+    "message": "监 控"
   },
   "desc_default": {
-    "message": "默认"
+    "message": "默 认"
   },
   "desc_proxy_selection": {
     "message": "代理选择"
@@ -419,6 +450,9 @@
   },
   "desc_sync_warning": {
     "message": "在确定主版本前，点击“取消”按钮或刷新页面，自动同步功能将被关闭"
+  },
+  "desc_monitor_disabled": {
+    "message": "链接监控未开启"
   },
   "feedback_request_failed": {
     "message": "地址获取内容失败"
@@ -455,5 +489,38 @@
   },
   "desc_unsave_toast": {
     "message": "当前页面存在未保存的信息，保存或刷新页面后再次操作"
+  },
+  "th_col_id": {
+    "message": "ID"
+  },
+  "th_col_date": {
+    "message": "时 间"
+  },
+  "th_col_isCache": {
+    "message": "缓 存"
+  },
+  "th_col_policy": {
+    "message": "策略（优先级组）"
+  },
+  "th_col_rule": {
+    "message": "命中规则"
+  },
+  "th_col_ip": {
+    "message": "请求IP"
+  },
+  "th_col_duration": {
+    "message": "时 长"
+  },
+  "th_col_url": {
+    "message": "URL"
+  },
+  "desc_yes": {
+    "message": "是"
+  },
+  "desc_no": {
+    "message": "否"
+  },
+  "placeholder_filter_request": {
+    "message": "策略、命中规则、URL"
   }
 }

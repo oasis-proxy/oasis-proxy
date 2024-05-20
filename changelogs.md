@@ -1,5 +1,11 @@
 # ChangeLogs
 
+## v1.0.2
+
+Features:
+
+- Add Requests Debugger Monitor(General Settings > Advanced Config > Req Monitor > BugIcon)
+
 ## v1.0.1
 
 Optimization:

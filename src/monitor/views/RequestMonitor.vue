@@ -32,6 +32,11 @@ onMounted(async () => {
       tabsList.value[index].title = changeInfo.title
     }
   })
+  Browser.Storage.changed(function (changes, areaName) {
+    if (areaName === 'local' && changes.status_proxyKey != null) {
+      getPolicyRules()
+    }
+  })
 })
 
 function filterTabsId(tabId) {
@@ -88,13 +93,14 @@ function handleOne(mode, details) {
       changeTabName(details.tabId)
     }
   }
+  let tmp
   switch (mode) {
     case 'beforeRequest':
-      tableList.value[index].data.beforeRequest = converBeforeRequest(details)
-      Object.keys(tableList.value[index].data.beforeRequest).forEach((key) => {
-        tableList.value[index][key] =
-          tableList.value[index].data.beforeRequest[key]
+      tmp = converBeforeRequest(details)
+      Object.keys(tmp).forEach((key) => {
+        tableList.value[index][key] = tmp[key]
       })
+      tableList.value[index].data.beforeRequest = { timeStamp: tmp.timeStamp }
       break
     case 'beforeRedirect':
       tableList.value[index].data.beforeRedirect = converBeforeRedirect(details)
@@ -136,9 +142,6 @@ async function getPolicyRules() {
   const result = await Browser.Storage.getLocalAll()
   if (result[result.status_proxyKey] == null) {
     return
-  }
-  if (result[result.status_proxyKey].mode != 'auto') {
-    return { policy: result[result.status_proxyKey].name, rule: 'All' }
   }
   activeRules.value = getRules(result[result.status_proxyKey])
 }

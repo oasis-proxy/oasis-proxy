@@ -27,6 +27,10 @@
     "message": "Submit",
     "description": ""
   },
+  "btn_label_empty": {
+    "message": "Clear Requests",
+    "description": ""
+  },
   "btn_label_delete_config": {
     "message": "Delete Config",
     "description": ""
@@ -63,6 +67,9 @@
     "message": "Clear Config",
     "description": ""
   },
+  "btn_label_monitor": {
+    "message": "Requests Monitor"
+  },
   "tab_label_default": {
     "message": "Default Config",
     "description": ""
@@ -77,6 +84,22 @@
   },
   "aside_label_setting": {
     "message": "General Settings",
+    "description": ""
+  },
+  "aside_label_alltabs": {
+    "message": "Monitor",
+    "description": ""
+  },
+  "aside_label_alltabs_item": {
+    "message": "All Requests",
+    "description": ""
+  },
+  "aside_label_tabs": {
+    "message": "By Tabs",
+    "description": ""
+  },
+  "aside_label_nonetabs": {
+    "message": "No Tab (Browser Background)",
     "description": ""
   },
   "aside_label_proxy_server": {
@@ -97,6 +120,14 @@
   },
   "form_label_reject": {
     "message": "Reject Addr",
+    "description": ""
+  },
+  "form_label_max_rows": {
+    "message": "Rows",
+    "description": ""
+  },
+  "form_label_filter": {
+    "message": "Filter",
     "description": ""
   },
   "form_label_rule_update": {
@@ -420,6 +451,9 @@
   "desc_sync_warning": {
     "message": "Auto-sync will be turned off, if Cancel Button pressed or the page be refreshed."
   },
+  "desc_monitor_disabled": {
+    "message": "Requests monitoring is not enabled"
+  },
   "feedback_request_failed": {
     "message": "Failed to get the content"
   },
@@ -453,7 +487,43 @@
   "popover_update_url": {
     "message": "Daily updated the \"External Rule Address\" and \"Reject Rule Address\""
   },
+  "popover_fromCache": {
+    "message": "From Cache"
+  },
   "desc_unsave_toast": {
     "message": "The current page contains unsaved information, save or refresh the page to cancel"
+  },
+  "th_col_id": {
+    "message": "ID"
+  },
+  "th_col_date": {
+    "message": "Time"
+  },
+  "th_col_isCache": {
+    "message": "From Cache"
+  },
+  "th_col_policy": {
+    "message": "Policy (Priority Group)"
+  },
+  "th_col_rule": {
+    "message": "Hit Rules"
+  },
+  "th_col_ip": {
+    "message": "To IP"
+  },
+  "th_col_duration": {
+    "message": "Duration"
+  },
+  "th_col_url": {
+    "message": "URL"
+  },
+  "desc_yes": {
+    "message": "Yes"
+  },
+  "desc_no": {
+    "message": "No"
+  },
+  "placeholder_filter_request": {
+    "message": "Policy, Hit Rule, IP, URL"
   }
 }

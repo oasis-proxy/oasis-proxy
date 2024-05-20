@@ -487,6 +487,9 @@
   "popover_update_url": {
     "message": "每日自动更新策略模式中设置的“外部规则地址”、“拒绝规则地址”内容。"
   },
+  "popover_fromCache": {
+    "message": "命中缓存"
+  },
   "desc_unsave_toast": {
     "message": "当前页面存在未保存的信息，保存或刷新页面后再次操作"
   },
@@ -497,7 +500,7 @@
     "message": "时 间"
   },
   "th_col_isCache": {
-    "message": "缓 存"
+    "message": "缓存读取"
   },
   "th_col_policy": {
     "message": "策略（优先级组）"

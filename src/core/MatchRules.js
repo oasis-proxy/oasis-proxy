@@ -6,6 +6,31 @@ import {
 import * as ipaddr from 'ipaddr.js'
 
 export const getRules = function (proxyConfig) {
+  if (proxyConfig.mode == 'auto') return getAutoRules(proxyConfig)
+  if (proxyConfig.mode == 'fixed_servers') return getFixedRules(proxyConfig)
+  return getDefaultRules(proxyConfig.mode)
+}
+const getDefaultRules = function (defaultProxy) {
+  return {
+    internal: [],
+    external: [],
+    reject: [],
+    default: defaultProxy,
+    bypass: []
+  }
+}
+const getFixedRules = function (proxyConfig) {
+  const config = proxyConfig.config
+  const bypass = getBypassRulesList(config.rules.bypassList)
+  return {
+    internal: [],
+    external: [],
+    reject: [],
+    default: proxyConfig.name,
+    bypass
+  }
+}
+const getAutoRules = function (proxyConfig) {
   const config = proxyConfig.config
   const external = getExternalRulesList(config.rules.external)
   const reject = getExternalRulesList(config.rules.reject)
@@ -14,7 +39,8 @@ export const getRules = function (proxyConfig) {
     internal,
     external,
     reject,
-    default: proxyConfig.config.rules.defaultProxy
+    default: proxyConfig.config.rules.defaultProxy,
+    bypass: []
   }
 }
 
@@ -35,9 +61,24 @@ export const getExternalRulesList = function (externalRule) {
   return parseAutoProxyFile(externalRule.data, externalRule.proxy)
 }
 
+const getBypassRulesList = function (bypassList) {
+  const res = []
+  if (bypassList.includes('<local>')) {
+    res.push(...parseBypassRule('<local>'))
+  }
+  res.push(
+    ...bypassList
+      .filter((item) => item != '<local>' && item != '')
+      .map((item) => {
+        return parseBypassRule(item)
+      })
+  )
+  return res
+}
+
 export const checkRules = function (url, formattedRulesList) {
   let res = {}
-  for (const group of ['internal', 'reject', 'external']) {
+  for (const group of ['internal', 'reject', 'external', 'bypass']) {
     for (const item of formattedRulesList[group]) {
       if (testRule(url, item)) {
         res.rule = item.orgin.data
@@ -62,10 +103,18 @@ export const testRule = function (url, formattedRule) {
     case 'invalid':
       return false
     case 'ip':
+      if (
+        !ipaddr.isValid(host) ||
+        (ipaddr.IPv4.isValid(host) && !formattedRule.rule.ipv4) ||
+        (ipaddr.IPv6.isValid(host) && formattedRule.rule.ipv4)
+      ) {
+        return false
+      }
       addr = ipaddr.parse(host)
       range = ipaddr.parseCIDR(
-        formattedRule.rule.subnet,
-        ipaddr.parse(formattedRule.rule.mask).prefixLengthFromSubnetMask()
+        formattedRule.rule.subnet +
+          '/' +
+          ipaddr.parse(formattedRule.rule.mask).prefixLengthFromSubnetMask()
       )
       return addr.match(range)
     case 'url':

@@ -95,6 +95,11 @@ const list = computed(() => {
               className="bi bi-x-circle-fill text-danger icon-btn"
               :content="item.error"
             ></PopoverTips>
+            <PopoverTips
+              v-else-if="item.status == 'redirect'"
+              className="bi bi-r-circle-fill text-info icon-btn"
+              :content="Browser.I18n.getMessage('popover_redirect')"
+            ></PopoverTips>
             <i class="bi bi-clock-fill text-info" v-else></i>
           </td>
           <td class="truncate-text" style="width: 40px">

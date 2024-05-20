@@ -105,20 +105,6 @@ const monitorBeforeRedirect = (details) => {
   )
 }
 
-const monitorResponseStart = (details) => {
-  chrome.runtime.sendMessage(
-    {
-      instruction: 'sendRequestItem',
-      data: { details: details, mode: 'responseStart' }
-    },
-    () => {
-      if (chrome.runtime.lastError) {
-        return
-      }
-    }
-  )
-}
-
 const monitorError = async (details) => {
   const tabId = details.tabId.toString()
   const requestSession = await chrome.storage.session.get(tabId)
@@ -182,10 +168,6 @@ const addMonitor = () => {
     urls: ['<all_urls>']
   })
 
-  // chrome.webRequest.onResponseStarted.addListener(monitorResponseStart, {
-  //   urls: ['<all_urls>']
-  // })
-
   chrome.webRequest.onCompleted.addListener(monitorResponse, {
     urls: ['<all_urls>']
   })
@@ -206,8 +188,6 @@ const removeMonitor = () => {
   chrome.webRequest.onBeforeRequest.removeListener(monitorBeforeRequest)
 
   chrome.webRequest.onBeforeRedirect.removeListener(monitorBeforeRedirect)
-
-  // chrome.webRequest.onResponseStarted.removeListener(monitorResponseStart)
 
   chrome.webRequest.onCompleted.removeListener(monitorResponse)
 

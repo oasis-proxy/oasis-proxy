@@ -490,6 +490,9 @@
   "popover_fromCache": {
     "message": "From Cache"
   },
+  "popover_redirect": {
+    "message": "Redirect to another Address"
+  },
   "desc_unsave_toast": {
     "message": "The current page contains unsaved information, save or refresh the page to cancel"
   },

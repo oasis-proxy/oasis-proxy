@@ -490,6 +490,9 @@
   "popover_fromCache": {
     "message": "命中缓存"
   },
+  "popover_redirect": {
+    "message": "重定向到其他地址"
+  },
   "desc_unsave_toast": {
     "message": "当前页面存在未保存的信息，保存或刷新页面后再次操作"
   },
@@ -524,6 +527,6 @@
     "message": "否"
   },
   "placeholder_filter_request": {
-    "message": "策略、命中规则、URL"
+    "message": "策略、命中规则、IP、URL"
   }
 }

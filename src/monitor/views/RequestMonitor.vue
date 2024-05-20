@@ -23,12 +23,10 @@ onMounted(async () => {
   Browser.Tabs.addRemovedListener((tabId, removeInfo) => {
     const index = tabsList.value.findIndex((e) => e.tabId == tabId)
     tabsList.value[index].valid = false
-    console.log(removeInfo)
   })
   Browser.Tabs.addUpdatedListener((tabId, changeInfo, tab) => {
     if (changeInfo.title != null) {
       const index = tabsList.value.findIndex((e) => e.tabId == tabId)
-      console.log(changeInfo, tabsList.value[index])
       tabsList.value[index].title = changeInfo.title
     }
   })
@@ -103,7 +101,14 @@ function handleOne(mode, details) {
       tableList.value[index].data.beforeRequest = { timeStamp: tmp.timeStamp }
       break
     case 'beforeRedirect':
-      tableList.value[index].data.beforeRedirect = converBeforeRedirect(details)
+      tableList.value[index].requestId = 'r_' + tableList.value[index].requestId
+      tableList.value[index].status = 'redirect'
+      tableList.value[index].redirectUrl = details.redirectUrl
+      tableList.value[index].fromCache = details.fromCache
+      tableList.value[index].ip = details.ip == null ? '-' : details.ip
+      tableList.value[index].duration = Math.round(
+        details.timeStamp - tableList.value[index].data.beforeRequest.timeStamp
+      )
       break
     case 'responseStart':
       tableList.value[index].status = 'active'
@@ -159,27 +164,6 @@ function converBeforeRequest(details) {
   res.group = policyRule.group
   res.rule = policyRule.rule == '' ? '-' : policyRule.rule
   res.ip = '-'
-  res.duration = '-'
-  res.method = details.method
-  res.url = details.url
-  res.initiator = details.initiator
-  res.tabId = details.tabId
-  res.type = details.type
-  return res
-}
-
-function converBeforeRedirect(details) {
-  const res = {}
-  // const policyRule = checkRules(details.url, activeRules.value)
-  res.requestId = details.requestId
-  res.date = new Date(details.timeStamp).toLocaleTimeString()
-  res.timeStamp = Math.round(details.timeStamp)
-  res.status = 'redirect'
-  res.host = new URL(details.url).hostname
-  res.fromCache = details.fromCache
-  // res.policy = policyRule.policy
-  // res.rule = policyRule.rule
-  res.ip = details.ip == null ? '-' : details.ip
   res.duration = '-'
   res.method = details.method
   res.url = details.url

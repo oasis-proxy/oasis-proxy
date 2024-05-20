@@ -102,11 +102,11 @@ async function handleBlur(event) {
                 id="monitorCheck"
                 v-model="storeConfig.configMonitor"
               />
-              <label class="form-check-label ms-2 me-4" for="monitorCheck">
+              <label class="form-check-label ms-2 me-2" for="monitorCheck">
                 <span>{{ Browser.I18n.getMessage('input_label_on') }}</span>
               </label>
               <PopoverTips
-                className="bi bi-kanban-fill icon-btn ms-2 mt-1"
+                className="bi bi-bug-fill icon-btn ms-2 mt-1"
                 :content="Browser.I18n.getMessage('btn_label_monitor')"
                 @click="openMonitor"
               ></PopoverTips>

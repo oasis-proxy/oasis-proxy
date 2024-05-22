@@ -17,7 +17,7 @@ function handleClick(tabId) {
 <template>
   <div>
     <div class="card">
-      <div class="card-header hstack">
+      <div class="card-header">
         <div class="fw-bold">
           {{ Browser.I18n.getMessage('aside_label_alltabs') }}
         </div>
@@ -42,13 +42,13 @@ function handleClick(tabId) {
         </ul>
       </div>
     </div>
-    <div class="card">
-      <div class="card-header hstack">
+    <div class="card flex-grow-1">
+      <div class="card-header">
         <div class="fw-bold">
           {{ Browser.I18n.getMessage('aside_label_tabs') }}
         </div>
       </div>
-      <div class="card-body">
+      <div class="card-body overflow-scroll" style="height: 1px">
         <ul class="nav nav-pills flex-column">
           <li
             :class="e.valid ? 'nav-item w-100' : 'nav-item invalid w-100'"

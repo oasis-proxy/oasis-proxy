@@ -175,7 +175,7 @@ function converBeforeRequest(details) {
 </script>
 <template>
   <RequestTab
-    class="col-2 sidebar"
+    class="col-2 sidebar vstack"
     :tabsList="tabsList"
     @filterTabsId="filterTabsId"
   ></RequestTab>

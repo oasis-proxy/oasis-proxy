@@ -9,8 +9,10 @@ const router = useRouter()
 const tableList = ref([])
 const quickEnabled = ref(false)
 const copyShow = ref(false)
+const iptags = ref({})
 
 onMounted(async () => {
+  getIptags()
   getMessage()
   chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
@@ -19,6 +21,13 @@ onMounted(async () => {
     }
   )
 })
+
+async function getIptags() {
+  const res = await Browser.Storage.getLocal('config_iptags')
+  if (res.config_iptags != null) {
+    iptags.value = res.config_iptags
+  }
+}
 
 async function clearMessage() {
   tableList.value = []
@@ -107,7 +116,7 @@ async function copyToClipboard(text) {
               style="width: 120px"
               :title="item.ip"
               @click="copyToClipboard(item.ip)"
-              >{{ item.ip }}</span
+              >{{ iptags[item.ip] != null ? iptags[item.ip] : item.ip }}</span
             >
           </td>
         </tr>

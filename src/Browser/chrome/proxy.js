@@ -1,30 +1,19 @@
-import Message from './Message.js'
 import { pacScriptCreate } from '../../core/PacScript.js'
 
 const Proxy = {}
 
 Proxy.set = async function (proxyConfigs, key, afterSuccess = function () {}) {
   const config = Proxy._createConfig(proxyConfigs, key)
-  await Message.send({
-    instruction: 'setProxyAuths',
-    content: { activekey: key }
-  })
   Proxy._set(config, afterSuccess)
 }
 
 Proxy.setDirect = async function (afterSuccess) {
   const config = Proxy._directConfig()
-  const response = await Message.send({
-    instruction: 'resetProxyAuths'
-  })
   Proxy._set(config, afterSuccess)
 }
 
 Proxy.setSystem = async function (afterSuccess) {
   const config = Proxy._systemConfig()
-  const response = await Message.send({
-    instruction: 'resetProxyAuths'
-  })
   Proxy._set(config, afterSuccess)
 }
 

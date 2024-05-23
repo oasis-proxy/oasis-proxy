@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import HomeDefault from './HomeDefault.vue'
 import HomeAdvance from './HomeAdvance.vue'
 import HomeDebug from './HomeDebug.vue'
+import HomeOthers from './HomeOthers.vue'
 import Browser from '@/Browser/main'
 
 const className = ref('nav-link d-none')
@@ -44,6 +45,17 @@ if (import.meta.env.VITE_APP_DEBUG == 'debug') {
           <span>{{ Browser.I18n.getMessage('tab_label_advance') }}</span>
         </button>
         <button
+          class="nav-link"
+          id="v-pills-others-tab"
+          data-bs-toggle="pill"
+          data-bs-target="#v-pills-others"
+          role="tab"
+          aria-controls="v-pills-others"
+          aria-selected="false"
+        >
+          <span>{{ Browser.I18n.getMessage('tab_label_others') }}</span>
+        </button>
+        <button
           :class="className"
           id="v-pills-debug-tab"
           data-bs-toggle="pill"
@@ -60,6 +72,7 @@ if (import.meta.env.VITE_APP_DEBUG == 'debug') {
       <HomeDefault></HomeDefault>
       <HomeAdvance></HomeAdvance>
       <HomeDebug></HomeDebug>
+      <HomeOthers></HomeOthers>
     </div>
   </div>
 </template>

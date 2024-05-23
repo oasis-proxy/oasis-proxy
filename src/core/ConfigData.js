@@ -54,6 +54,9 @@ export const simplify = function (config) {
       }
     }
   }
+  if (config.config_iptags != null) {
+    simplifyConfig.config_iptags = config.config_iptags
+  }
   return simplifyConfig
 }
 
@@ -100,7 +103,9 @@ export const enrich = async function (config) {
       }
     }
   }
-
+  if (config.config_iptags != null) {
+    enrichConfig.config_iptags = config.config_iptags
+  }
   return enrichConfig
 }
 

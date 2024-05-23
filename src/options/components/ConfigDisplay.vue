@@ -21,6 +21,7 @@ const syncFixed = ref([])
 const syncPac = ref([])
 const syncAuto = ref([])
 const syncVersion = ref(0)
+const syncUpdateDate = ref('')
 
 onMounted(() => {
   reload()
@@ -54,6 +55,8 @@ async function reloadSyncData() {
     }
   })
   if (result.config_version != null) syncVersion.value = result.config_version
+  if (result.config_syncTime != null)
+    syncUpdateDate.value = new Date(result.config_syncTime).toLocaleString()
 }
 async function reloadLocalData() {
   localAuto.value = []
@@ -157,7 +160,11 @@ function handleSetSync() {
           {{ Browser.I18n.getMessage('section_label_sync_data') }}
         </p>
         <p class="card-text">
-          {{ Browser.I18n.getMessage('page_title_version') + syncVersion }}
+          {{
+            Browser.I18n.getMessage('page_title_version') +
+            syncVersion +
+            (syncUpdateDate == '' ? '' : `  (${syncUpdateDate})`)
+          }}
         </p>
         <p class="card-text" v-if="syncFixed.length > 0">
           {{

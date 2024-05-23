@@ -1,6 +1,6 @@
 <script setup>
 import Browser from '@/Browser/main'
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import PopoverTips from '@/components/PopoverTips.vue'
 
 const props = defineProps({
@@ -8,22 +8,25 @@ const props = defineProps({
   contentFilter: String,
   tabIdFilter: String
 })
+
+const iptags = ref({})
+
 const title = [
   { name: '', show: true, width: '20px' },
   {
     name: Browser.I18n.getMessage('th_col_id'),
     show: true,
-    width: '40px'
+    width: '50px'
   },
   {
     name: Browser.I18n.getMessage('th_col_date'),
     show: true,
-    width: '80px'
+    width: '90px'
   },
   {
     name: Browser.I18n.getMessage('th_col_policy'),
     show: true,
-    width: '160px'
+    width: '170px'
   },
   {
     name: Browser.I18n.getMessage('th_col_rule'),
@@ -50,6 +53,10 @@ const title = [
   }
 ]
 
+onMounted(async () => {
+  getIptags()
+})
+
 function tableFilter(item) {
   return (
     (props.tabIdFilter == '' || item.tabId == props.tabIdFilter) &&
@@ -62,6 +69,13 @@ function tableFilter(item) {
 const list = computed(() => {
   return props.tableList.filter(tableFilter)
 })
+
+async function getIptags() {
+  const res = await Browser.Storage.getLocal('config_iptags')
+  if (res.config_iptags != null) {
+    iptags.value = res.config_iptags
+  }
+}
 </script>
 <template>
   <div>
@@ -69,6 +83,7 @@ const list = computed(() => {
       <thead class="table-primary text-nowrap">
         <tr>
           <th
+            class="ps-3"
             v-for="(item, index) in title"
             :key="index"
             :style="{ width: item.width }"
@@ -85,7 +100,7 @@ const list = computed(() => {
       </thead>
       <tbody>
         <tr v-for="(item, index) in list" class="text-nowrap" :key="index">
-          <td style="width: 20px" class="text-end">
+          <td style="width: 20px" class="ps-2">
             <i
               class="bi bi-check-circle-fill text-success"
               v-if="item.status == 'complete'"
@@ -102,24 +117,24 @@ const list = computed(() => {
             ></PopoverTips>
             <i class="bi bi-clock-fill text-info" v-else></i>
           </td>
-          <td class="truncate-text" style="width: 40px">
+          <td class="truncate-text ps-3" style="width: 40px">
             {{ index }}
           </td>
-          <td class="truncate-text" style="width: 80px">
+          <td class="truncate-text ps-3" style="width: 80px">
             {{ item.date }}
           </td>
-          <td class="truncate-text" style="width: 140px">
+          <td class="truncate-text ps-3" style="width: 140px">
             {{ item.policy }}
           </td>
           <td
-            class="truncate-text cursor-point"
+            class="truncate-text cursor-point ps-3"
             style="width: 160px"
             @click="$emit('copyToClipboard', item.rule)"
           >
             {{ item.rule }}
           </td>
           <td
-            class="truncate-text cursor-point"
+            class="truncate-text cursor-point ps-3"
             style="width: 160px"
             @click="$emit('copyToClipboard', item.ip)"
           >
@@ -128,15 +143,15 @@ const list = computed(() => {
               className="bi bi-clock-history icon-btn me-2"
               :content="Browser.I18n.getMessage('popover_fromCache')"
             ></PopoverTips>
-            {{ item.ip }}
+            {{ iptags[item.ip] != null ? iptags[item.ip] : item.ip }}
           </td>
-          <td class="truncate-text" style="width: 80px">
+          <td class="truncate-text ps-3" style="width: 80px">
             {{ item.duration }}
           </td>
           <td
             scope="col"
             style="width: auto"
-            class="truncate-text cursor-point"
+            class="truncate-text cursor-point ps-3"
             @click="$emit('copyToClipboard', item.url)"
           >
             {{ item.url }}

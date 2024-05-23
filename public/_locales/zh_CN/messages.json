@@ -78,6 +78,9 @@
     "message": "高级配置",
     "description": ""
   },
+  "tab_label_others": {
+    "message": "其他配置"
+  },
   "tab_label_debug": {
     "message": "调试配置",
     "description": ""
@@ -196,6 +199,18 @@
   },
   "form_label_new_name": {
     "message": "新名称",
+    "description": ""
+  },
+  "form_label_iptags": {
+    "message": "IP标签",
+    "description": ""
+  },
+  "form_label_ip": {
+    "message": "IP",
+    "description": ""
+  },
+  "form_label_tagsname": {
+    "message": "标签名称",
     "description": ""
   },
   "section_label_extention_setting": {
@@ -385,6 +400,12 @@
   "desc_undeleted_info": {
     "message": "配置被以下策略引用无法删除："
   },
+  "desc_undeleted_iptags": {
+    "message": "该标签不存在，请刷新页面"
+  },
+  "desc_add_iptags_info": {
+    "message": "IP已存在标签，或IP、标签名称为空"
+  },
   "desc_deleted_success": {
     "message": "删除成功"
   },
@@ -493,6 +514,12 @@
   "popover_redirect": {
     "message": "重定向到其他地址"
   },
+  "popover_copyable": {
+    "message": "本列点击单元格可复制文本内容"
+  },
+  "popover_iptags": {
+    "message": "IP标签用于在PopUp页面和请求查看器替代IP地址"
+  },
   "desc_unsave_toast": {
     "message": "当前页面存在未保存的信息，保存或刷新页面后再次操作"
   },
@@ -528,5 +555,11 @@
   },
   "placeholder_filter_request": {
     "message": "策略、命中规则、IP、URL"
+  },
+  "placeholder_ip": {
+    "message": "请输入IP"
+  },
+  "placeholder_iptags": {
+    "message": "请输入标签名称"
   }
 }

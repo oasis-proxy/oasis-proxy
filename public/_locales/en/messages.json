@@ -78,6 +78,9 @@
     "message": "Advanced Config",
     "description": ""
   },
+  "tab_label_others": {
+    "message": "Other Config"
+  },
   "tab_label_debug": {
     "message": "Debug Config",
     "description": ""
@@ -196,6 +199,18 @@
   },
   "form_label_new_name": {
     "message": "New Name",
+    "description": ""
+  },
+  "form_label_iptags": {
+    "message": "IP Tags",
+    "description": ""
+  },
+  "form_label_ip": {
+    "message": "IP Addr.",
+    "description": ""
+  },
+  "form_label_tagsname": {
+    "message": "Tags Name",
     "description": ""
   },
   "section_label_extention_setting": {
@@ -385,6 +400,12 @@
   "desc_undeleted_info": {
     "message": "The configuration can't to be deleted, it is referenced by these rules:"
   },
+  "desc_undeleted_iptags": {
+    "message": "The tag does not exist, please refresh the page"
+  },
+  "desc_add_iptags_info": {
+    "message": "The IP already exists tag, or IP/tag name is empty"
+  },
   "desc_deleted_success": {
     "message": "is deleted successfully"
   },
@@ -493,6 +514,12 @@
   "popover_redirect": {
     "message": "Redirect to another Address"
   },
+  "popover_copyable": {
+    "message": "This column click on the cell to copy text contents"
+  },
+  "popover_iptags": {
+    "message": "IP Tag is used to replace IP addresses on PopUp page and request monitors"
+  },
   "desc_unsave_toast": {
     "message": "The current page contains unsaved information, save or refresh the page to cancel"
   },
@@ -528,5 +555,11 @@
   },
   "placeholder_filter_request": {
     "message": "Policy, Hit Rule, IP, URL"
+  },
+  "placeholder_ip": {
+    "message": "Please Enter IP"
+  },
+  "placeholder_iptags": {
+    "message": "Please Enter Tag Name"
   }
 }

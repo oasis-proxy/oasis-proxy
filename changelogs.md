@@ -6,6 +6,10 @@ Features:
 
 - Added an IP tagging feature. Users can use custom IP tags to replace the display of IP addresses on the PopUp link monitoring and Requests Debugger Monitor pages.
 
+BugFix:
+
+- Fixed the automatic set-auth for auto-policy
+
 ## v1.0.2
 
 Features:

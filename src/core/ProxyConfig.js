@@ -294,7 +294,7 @@ function getAuthListInAuto(proxyConfigs, key) {
   for (const name of proxyNames) {
     if (name !== 'direct' && name !== 'reject')
       getAuthListInFixed(proxyConfigs['proxy_' + name]).forEach((item) => {
-        authList.push({ item })
+        authList.push(item)
       })
   }
 

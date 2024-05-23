@@ -354,37 +354,13 @@ chrome.runtime.onStartup.addListener(async () => {
   )
 })
 
-// 在 background.js 中监听消息
-chrome.runtime.onMessage.addListener(
-  async function (request, sender, sendResponse) {
-    let resqData
-    switch (request.instruction) {
-      case 'setProxyAuths':
-        resqData = handleSetProxyAuths(request)
-        sendResponse(resqData)
-        break
-      case 'resetProxyAuths':
-        sendResponse({})
-        break
-      default:
-        sendResponse({})
-    }
-  }
+chrome.webRequest.onAuthRequired.addListener(
+  setProxyAuths,
+  { urls: ['<all_urls>'] },
+  ['asyncBlocking']
 )
 
-async function handleSetProxyAuths(request) {
-  if (!chrome.webRequest.onAuthRequired.hasListeners()) {
-    chrome.webRequest.onAuthRequired.addListener(
-      setProxyAuths,
-      { urls: ['<all_urls>'] },
-      ['asyncBlocking']
-    )
-  }
-  return { code: 0 }
-}
-
 async function setProxyAuths(details, callback) {
-  console.info('Authentication required for URL: ', details)
   if (details.isProxy) {
     const result = await chrome.storage.local.get(null)
     const authList = getAuthList(result, result.status_proxyKey)
@@ -393,7 +369,6 @@ async function setProxyAuths(details, callback) {
         details.challenger.host == item.host &&
         details.challenger.port == item.port
       ) {
-        console.info('Authentication required for URL: ', item)
         callback({
           authCredentials: {
             username: item.username,

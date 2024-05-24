@@ -111,19 +111,29 @@ function resetData() {
     data: ''
   }
 }
+
 function setFocusText(text) {
   focusText.value = text
 }
-function addInternalRule() {
-  internalRules.value.push({ mode: 'domain', data: '', proxy: 'direct' })
-}
 
-function handleClone() {
-  return {
-    mode: 'divider',
-    data: Browser.I18n.getMessage('input_label_divider'),
-    proxy: 'direct'
+function addInternalRule(index, divider = false) {
+  let tmp
+  if (divider) {
+    tmp = {
+      mode: 'divider',
+      data: Browser.I18n.getMessage('input_label_divider'),
+      proxy: 'direct'
+    }
+  } else {
+    tmp = {
+      mode: 'domain',
+      data: '',
+      proxy: 'direct',
+      valid: true
+    }
   }
+  if (index != null) internalRules.value.splice(index + 1, 0, tmp)
+  else internalRules.value.push(tmp)
 }
 
 function removeInternalRule(index) {
@@ -242,7 +252,7 @@ function handleCancel() {
                 }}</span>
                 <i
                   class="bi bi-plus-circle-fill icon-btn ms-2"
-                  @click="addInternalRule"
+                  @click="addInternalRule(null)"
                 ></i>
               </div>
             </div>
@@ -263,32 +273,12 @@ function handleCancel() {
                       @getFocusText="setFocusText(element.data)"
                       @clearFousText="setFocusText(null)"
                       @deleteItem="removeInternalRule(index)"
+                      @addItem="addInternalRule(index)"
+                      @hrItem="addInternalRule(index, true)"
                     ></InternalRuleGroup>
                   </template>
                 </draggable>
               </div>
-              <draggable
-                :list="dragableDivider"
-                :group="{ name: 'shared', pull: 'clone', put: false }"
-                :clone="handleClone"
-                @end="setUnsaved"
-                handle=".drag-handle"
-                item-key="index"
-              >
-                <template #item="{ element }">
-                  <div class="hstack gap-4 mb-2 d-flex align-items-center">
-                    <span
-                      ><i class="bi bi-arrows-move icon-btn drag-handle"></i
-                    ></span>
-                    <hr class="w-100" />
-                    <span
-                      style="white-space: nowrap"
-                      :textContent="element.data"
-                    ></span>
-                    <hr class="w-100" />
-                  </div>
-                </template>
-              </draggable>
               <div>
                 <div class="hstack gap-4 mb-2">
                   <span class="ms-auto">{{
@@ -301,6 +291,8 @@ function handleCancel() {
                     ></ProxySelect>
                   </div>
                   <div class="hstack gap-1" style="visibility: hidden">
+                    <i class="bi bi-trash-fill icon-btn me-1"></i>
+                    <i class="bi bi-trash-fill icon-btn me-1"></i>
                     <i class="bi bi-trash-fill icon-btn"></i>
                   </div>
                 </div>
@@ -317,6 +309,8 @@ function handleCancel() {
                     ></ProxySelect>
                   </div>
                   <div class="hstack gap-1" style="visibility: hidden">
+                    <i class="bi bi-trash-fill icon-btn me-1"></i>
+                    <i class="bi bi-trash-fill icon-btn me-1"></i>
                     <i class="bi bi-trash-fill icon-btn"></i>
                   </div>
                 </div>

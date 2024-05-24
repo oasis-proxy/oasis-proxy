@@ -50,6 +50,11 @@ function inputDividerLabel(event) {
       <ProxySelect v-model="rule.proxy" style="width: 150px"></ProxySelect>
     </div>
     <div class="hstack gap-1">
+      <i
+        class="bi bi-layer-backward icon-btn me-1"
+        @click="$emit('addItem')"
+      ></i>
+      <i class="bi bi-view-list icon-btn me-1" @click="$emit('hrItem')"></i>
       <i class="bi bi-trash-fill icon-btn" @click="$emit('deleteItem')"></i>
     </div>
   </div>

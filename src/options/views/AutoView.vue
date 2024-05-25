@@ -132,8 +132,7 @@ function addInternalRule(index, divider = false) {
       valid: true
     }
   }
-  if (index != null) internalRules.value.splice(index + 1, 0, tmp)
-  else internalRules.value.push(tmp)
+  internalRules.value.splice(index + 1, 0, tmp)
 }
 
 function removeInternalRule(index) {
@@ -185,7 +184,7 @@ function handleCancel() {
     Browser.I18n.getMessage('modal_title_warning'),
     Browser.I18n.getMessage('modal_desc_reset'),
     function () {
-      load('proxy_' + route.params.name)
+      load('proxy_' + encodeURIComponent(route.params.name))
       storeStatus.resetUnsaved()
     }
   )
@@ -252,7 +251,7 @@ function handleCancel() {
                 }}</span>
                 <i
                   class="bi bi-plus-circle-fill icon-btn ms-2"
-                  @click="addInternalRule(null)"
+                  @click="addInternalRule(-1)"
                 ></i>
               </div>
             </div>

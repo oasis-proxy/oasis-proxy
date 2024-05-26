@@ -39,13 +39,12 @@ const rejectRule = ref({
   data: ''
 })
 const occurrences = ref([])
-const dragableDivider = ref([
-  {
-    mode: 'divider',
-    data: Browser.I18n.getMessage('input_label_divider'),
-    proxy: 'direct'
-  }
-])
+const dragableDivider = {
+  mode: 'divider',
+  data: Browser.I18n.getMessage('input_label_divider'),
+  proxy: 'direct'
+}
+
 onMounted(() => {
   load('proxy_' + encodeURIComponent(route.params.name))
 })
@@ -119,11 +118,7 @@ function setFocusText(text) {
 function addInternalRule(index, divider = false) {
   let tmp
   if (divider) {
-    tmp = {
-      mode: 'divider',
-      data: Browser.I18n.getMessage('input_label_divider'),
-      proxy: 'direct'
-    }
+    tmp = dragableDivider
   } else {
     tmp = {
       mode: 'domain',

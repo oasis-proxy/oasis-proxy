@@ -14,12 +14,10 @@ const iptags = ref({})
 onMounted(async () => {
   getIptags()
   getMessage()
-  chrome.runtime.onMessage.addListener(
-    function (request, sender, sendResponse) {
-      if (request.instruction == 'updateList') getMessage()
-      if (request.instruction == 'clearList') clearMessage()
-    }
-  )
+  chrome.runtime.onMessage.addListener(function (request) {
+    if (request.instruction == 'updateList') getMessage()
+    if (request.instruction == 'clearList') clearMessage()
+  })
 })
 
 async function getIptags() {

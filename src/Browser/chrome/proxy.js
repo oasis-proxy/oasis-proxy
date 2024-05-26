@@ -60,7 +60,7 @@ Proxy._systemConfig = function () {
 Proxy._fixedConfig = function (proxyConfig) {
   const config = { mode: 'fixed_servers', rules: {} }
   if (
-    proxyConfig.rules.hasOwnProperty('singleProxy') &&
+    Object.prototype.hasOwnProperty.call(proxyConfig.rules, 'singleProxy') &&
     proxyConfig.rules.singleProxy.scheme != 'direct' &&
     proxyConfig.rules.singleProxy.host != null &&
     proxyConfig.rules.singleProxy.host != ''
@@ -71,7 +71,7 @@ Proxy._fixedConfig = function (proxyConfig) {
   } else {
     config.rules = {}
     if (
-      proxyConfig.rules.hasOwnProperty('proxyForHttp') &&
+      Object.prototype.hasOwnProperty.call(proxyConfig.rules, 'proxyForHttp') &&
       proxyConfig.rules.proxyForHttp.host != null &&
       proxyConfig.rules.proxyForHttp.host != ''
     ) {
@@ -80,7 +80,10 @@ Proxy._fixedConfig = function (proxyConfig) {
       )
     }
     if (
-      proxyConfig.rules.hasOwnProperty('proxyForHttps') &&
+      Object.prototype.hasOwnProperty.call(
+        proxyConfig.rules,
+        'proxyForHttps'
+      ) &&
       proxyConfig.rules.proxyForHttps.host != null &&
       proxyConfig.rules.proxyForHttps.host != ''
     ) {
@@ -89,7 +92,7 @@ Proxy._fixedConfig = function (proxyConfig) {
       )
     }
     if (
-      proxyConfig.rules.hasOwnProperty('proxyForFtp') &&
+      Object.prototype.hasOwnProperty.call(proxyConfig.rules, 'proxyForFtp') &&
       proxyConfig.rules.proxyForFtp.host != null &&
       proxyConfig.rules.proxyForFtp.host != ''
     ) {
@@ -98,7 +101,10 @@ Proxy._fixedConfig = function (proxyConfig) {
       )
     }
     if (
-      proxyConfig.rules.hasOwnProperty('fallbackProxy') &&
+      Object.prototype.hasOwnProperty.call(
+        proxyConfig.rules,
+        'fallbackProxy'
+      ) &&
       proxyConfig.rules.fallbackProxy.host != null &&
       proxyConfig.rules.fallbackProxy.host != '' &&
       proxyConfig.rules.fallbackProxy.scheme != 'direct'
@@ -109,7 +115,7 @@ Proxy._fixedConfig = function (proxyConfig) {
     }
   }
   if (JSON.stringify(config.rules) == '{}') return { mode: 'direct' }
-  if (proxyConfig.rules.hasOwnProperty('bypassList'))
+  if (Object.prototype.hasOwnProperty.call(proxyConfig.rules, 'bypassList'))
     config.rules.bypassList = JSON.parse(
       JSON.stringify(proxyConfig.rules.bypassList)
     )

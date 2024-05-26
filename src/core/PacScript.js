@@ -126,7 +126,7 @@ const createFixedServerCodeBlock = function (proxyConfig) {
         })
         .join('\n') + '\n'
 
-    if (config.rules.hasOwnProperty('singleProxy')) {
+    if (Object.prototype.hasOwnProperty.call(config.rules, 'singleProxy')) {
       if (config.rules.singleProxy.scheme == 'direct') {
         proxyStr = proxyStr + `  return "direct";`
       } else {

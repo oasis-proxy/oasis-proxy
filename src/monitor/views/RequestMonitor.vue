@@ -16,15 +16,15 @@ const copyShow = ref(false)
 
 onMounted(async () => {
   await getPolicyRules()
-  Browser.Runtime.addMessageListener(function (request, sender, sendResponse) {
+  Browser.Runtime.addMessageListener(function (request) {
     if (request.instruction == 'sendRequestItem')
       handleOne(request.data.mode, request.data.details)
   })
-  Browser.Tabs.addRemovedListener((tabId, removeInfo) => {
+  Browser.Tabs.addRemovedListener((tabId) => {
     const index = tabsList.value.findIndex((e) => e.tabId == tabId)
     tabsList.value[index].valid = false
   })
-  Browser.Tabs.addUpdatedListener((tabId, changeInfo, tab) => {
+  Browser.Tabs.addUpdatedListener((tabId, changeInfo) => {
     if (changeInfo.title != null) {
       const index = tabsList.value.findIndex((e) => e.tabId == tabId)
       tabsList.value[index].title = changeInfo.title

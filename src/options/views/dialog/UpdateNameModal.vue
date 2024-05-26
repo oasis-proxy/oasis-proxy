@@ -18,7 +18,6 @@ let updateNameModalInstance = null
 
 onMounted(() => {
   const modalElement = document.getElementById('updateNameModal')
-  // eslint-disable-next-line no-undef
   updateNameModalInstance = new bootstrap.Modal(modalElement)
 })
 
@@ -77,7 +76,7 @@ async function handleSubmit() {
   const encodeNewName = encodeURIComponent(name.value)
   const newKey = 'proxy_' + encodeNewName
   const activeProxyKey = result.status_proxyKey
-  if (result.hasOwnProperty(newKey)) {
+  if (Object.prototype.hasOwnProperty.call(result, newKey)) {
     isNameValid.value = false
     return
   }

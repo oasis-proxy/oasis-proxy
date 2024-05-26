@@ -48,18 +48,18 @@ onMounted(async () => {
   })
 })
 
-function suffixByIndex(domain, level = 2) {
-  const parts = domain.split('.')
-  let suffix = []
+// function suffixByIndex(domain, level = 2) {
+//   const parts = domain.split('.')
+//   let suffix = []
 
-  if (level <= parts.length) {
-    suffix = parts.splice(1 - level)
-    suffix.unshift('')
-  } else {
-    suffix = parts
-  }
-  return suffix.join('.')
-}
+//   if (level <= parts.length) {
+//     suffix = parts.splice(1 - level)
+//     suffix.unshift('')
+//   } else {
+//     suffix = parts
+//   }
+//   return suffix.join('.')
+// }
 
 async function quickAddInternalRules() {
   const result = await Browser.Storage.getLocalAll()

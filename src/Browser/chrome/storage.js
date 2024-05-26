@@ -1,6 +1,6 @@
 const Storage = {}
 
-Storage.changed = function (callback = function (changes, areaName) {}) {
+Storage.changed = function (callback = function () {}) {
   chrome.storage.onChanged.addListener(callback)
 }
 

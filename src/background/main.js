@@ -1,4 +1,3 @@
-import Browser from '../Browser/main'
 import { startUpdateUrl, endUpdateUrl, handleUpdateUrl } from './updateUrl'
 import { startAutoSync, endAutoSync, handleAutoSync } from './autoSync'
 import { getAuthList } from '@/core/ProxyConfig.js'
@@ -50,7 +49,7 @@ const updateTabBadgeText = async () => {
 const monitorResponse = async (details) => {
   const tabId = details.tabId.toString()
   const requestSession = await chrome.storage.session.get(tabId)
-  if (!requestSession.hasOwnProperty(tabId)) {
+  if (!Object.prototype.hasOwnProperty.call(requestSession, tabId)) {
     requestSession[tabId] = {}
   }
   requestSession[tabId][getHostName(details.url)] = {
@@ -108,7 +107,7 @@ const monitorBeforeRedirect = (details) => {
 const monitorError = async (details) => {
   const tabId = details.tabId.toString()
   const requestSession = await chrome.storage.session.get(tabId)
-  if (!requestSession.hasOwnProperty(tabId)) {
+  if (!Object.prototype.hasOwnProperty.call(requestSession, tabId)) {
     requestSession[tabId] = {}
   }
   requestSession[tabId][getHostName(details.url)] = {
@@ -136,13 +135,13 @@ const monitorError = async (details) => {
 }
 
 /* tab section*/
-const tabRemoved = (tabId, removeInfo) => {
+const tabRemoved = (tabId) => {
   setTimeout(async () => {
     await chrome.storage.session.remove(tabId.toString())
   }, 2000)
 }
 
-const tabActivated = (activeInfo) => {
+const tabActivated = () => {
   updateTabBadgeText()
 }
 

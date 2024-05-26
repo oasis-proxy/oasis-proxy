@@ -45,7 +45,9 @@ export const handleUpdateUrl = async function () {
       if (updateFlag) {
         await chrome.storage.local.set({ [key]: updateProxyConfig })
       }
-    } catch (err) {}
+    } catch (err) {
+      console.error(err)
+    }
   }
   const afterUpdateResult = await chrome.storage.local.get(null)
   if (afterUpdateResult.status_proxyKey != null) {

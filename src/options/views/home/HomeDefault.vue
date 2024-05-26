@@ -1,6 +1,5 @@
 <script setup>
 import { watch, getCurrentInstance } from 'vue'
-import { useRouter } from 'vue-router'
 import PopoverTips from '@/components/PopoverTips.vue'
 import { useConfigStore } from '@/options/stores/config'
 
@@ -8,7 +7,6 @@ import Browser from '@/Browser/main'
 
 const storeConfig = useConfigStore()
 const instance = getCurrentInstance()
-const router = useRouter()
 const toast = instance?.appContext.config.globalProperties.$toast
 const confirmModal = instance?.appContext.config.globalProperties.$confirm
 

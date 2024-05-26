@@ -1,8 +1,6 @@
 import Storage from './storage.js'
 const WebRequest = {}
 
-function setAuth(details) {}
-
 // authList = {host, port, username, password}
 WebRequest.Auth = async function (authList) {
   console.info('webRequestAuth', authList)
@@ -31,11 +29,6 @@ WebRequest.Auth = async function (authList) {
     const status_auths = { status_auths: authList }
     await Storage.setLocal(status_auths)
   }
-}
-
-WebRequest.removeAuth = function () {
-  console.info('removeAuth')
-  chrome.webRequest.onAuthRequired.removeListener(setAuth)
 }
 
 export default WebRequest

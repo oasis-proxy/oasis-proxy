@@ -24,7 +24,14 @@ Runtime.addMessageListener = function (func) {
 const Browser = { Storage, Proxy, Tabs, WebRequest, Message, Runtime, I18n }
 
 Browser.saveFile = function (obj, filename) {
-  const fileContent = JSON.stringify(obj)
+  let fileContent
+  if (typeof obj === 'string') {
+    fileContent = obj
+  } else if (typeof obj === 'object') {
+    fileContent = JSON.stringify(obj)
+  } else {
+    fileContent = 'Error'
+  }
   const blob = new Blob([fileContent], { type: 'application/octet-stream' })
   chrome.downloads.download({
     url: URL.createObjectURL(blob),

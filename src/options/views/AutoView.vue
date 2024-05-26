@@ -10,6 +10,7 @@ import PopoverTips from '@/components/PopoverTips.vue'
 import Browser from '@/Browser/main'
 import { useStatusStore } from '@/options/stores/status'
 import { saveForAuto } from '@/core/ProxyConfig'
+import { pacScriptCreate } from '@/core/PacScript'
 import { getNextLocalVersion } from '@/core/VersionControl'
 
 const handleUpdate = inject('handleUpdate')
@@ -92,6 +93,17 @@ async function load(proxyKey) {
     if (e.valid == undefined) e.valid = true
     internalRules.value.push(e)
   }
+}
+
+async function handleExportPAC() {
+  const res = await Browser.Storage.getLocalAll()
+  console.info(res, 'proxy_' + encodeURIComponent(route.params.name))
+  const codeBlock = pacScriptCreate(
+    res,
+    'proxy_' + encodeURIComponent(route.params.name)
+  )
+  const outBlock = codeBlock.replace(/^\s*[\r?\n]/gm, '')
+  Browser.saveFile(outBlock, `${route.params.name}.pac`)
 }
 
 function resetData() {
@@ -203,6 +215,10 @@ function handleCancel() {
         <span>{{
           Browser.I18n.getMessage('btn_label_update_name_config')
         }}</span>
+      </button>
+      <button class="btn btn-sm btn-outline-secondary" @click="handleExportPAC">
+        <i class="bi bi-file-earmark-ppt-fill me-2"></i>
+        <span>{{ Browser.I18n.getMessage('btn_label_export_pac') }}</span>
       </button>
     </div>
     <div>

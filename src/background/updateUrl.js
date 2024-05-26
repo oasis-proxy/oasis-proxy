@@ -35,7 +35,7 @@ export const handleUpdateUrl = async function () {
       }
       if (updateProxyConfig.config.rules.reject.url != '') {
         response = await downloadUrl(
-          result.proxyConfigObj[key].config.rules.reject.url,
+          updateProxyConfig.config.rules.reject.url,
           'base64'
         )
         updateProxyConfig.config.rules.reject.data = response.data

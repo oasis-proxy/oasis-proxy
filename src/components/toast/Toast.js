@@ -4,7 +4,7 @@ import ToastMessage from './ToastMessage.vue'
 const toastPlugin = {
   install(app) {
     const toastContainer = document.createElement('div')
-    toastContainer.classList.add('position-absolute')
+    toastContainer.classList.add('position-fixed')
     toastContainer.classList.add('top-0')
     toastContainer.classList.add('end-0')
     toastContainer.classList.add('p-3')

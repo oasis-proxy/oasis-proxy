@@ -1,4 +1,4 @@
-import { pacScriptCreate } from '../../core/PacScript.js'
+import { generatePacfile } from '../../core/pacfile_generator.js'
 
 const Proxy = {}
 
@@ -124,7 +124,7 @@ Proxy._fixedConfig = function (proxyConfig) {
 
 Proxy._autoConfig = function (proxyConfigs, key) {
   const config = { mode: 'pac_script', pacScript: {} }
-  const codeBlock = pacScriptCreate(proxyConfigs, key)
+  const codeBlock = generatePacfile(proxyConfigs, key)
   config.pacScript = {
     data: codeBlock
   }

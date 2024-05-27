@@ -1,7 +1,7 @@
 <script setup>
 import { defineModel, computed, ref } from 'vue'
 
-import { downloadUrl } from '@/core/ConfigData.js'
+import { downloadUrl } from '@/core/utils'
 import Browser from '@/Browser/main'
 
 const externalItem = defineModel('externalItem', {

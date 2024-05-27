@@ -1,5 +1,5 @@
 import Browser from '../Browser/main'
-import { downloadUrl } from '@/core/ConfigData'
+import { downloadUrl } from '@/core/utils'
 
 export const startUpdateUrl = async () => {
   let per = 3

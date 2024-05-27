@@ -8,12 +8,12 @@ import SyncConflictModal from './views/dialog/SyncConflictModal.vue'
 import UploadConflictModal from './views/dialog/UploadConflictModal.vue'
 import { useConfigStore } from '@/options/stores/config'
 import { useStatusStore } from '@/options/stores/status'
-import { proxyUsedBy } from '@/core/ProxyConfig.js'
+import { proxyUsedBy } from '@/core/proxy_config.js'
 import {
   getNextLocalVersion,
   getSyncDownloadStatus,
   overWriteToLocal
-} from '@/core/VersionControl'
+} from '@/core/version_control.js'
 
 const storeConfig = useConfigStore()
 const storeStatus = useStatusStore()

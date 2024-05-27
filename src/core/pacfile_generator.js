@@ -1,11 +1,11 @@
-import { proxyUses, CONST_DEFAULT_PORT } from './ProxyConfig.js'
+import { proxyUses, CONST_DEFAULT_PORT } from './proxy_config.js'
 import {
   parseAutoProxyFile,
   parseInternalRule,
   parseBypassRule
-} from './ConfigData.js'
+} from './rules_parser.js'
 
-export const pacScriptCreate = function (proxyConfigs, key) {
+export const generatePacfile = function (proxyConfigs, key) {
   const nameList = proxyUses(proxyConfigs[key])
   const activeName = key.substring(6)
   nameList.push(activeName)

@@ -1,4 +1,7 @@
-import { overWriteToLocal, getSyncDownloadStatus } from '@/core/VersionControl'
+import {
+  overWriteToLocal,
+  getSyncDownloadStatus
+} from '@/core/version_control.js'
 
 export const startAutoSync = async () => {
   let per = 1

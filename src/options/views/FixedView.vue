@@ -5,8 +5,8 @@ import ServerInfoItem from '../components/ServerInfoItem.vue'
 
 import Browser from '@/Browser/main'
 import { useStatusStore } from '@/options/stores/status'
-import { saveForFixed, proxyUses } from '@/core/ProxyConfig'
-import { getNextLocalVersion } from '@/core/VersionControl'
+import { saveForFixed, proxyUses } from '@/core/proxy_config.js'
+import { getNextLocalVersion } from '@/core/version_control.js'
 
 const handleUpdate = inject('handleUpdate')
 const handleDelete = inject('handleDelete')

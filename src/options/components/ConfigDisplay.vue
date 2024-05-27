@@ -1,7 +1,7 @@
 <script setup>
 import { ref, getCurrentInstance, onMounted } from 'vue'
 import Browser from '@/Browser/main'
-import { overWriteToCloud, overWriteToLocal } from '@/core/VersionControl'
+import { overWriteToCloud, overWriteToLocal } from '@/core/version_control.js'
 defineProps({
   isModal: Boolean
 })

@@ -1,6 +1,10 @@
-import { startUpdateUrl, endUpdateUrl, handleUpdateUrl } from './updateUrl'
-import { startAutoSync, endAutoSync, handleAutoSync } from './autoSync'
-import { getAuthList } from '@/core/ProxyConfig.js'
+import {
+  startUpdateUrl,
+  endUpdateUrl,
+  handleUpdateUrl
+} from './external_updater.js'
+import { startAutoSync, endAutoSync, handleAutoSync } from './auto_sync.js'
+import { getAuthList } from '@/core/proxy_config.js'
 let current = new Date().toLocaleString()
 console.log('background:', current)
 

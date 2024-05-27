@@ -4,8 +4,8 @@ import { useRoute } from 'vue-router'
 import LinkTextItem from '../components/LinkTextItem.vue'
 
 import Browser from '@/Browser/main'
-import { saveForPac } from '@/core/ProxyConfig'
-import { getNextLocalVersion } from '@/core/VersionControl'
+import { saveForPac } from '@/core/proxy_config.js'
+import { getNextLocalVersion } from '@/core/version_control.js'
 import { useStatusStore } from '@/options/stores/status'
 
 const handleUpdate = inject('handleUpdate')

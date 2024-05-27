@@ -1,5 +1,5 @@
 import Browser from '@/Browser/main'
-import { enrich, simplify } from '@/core/ConfigData'
+import { enrich, simplify } from '@/core/proxy_config.js'
 
 const MAX_VERSION = 1000000
 

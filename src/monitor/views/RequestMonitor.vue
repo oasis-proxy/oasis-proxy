@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import RequestTable from './RequestTable.vue'
 import RequestTab from './RequestTab.vue'
-import { getRules, checkRules } from '@/core/MatchRules'
+import { getRules, checkRules } from '@/core/rules_pretest.js'
 import Browser from '@/Browser/main'
 
 const tableList = ref([])

@@ -2,7 +2,7 @@ import {
   parseAutoProxyFile,
   parseInternalRule,
   parseBypassRule
-} from './ConfigData.js'
+} from './rules_parser.js'
 import * as ipaddr from 'ipaddr.js'
 
 export const getRules = function (proxyConfig) {

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed, getCurrentInstance, inject } from 'vue'
 import Browser from '@/Browser/main'
-import { getNextLocalVersion } from '@/core/VersionControl'
+import { getNextLocalVersion } from '@/core/version_control.js'
 const iptags = ref({})
 onMounted(() => {
   getTags()

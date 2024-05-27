@@ -1,3 +1,5 @@
+import { downloadUrl } from './utils.js'
+
 export const CONST_DEFAULT_PORT = {
   http: 80,
   https: 443,
@@ -385,4 +387,87 @@ function getAuthListInFixed(proxyConfig) {
     }
     return authList
   }
+}
+
+export const simplify = function (config) {
+  const simplifyConfig = {}
+  for (const key of Object.keys(config)) {
+    if (key.startsWith('proxy_')) {
+      switch (config[key].mode) {
+        case 'auto':
+          simplifyConfig[key] = config[key]
+          if (config[key].config.rules.external.url != '') {
+            simplifyConfig[key].config.rules.external.data = ''
+          }
+          if (config[key].config.rules.reject.url != '') {
+            simplifyConfig[key].config.rules.reject.data = ''
+          }
+          break
+        case 'pac_script':
+          simplifyConfig[key] = config[key]
+          if (config[key].config.rules.url != '') {
+            simplifyConfig[key].config.rules.data = ''
+          }
+          break
+        case 'fixed_servers':
+          simplifyConfig[key] = config[key]
+          break
+        default:
+          break
+      }
+    }
+  }
+  if (config.config_iptags != null) {
+    simplifyConfig.config_iptags = config.config_iptags
+  }
+  return simplifyConfig
+}
+
+export const enrich = async function (config) {
+  const enrichConfig = {}
+  for (const key of Object.keys(config)) {
+    if (key.startsWith('proxy_')) {
+      let response
+      switch (config[key].mode) {
+        case 'auto':
+          enrichConfig[key] = config[key]
+          if (config[key].config.rules.external.url != '') {
+            response = await downloadUrl(
+              config[key].config.rules.external.url,
+              'base64'
+            )
+            enrichConfig[key].config.rules.external.data = response.data
+            enrichConfig[key].config.rules.external.urlUpdatedAt =
+              response.updated
+          }
+          if (config[key].config.rules.reject.url != '') {
+            response = await downloadUrl(
+              config[key].config.rules.reject.url,
+              'base64'
+            )
+            enrichConfig[key].config.rules.reject.data = response.data
+            enrichConfig[key].config.rules.reject.urlUpdatedAt =
+              response.updated
+          }
+          break
+        case 'pac_script':
+          enrichConfig[key] = config[key]
+          if (config[key].config.rules.url != '') {
+            response = await downloadUrl(config[key].config.rules.url, 'base64')
+            enrichConfig[key].config.rules.data = response.data
+            enrichConfig[key].config.rules.urlUpdatedAt = response.updated
+          }
+          break
+        case 'fixed_servers':
+          enrichConfig[key] = config[key]
+          break
+        default:
+          break
+      }
+    }
+  }
+  if (config.config_iptags != null) {
+    enrichConfig.config_iptags = config.config_iptags
+  }
+  return enrichConfig
 }

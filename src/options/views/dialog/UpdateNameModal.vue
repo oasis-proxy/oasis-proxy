@@ -4,8 +4,8 @@ import { useRoute, useRouter } from 'vue-router'
 import ModalBase from '@/components/modal/ModalBase.vue'
 
 import Browser from '@/Browser/main'
-import { replaceProxyNameForAllProxy } from '@/core/ProxyConfig.js'
-import { getNextLocalVersion } from '@/core/VersionControl'
+import { replaceProxyNameForAllProxy } from '@/core/proxy_config.js'
+import { getNextLocalVersion } from '@/core/version_control.js'
 const showUploadConflictModal = inject('showUploadConflictModal')
 
 const name = ref('')

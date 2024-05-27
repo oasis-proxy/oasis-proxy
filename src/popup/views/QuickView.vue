@@ -2,13 +2,13 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import ProxySelect from '../../components/ProxySelect.vue'
-import { addInternalRulesForAuto } from '@/core/ProxyConfig.js'
+import { addInternalRulesForAuto } from '@/core/proxy_config.js'
 import Browser from '@/Browser/main'
 import {
   getNextLocalVersion,
   getSyncUploadStatus,
   overWriteToCloud
-} from '@/core/VersionControl'
+} from '@/core/version_control.js'
 
 const router = useRouter()
 

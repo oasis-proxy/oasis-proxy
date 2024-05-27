@@ -5,7 +5,10 @@ import ConfigDisplay from '../../components/ConfigDisplay.vue'
 import { useConfigStore } from '@/options/stores/config'
 
 import Browser from '@/Browser/main'
-import { overWriteToCloud, getSyncUploadStatus } from '@/core/VersionControl'
+import {
+  overWriteToCloud,
+  getSyncUploadStatus
+} from '@/core/version_control.js'
 
 defineExpose({ createModal })
 

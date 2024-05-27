@@ -9,9 +9,9 @@ import PopoverTips from '@/components/PopoverTips.vue'
 
 import Browser from '@/Browser/main'
 import { useStatusStore } from '@/options/stores/status'
-import { saveForAuto } from '@/core/ProxyConfig'
-import { pacScriptCreate } from '@/core/PacScript'
-import { getNextLocalVersion } from '@/core/VersionControl'
+import { saveForAuto } from '@/core/proxy_config.js'
+import { generatePacfile } from '@/core/pacfile_generator.js'
+import { getNextLocalVersion } from '@/core/version_control.js'
 
 const handleUpdate = inject('handleUpdate')
 const handleDelete = inject('handleDelete')
@@ -98,7 +98,7 @@ async function load(proxyKey) {
 async function handleExportPAC() {
   const res = await Browser.Storage.getLocalAll()
   console.info(res, 'proxy_' + encodeURIComponent(route.params.name))
-  const codeBlock = pacScriptCreate(
+  const codeBlock = generatePacfile(
     res,
     'proxy_' + encodeURIComponent(route.params.name)
   )
@@ -290,7 +290,7 @@ function handleCancel() {
                 </draggable>
               </div>
               <div>
-                <div class="hstack gap-4 mb-2">
+                <div class="hstack gap-2 mb-2">
                   <span class="ms-auto">{{
                     Browser.I18n.getMessage('desc_external_rules')
                   }}</span>
@@ -300,15 +300,22 @@ function handleCancel() {
                       v-model="externalProxy"
                     ></ProxySelect>
                   </div>
-                  <div class="hstack gap-1" style="visibility: hidden">
-                    <i class="bi bi-trash-fill icon-btn me-1"></i>
-                    <i class="bi bi-trash-fill icon-btn me-1"></i>
-                    <i class="bi bi-trash-fill icon-btn"></i>
-                  </div>
+                  <i
+                    class="bi bi-trash-fill icon-btn"
+                    style="visibility: hidden"
+                  ></i>
+                  <i
+                    class="bi bi-trash-fill icon-btn"
+                    style="visibility: hidden"
+                  ></i>
+                  <i
+                    class="bi bi-trash-fill icon-btn"
+                    style="visibility: hidden"
+                  ></i>
                 </div>
               </div>
               <div>
-                <div class="hstack gap-4">
+                <div class="hstack gap-2">
                   <span class="ms-auto">{{
                     Browser.I18n.getMessage('desc_default')
                   }}</span>
@@ -318,11 +325,18 @@ function handleCancel() {
                       v-model="defaultProxy"
                     ></ProxySelect>
                   </div>
-                  <div class="hstack gap-1" style="visibility: hidden">
-                    <i class="bi bi-trash-fill icon-btn me-1"></i>
-                    <i class="bi bi-trash-fill icon-btn me-1"></i>
-                    <i class="bi bi-trash-fill icon-btn"></i>
-                  </div>
+                  <i
+                    class="bi bi-trash-fill icon-btn"
+                    style="visibility: hidden"
+                  ></i>
+                  <i
+                    class="bi bi-trash-fill icon-btn"
+                    style="visibility: hidden"
+                  ></i>
+                  <i
+                    class="bi bi-trash-fill icon-btn"
+                    style="visibility: hidden"
+                  ></i>
                 </div>
               </div>
             </div>

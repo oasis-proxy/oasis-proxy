@@ -122,14 +122,14 @@ export const testRule = function (url, formattedRule) {
         1,
         formattedRule.rule.regex.length - 1
       )
-      pattern = new RegExp(tmpStr.replace(/\\\//g, '/'))
+      pattern = new RegExp(tmpStr)
       return pattern.test(url)
     case 'host':
       tmpStr = formattedRule.rule.regex.substring(
         1,
         formattedRule.rule.regex.length - 1
       )
-      pattern = new RegExp(tmpStr.replace(/\\\//g, '/'))
+      pattern = new RegExp(tmpStr)
       return pattern.test(host)
     case 'plain':
       return host.lastIndexOf('.') == -1 && host.lastIndexOf(':') == -1

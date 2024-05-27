@@ -1,0 +1,26 @@
+[
+  {
+    "test": ".example.com",
+    "result": "/\\.example\\.com$/"
+  },
+  {
+    "test": "*.example.com",
+    "result": "/\\.example\\.com$/"
+  },
+  {
+    "test": "example.com",
+    "result": "/^example\\.com$/"
+  },
+  {
+    "test": "**.example.com",
+    "result": "/\\.example\\.com$/"
+  },
+  {
+    "test": "*example.com",
+    "result": "/.*example\\.com$/"
+  },
+  {
+    "test": "exam**ple.com",
+    "result": "/^exam.*.*ple\\.com$/"
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "test": "*.example.com",
+    "result": "/(?:^|\\.)example\\.com$/"
+  },
+  {
+    "test": "**.example.com",
+    "result": "/\\.example\\.com$/"
+  },
+  {
+    "test": ".example.com",
+    "result": "/(?:^|\\.)example\\.com$/"
+  },
+  {
+    "test": "***.example.com",
+    "result": "/.*.*.*\\.example\\.com$/"
+  },
+  {
+    "test": ".exam**ple.com",
+    "result": "/(?:^|\\.)exam.*.*ple\\.com$/"
+  },
+  {
+    "test": "*.example*.com",
+    "result": "/(?:^|\\.)example.*\\.com$/"
+  },
+  {
+    "test": "*.example.*com",
+    "result": "/(?:^|\\.)example\\..*com$/"
+  },
+  {
+    "test": "*.example.com*",
+    "result": "/(?:^|\\.)example\\.com.*$/"
+  },
+  {
+    "test": "*.example*.c*om",
+    "result": "/(?:^|\\.)example.*\\.c.*om$/"
+  },
+  {
+    "test": "**examp-?le.com",
+    "result": "/.*.*examp-.le\\.com$/"
+  },
+  {
+    "test": "*example.com?",
+    "result": "/.*example\\.com.$/"
+  },
+  {
+    "test": "example.com",
+    "result": "/^example\\.com$/"
+  }
+]

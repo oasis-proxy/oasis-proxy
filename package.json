@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "test": "vitest",
     "build": "vite build",
     "debug": "vite --mode debugging build",
     "preview": "vite preview",
@@ -27,6 +28,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.23.0",
     "prettier": "^3.2.5",
-    "vite": "^5.2.8"
+    "vite": "^5.2.8",
+    "vitest": "^1.6.0"
   }
 }

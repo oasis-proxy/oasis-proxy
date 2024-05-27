@@ -1,0 +1,50 @@
+[
+  {
+    "test": "*.example.com",
+    "result": "/^http:\\/\\/.*\\.example\\.com.*$/"
+  },
+  {
+    "test": "**.example.com",
+    "result": "/^http:\\/\\/.*.*\\.example\\.com.*$/"
+  },
+  {
+    "test": ".example.com",
+    "result": "/^http:\\/\\/.*\\.example\\.com.*$/"
+  },
+  {
+    "test": "***.example.com",
+    "result": "/^http:\\/\\/.*.*.*\\.example\\.com.*$/"
+  },
+  {
+    "test": ".exam**ple.com",
+    "result": "/^http:\\/\\/.*\\.exam.*.*ple\\.com.*$/"
+  },
+  {
+    "test": "*.example*.com",
+    "result": "/^http:\\/\\/.*\\.example.*\\.com.*$/"
+  },
+  {
+    "test": "*.example.*com",
+    "result": "/^http:\\/\\/.*\\.example\\..*com.*$/"
+  },
+  {
+    "test": "*.example.com*",
+    "result": "/^http:\\/\\/.*\\.example\\.com.*$/"
+  },
+  {
+    "test": "*.example*.c*om",
+    "result": "/^http:\\/\\/.*\\.example.*\\.c.*om.*$/"
+  },
+  {
+    "test": "*.examp-?le.com",
+    "result": "/^http:\\/\\/.*\\.examp-.le\\.com.*$/"
+  },
+  {
+    "test": "*example.com?",
+    "result": "/^http:\\/\\/.*example\\.com..*$/"
+  },
+  {
+    "test": "example.com",
+    "result": "/^http:\\/\\/.*example\\.com.*$/"
+  }
+]

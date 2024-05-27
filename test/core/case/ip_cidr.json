@@ -1,0 +1,18 @@
+[
+  {
+    "test": "https://example\\.com\\",
+    "result": ""
+  },
+  {
+    "test": "^https?://[^\\/]+example\\.(.*)",
+    "result": "/^https?:\\/\\/[^\\/]+example\\.(.*)/"
+  },
+  {
+    "test": "^https?://([^\\/]+\\.)*example\\.(ac|cm|co.ao|co.kr|co.ls|co.ma|com|com.af|com.ag)/.*",
+    "result": "/^https?:\\/\\/([^\\/]+\\.)*example\\.(ac|cm|co.ao|co.kr|co.ls|co.ma|com|com.af|com.ag)\\/.*/"
+  },
+  {
+    "test": "^https?:\\/\\/([^\\/]+\\.)*example\\.(ac|cm|co.ao|co.kr|co.ls|co.ma|com|com.af|com.ag)\\/.*",
+    "result": "/^https?:\\/\\/([^\\/]+\\.)*example\\.(ac|cm|co.ao|co.kr|co.ls|co.ma|com|com.af|com.ag)\\/.*/"
+  }
+]

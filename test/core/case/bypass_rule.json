@@ -1,0 +1,70 @@
+[
+  {
+    "test": ".example.com",
+    "result": "/\\.example\\.com$/"
+  },
+  {
+    "test": "*.example.com",
+    "result": "/\\.example\\.com$/"
+  },
+  {
+    "test": "example.com",
+    "result": "/^example\\.com$/"
+  },
+  {
+    "test": "**.example.com",
+    "result": "/\\.example\\.com$/"
+  },
+  {
+    "test": "*example.com",
+    "result": "/.*example\\.com$/"
+  },
+  {
+    "test": "exam**ple.com",
+    "result": "/^exam.*.*ple\\.com$/"
+  },
+  {
+    "test": "1.1.1.1",
+    "rule": { "subnet": "1.1.1.1", "mask": "255.255.255.255", "ipv4": true }
+  },
+  {
+    "test": "1.1.1.1/24",
+    "rule": { "subnet": "1.1.1.0", "mask": "255.255.255.0", "ipv4": true }
+  },
+  {
+    "test": "8.8.8.8/12",
+    "rule": { "subnet": "8.0.0.0", "mask": "255.240.0.0", "ipv4": true }
+  },
+  {
+    "test": "::1",
+    "rule": {
+      "subnet": "::1",
+      "mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+      "ipv4": false
+    }
+  },
+  {
+    "test": "2400::",
+    "rule": {
+      "subnet": "2400::",
+      "mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+      "ipv4": false
+    }
+  },
+  {
+    "test": "2480::/8",
+    "rule": {
+      "subnet": "2400:0:0:0:0:0:0:0",
+      "mask": "ff00:0:0:0:0:0:0:0",
+      "ipv4": false
+    }
+  },
+  {
+    "test": "[2480::]",
+    "rule": {
+      "subnet": "2480::",
+      "mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+      "ipv4": false
+    }
+  }
+]

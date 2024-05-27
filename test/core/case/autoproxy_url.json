@@ -1,0 +1,46 @@
+[
+  {
+    "test": "|http://*.example.com",
+    "result": "/^http:\\/\\/.*\\.example\\.com.*$/"
+  },
+  {
+    "test": "|https://**.example.com",
+    "result": "/^https:\\/\\/.*.*\\.example\\.com.*$/"
+  },
+  {
+    "test": "|https://.example.com",
+    "result": "/^https:\\/\\/\\.example\\.com.*$/"
+  },
+  {
+    "test": "|https://.exam**ple.com",
+    "result": "/^https:\\/\\/\\.exam.*.*ple\\.com.*$/"
+  },
+  {
+    "test": "|https://*.example*.com",
+    "result": "/^https:\\/\\/.*\\.example.*\\.com.*$/"
+  },
+  {
+    "test": "|https://*.example.*com",
+    "result": "/^https:\\/\\/.*\\.example\\..*com.*$/"
+  },
+  {
+    "test": "|https://*.example.com*",
+    "result": "/^https:\\/\\/.*\\.example\\.com.*$/"
+  },
+  {
+    "test": "|https://*.example*.c*om",
+    "result": "/^https:\\/\\/.*\\.example.*\\.c.*om.*$/"
+  },
+  {
+    "test": "|https://*.examp-?le.com",
+    "result": "/^https:\\/\\/.*\\.examp-.le\\.com.*$/"
+  },
+  {
+    "test": "|https://*.example.com?",
+    "result": "/^https:\\/\\/.*\\.example\\.com..*$/"
+  },
+  {
+    "test": "|https://example.com",
+    "result": "/^https:\\/\\/example\\.com.*$/"
+  }
+]

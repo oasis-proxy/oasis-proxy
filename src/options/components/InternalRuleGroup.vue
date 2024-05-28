@@ -57,7 +57,8 @@ function inputDividerLabel(event) {
 
 function checkDataValid() {
   if (rule.value.mode == 'domain') {
-    isDataValid.value = /^[a-zA-Z0-9*?.-]*$/.test(rule.value.data)
+    if (rule.value.data == '') isDataValid.value = false
+    else isDataValid.value = /^[a-zA-Z0-9*?.-]*$/.test(rule.value.data)
   } else if (rule.value.mode == 'regex') {
     if (rule.value.data == '') isDataValid.value = false
     else isDataValid.value = getRegConst(rule.value.data) != ''
@@ -125,7 +126,7 @@ function handleBlur() {
       <ProxySelect v-model="rule.proxy" style="width: 150px"></ProxySelect>
     </div>
     <i class="bi bi-layer-backward icon-btn mt-1" @click="$emit('addItem')"></i>
-    <i class="bi bi-view-list icon-btn mt-1" @click="$emit('hrItem')"></i>
+    <i class="bi bi-inboxes-fill icon-btn mt-1" @click="$emit('hrItem')"></i>
     <i class="bi bi-trash-fill icon-btn mt-1" @click="$emit('deleteItem')"></i>
   </div>
   <div class="hstack gap-4 mb-2 d-flex align-items-center" v-else>

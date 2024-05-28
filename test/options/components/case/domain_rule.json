@@ -1,0 +1,58 @@
+[
+  {
+    "test": {
+      "mode": "domain",
+      "value": "example.com"
+    },
+    "result": "form-control form-control-sm"
+  },
+  {
+    "test": {
+      "mode": "domain",
+      "value": ".example.com"
+    },
+    "result": "form-control form-control-sm"
+  },
+  {
+    "test": {
+      "mode": "domain",
+      "value": "*.exampl-e.c?om"
+    },
+    "result": "form-control form-control-sm"
+  },
+  {
+    "test": {
+      "mode": "domain",
+      "value": ".exam/ple.com"
+    },
+    "result": "form-control form-control-sm is-invalid"
+  },
+  {
+    "test": {
+      "mode": "domain",
+      "value": ".examp\\le.com"
+    },
+    "result": "form-control form-control-sm is-invalid"
+  },
+  {
+    "test": {
+      "mode": "domain",
+      "value": ".example.*"
+    },
+    "result": "form-control form-control-sm"
+  },
+  {
+    "test": {
+      "mode": "domain",
+      "value": ".example.c?"
+    },
+    "result": "form-control form-control-sm"
+  },
+  {
+    "test": {
+      "mode": "domain",
+      "value": ".example.com"
+    },
+    "result": "form-control form-control-sm"
+  }
+]

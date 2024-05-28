@@ -1,0 +1,44 @@
+[
+  {
+    "test": {
+      "mode": "regex",
+      "value": "example.com"
+    },
+    "result": "form-control form-control-sm"
+  },
+  {
+    "test": {
+      "mode": "regex",
+      "value": "https://example\\.com\\"
+    },
+    "result": "form-control form-control-sm is-invalid"
+  },
+  {
+    "test": {
+      "mode": "regex",
+      "value": "^https?://[^\\/]+example\\.(.*)"
+    },
+    "result": "form-control form-control-sm"
+  },
+  {
+    "test": {
+      "mode": "regex",
+      "value": "^https?://([^\\/]+\\.)*example\\.(ac|cm|co.ao|co.kr|co.ls|co.ma|com|com.af|com.ag)/.*"
+    },
+    "result": "form-control form-control-sm"
+  },
+  {
+    "test": {
+      "mode": "regex",
+      "value": "^https?:\\/\\/([^\\/]+\\.)*example\\.(ac|cm|co.ao|co.kr|co.ls|co.ma|com|com.af|com.ag)\\/.*"
+    },
+    "result": "form-control form-control-sm"
+  },
+  {
+    "test": {
+      "mode": "regex",
+      "value": ""
+    },
+    "result": "form-control form-control-sm is-invalid"
+  }
+]

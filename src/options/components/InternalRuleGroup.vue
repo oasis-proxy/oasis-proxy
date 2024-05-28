@@ -59,8 +59,8 @@ function checkDataValid() {
   if (rule.value.mode == 'domain') {
     isDataValid.value = /^[a-zA-Z0-9*?.-]*$/.test(rule.value.data)
   } else if (rule.value.mode == 'regex') {
-    const data = getRegConst(rule.value.data)
-    isDataValid.value = data != ''
+    if (rule.value.data == '') isDataValid.value = false
+    else isDataValid.value = getRegConst(rule.value.data) != ''
   } else if (rule.value.mode == 'ip') {
     isDataValid.value =
       ipaddr.IPv4.isValidFourPartDecimal(rule.value.data) ||

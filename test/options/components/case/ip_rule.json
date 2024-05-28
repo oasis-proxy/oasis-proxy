@@ -1,0 +1,79 @@
+[
+  {
+    "test": {
+      "mode": "ip",
+      "value": "1.1.1.1"
+    },
+    "result": "form-control form-control-sm"
+  },
+  {
+    "test": {
+      "mode": "ip",
+      "value": "1.1.1"
+    },
+    "result": "form-control form-control-sm is-invalid"
+  },
+  {
+    "test": {
+      "mode": "ip",
+      "value": "1"
+    },
+    "result": "form-control form-control-sm is-invalid"
+  },
+  {
+    "test": {
+      "mode": "ip",
+      "value": "1.1.1.1123"
+    },
+    "result": "form-control form-control-sm is-invalid"
+  },
+  {
+    "test": {
+      "mode": "ip",
+      "value": "1.1.1.112/24"
+    },
+    "result": "form-control form-control-sm"
+  },
+  {
+    "test": {
+      "mode": "ip",
+      "value": "1.1.1.112/33"
+    },
+    "result": "form-control form-control-sm is-invalid"
+  },
+  {
+    "test": {
+      "mode": "ip",
+      "value": "::1"
+    },
+    "result": "form-control form-control-sm"
+  },
+  {
+    "test": {
+      "mode": "ip",
+      "value": "2400::1/128"
+    },
+    "result": "form-control form-control-sm"
+  },
+  {
+    "test": {
+      "mode": "ip",
+      "value": "2400::1/129"
+    },
+    "result": "form-control form-control-sm is-invalid"
+  },
+  {
+    "test": {
+      "mode": "ip",
+      "value": "2400::1"
+    },
+    "result": "form-control form-control-sm"
+  },
+  {
+    "test": {
+      "mode": "ip",
+      "value": "24001::1"
+    },
+    "result": "form-control form-control-sm is-invalid"
+  }
+]

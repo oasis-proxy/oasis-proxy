@@ -48,7 +48,7 @@ function handleClick(tabId) {
           {{ Browser.I18n.getMessage('aside_label_tabs') }}
         </div>
       </div>
-      <div class="card-body overflow-scroll" style="height: 1px">
+      <div class="card-body overflow-auto" style="height: 1px">
         <ul class="nav nav-pills flex-column">
           <li
             :class="e.valid ? 'nav-item w-100' : 'nav-item invalid w-100'"

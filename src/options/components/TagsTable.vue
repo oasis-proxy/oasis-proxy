@@ -90,7 +90,7 @@ async function deleteTags(ip) {
       </div>
       <i class="bi bi-plus-circle-fill icon-btn" @click="addTags"></i>
     </div>
-    <div style="height: 300px; width: fit-content" class="overflow-scroll">
+    <div style="height: 300px; width: fit-content" class="overflow-auto">
       <table class="table table-sm table-striped">
         <thead class="table-primary text-nowrap">
           <tr>

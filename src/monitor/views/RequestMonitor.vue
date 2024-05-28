@@ -221,7 +221,7 @@ function converBeforeRequest(details) {
       </div>
     </div>
     <hr />
-    <div class="overflow-scroll">
+    <div class="overflow-auto" style="min-height: 60%">
       <RequestTable
         :contentFilter="contentFilter"
         :tabIdFilter="selectedTabsId"

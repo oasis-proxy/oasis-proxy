@@ -39,6 +39,10 @@
     "message": "Modify Name",
     "description": ""
   },
+  "btn_label_export_pac": {
+    "message": "Export PAC",
+    "description": ""
+  },
   "btn_label_add_config": {
     "message": "Add",
     "description": ""
@@ -314,7 +318,7 @@
     "description": ""
   },
   "input_label_divider": {
-    "message": "Section divider, edit the description after dragged up",
+    "message": "Section divider, edit the description after click",
     "description": ""
   },
   "input_label_auto_policy": {
@@ -481,6 +485,18 @@
   "feedback_reject_invalid": {
     "message": "Format to fill in: SCHEME[space]HOST:PORT. Suggestion: HTTPS 127.0.0.1:65432"
   },
+  "feedback_regex_invalid": {
+    "message": "Regular Expression Error"
+  },
+  "feedback_wildcard_domain_invalid": {
+    "message": "Wildcard domain error (valid character: a-zA-Z0-9.?*-)"
+  },
+  "feedback_ip_cidr_invalid": {
+    "message": "IP/CIDR Input Error"
+  },
+  "feedback_invalid": {
+    "message": "Input Error"
+  },
   "feedback_update_name_invalid": {
     "message": "The new name cannot be empty, direct, system, or reject. The new name cannot be the same as the old name, or the new name already exists"
   },
@@ -561,5 +577,14 @@
   },
   "placeholder_iptags": {
     "message": "Please Enter Tag Name"
+  },
+  "placeholder_domain": {
+    "message": "Please enter a domain wildcard expression"
+  },
+  "placeholder_ip_cidr": {
+    "message": "Please enter IP/CIDR"
+  },
+  "placeholder_regex": {
+    "message": "Please enter a regular expression for domain"
   }
 }

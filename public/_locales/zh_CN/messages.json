@@ -39,6 +39,10 @@
     "message": "修改名称",
     "description": ""
   },
+  "btn_label_export_pac": {
+    "message": "导出PAC",
+    "description": ""
+  },
   "btn_label_add_config": {
     "message": "添 加",
     "description": ""
@@ -314,7 +318,7 @@
     "description": ""
   },
   "input_label_divider": {
-    "message": "段分隔，向上拖动后可点击编辑",
+    "message": "段分隔，点击编辑",
     "description": ""
   },
   "input_label_auto_policy": {
@@ -481,6 +485,18 @@
   "feedback_reject_invalid": {
     "message": "填写格式：SCHEME[空格]HOST:PORT。建议：HTTPS 127.0.0.1:65432"
   },
+  "feedback_regex_invalid": {
+    "message": "正则表达式错误"
+  },
+  "feedback_wildcard_domain_invalid": {
+    "message": "通配符域名错误（有效字符：a-zA-Z0-9.?*-）"
+  },
+  "feedback_ip_cidr_invalid": {
+    "message": "IP/CIDR输入错误"
+  },
+  "feedback_invalid": {
+    "message": "输入错误"
+  },
   "feedback_update_name_invalid": {
     "message": "新名称不能为空、direct、system、reject，或新名称与旧名称一致，或新名称已存在"
   },
@@ -561,5 +577,14 @@
   },
   "placeholder_iptags": {
     "message": "请输入标签名称"
+  },
+  "placeholder_domain": {
+    "message": "请输入域名通配符表达式"
+  },
+  "placeholder_ip_cidr": {
+    "message": "请输入IP/CIDR"
+  },
+  "placeholder_regex": {
+    "message": "请输入域名的正则表达式"
   }
 }

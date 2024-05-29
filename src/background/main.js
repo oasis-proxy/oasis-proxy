@@ -204,7 +204,7 @@ const removeMonitor = () => {
 }
 
 const isMonitorEffective = () => {
-  const flag = chrome.webRequest.onResponseStarted.hasListener(monitorResponse)
+  const flag = chrome.webRequest.onCompleted.hasListener(monitorResponse)
   console.debug('isMonitorEffective', flag)
   return flag
 }

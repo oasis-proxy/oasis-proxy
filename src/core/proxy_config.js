@@ -389,6 +389,48 @@ function getAuthListInFixed(proxyConfig) {
   }
 }
 
+export const updateExternalData = async function (
+  proxyConfig,
+  subject = 'all'
+) {
+  let updateFlag = false
+  let response
+  try {
+    if (
+      proxyConfig.config.rules.external.url != '' &&
+      (subject == 'all' || subject == 'external')
+    ) {
+      response = await downloadUrl(
+        proxyConfig.config.rules.external.url,
+        'base64'
+      )
+      proxyConfig.config.rules.external.data = response.data
+      proxyConfig.config.rules.external.urlUpdatedAt = response.updated
+      updateFlag = true
+    }
+    if (
+      proxyConfig.config.rules.reject.url != '' &&
+      (subject == 'all' || subject == 'reject')
+    ) {
+      response = await downloadUrl(
+        proxyConfig.config.rules.reject.url,
+        'base64'
+      )
+      proxyConfig.config.rules.reject.data = response.data
+      proxyConfig.config.rules.reject.urlUpdatedAt = response.updated
+      updateFlag = true
+    }
+    if (updateFlag) {
+      return proxyConfig
+    } else {
+      return {}
+    }
+  } catch (err) {
+    console.error(err)
+    return {}
+  }
+}
+
 export const simplify = function (config) {
   const simplifyConfig = {}
   for (const key of Object.keys(config)) {

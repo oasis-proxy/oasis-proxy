@@ -3,6 +3,7 @@ import { defineModel, computed, ref } from 'vue'
 
 import { downloadUrl } from '@/core/utils'
 import Browser from '@/Browser/main'
+import { useStatusStore } from '@/options/stores/status'
 
 const externalItem = defineModel('externalItem', {
   type: Object,
@@ -16,6 +17,8 @@ const externalItem = defineModel('externalItem', {
     }
   }
 })
+const storeStatus = useStatusStore()
+const emit = defineEmits(['updateExternalData'])
 
 defineProps({
   urlTitle: String,
@@ -37,7 +40,7 @@ const urlInputClass = computed(() => {
   return isUrlValid.value ? 'input-group' : 'input-group is-invalid'
 })
 
-function updateData() {
+async function updateData() {
   console.log('updateData', externalItem.value)
   isUrlValid.value = true
   if (externalItem.value.url == '') {
@@ -45,16 +48,24 @@ function updateData() {
     externalItem.value.data = ''
     return
   }
-  downloadUrl(externalItem.value.url, 'base64')
-    .then((obj) => {
-      externalItem.value.data = obj.data
-      externalItem.value.urlUpdatedAt = obj.updated
-    })
-    .catch(() => {
-      externalItem.value.urlUpdatedAt = ''
-      externalItem.value.data = ''
-      isUrlValid.value = false
-    })
+  try {
+    const response = await downloadUrl(externalItem.value.url, 'base64')
+    externalItem.value.data = response.data
+    externalItem.value.urlUpdatedAt = response.updated
+  } catch (err) {
+    console.error(err)
+    externalItem.value.urlUpdatedAt = ''
+    externalItem.value.data = ''
+    isUrlValid.value = false
+  }
+}
+
+async function handleClickUpdate() {
+  if (!storeStatus.isUnsaved) {
+    emit('updateExternalData')
+  } else {
+    updateData()
+  }
 }
 </script>
 <template>
@@ -72,7 +83,7 @@ function updateData() {
           />
           <button
             class="btn-sm btn btn-outline-secondary btn-custom-group"
-            @click="updateData"
+            @click="handleClickUpdate"
           >
             <i class="bi bi-arrow-counterclockwise"></i>
           </button>

@@ -12,6 +12,7 @@ import { useStatusStore } from '@/options/stores/status'
 import { saveForAuto } from '@/core/proxy_config.js'
 import { generatePacfile } from '@/core/pacfile_generator.js'
 import { getNextLocalVersion } from '@/core/version_control.js'
+import { updateExternalData } from '@/core/proxy_config.js'
 
 const handleUpdate = inject('handleUpdate')
 const handleDelete = inject('handleDelete')
@@ -157,6 +158,22 @@ function inputClassName(item) {
   }
   return name.join(' ')
 }
+
+async function handleUpdateUrl(subject) {
+  const key = 'proxy_' + encodeURIComponent(route.params.name)
+  const allConfig = await Browser.Storage.getLocalAll()
+  const updateProxyConfig = await updateExternalData(allConfig[key], subject)
+  if (JSON.stringify(updateProxyConfig) != '{}') {
+    await Browser.Storage.setLocal({ [key]: updateProxyConfig })
+    if (allConfig.status_proxyKey == key) {
+      Browser.Proxy.set(allConfig, key, async () => {
+        toast.info(Browser.I18n.getMessage('desc_proxy_update'))
+      })
+    }
+    load(key)
+  }
+}
+
 async function handleSubmit() {
   const name = route.params.name
   const encodeName = encodeURIComponent(name)
@@ -360,6 +377,7 @@ function handleCancel() {
                   Browser.I18n.getMessage('form_label_update_date')
                 "
                 :dataTitle="Browser.I18n.getMessage('form_label_rule_data')"
+                @updateExternalData="handleUpdateUrl('external')"
                 v-model:externalItem="externalRule"
               ></LinkTextItem>
             </div>
@@ -390,6 +408,7 @@ function handleCancel() {
                   Browser.I18n.getMessage('form_label_update_date')
                 "
                 :dataTitle="Browser.I18n.getMessage('form_label_rule_data')"
+                @updateExternalData="handleUpdateUrl('reject')"
                 v-model:externalItem="rejectRule"
               ></LinkTextItem>
             </div>

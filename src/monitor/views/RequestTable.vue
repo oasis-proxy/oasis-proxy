@@ -12,11 +12,11 @@ const props = defineProps({
 const iptags = ref({})
 
 const title = [
-  { name: '', show: true, width: '20px' },
+  { name: ' ', show: true, width: '20px' },
   {
     name: Browser.I18n.getMessage('th_col_id'),
     show: true,
-    width: '50px'
+    width: '60px'
   },
   {
     name: Browser.I18n.getMessage('th_col_date'),
@@ -48,7 +48,7 @@ const title = [
   {
     name: Browser.I18n.getMessage('th_col_url'),
     show: true,
-    width: 'auto',
+    width: 'calc(100% - 760px)',
     clickable: true
   }
 ]
@@ -117,7 +117,7 @@ async function getIptags() {
             ></PopoverTips>
             <i class="bi bi-clock-fill text-info" v-else></i>
           </td>
-          <td class="truncate-text ps-3" style="width: 40px">
+          <td class="truncate-text ps-3" style="width: 60px">
             {{ index }}
           </td>
           <td class="truncate-text ps-3" style="width: 80px">

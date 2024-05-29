@@ -65,6 +65,10 @@ function clearConfig() {
         }
       }
       await Browser.Storage.setLocal(obj)
+      await Browser.Proxy.setDirect(async () => {
+        await Browser.Storage.setLocal({ status_proxyKey: 'direct' })
+        toast.info(`代理切换为直连`)
+      })
       toast.info(Browser.I18n.getMessage('desc_init_config'))
       setTimeout(() => {
         location.reload()

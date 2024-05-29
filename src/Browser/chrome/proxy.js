@@ -7,12 +7,12 @@ Proxy.set = async function (proxyConfigs, key, afterSuccess = function () {}) {
   Proxy._set(config, afterSuccess)
 }
 
-Proxy.setDirect = async function (afterSuccess) {
+Proxy.setDirect = async function (afterSuccess = () => {}) {
   const config = Proxy._directConfig()
   Proxy._set(config, afterSuccess)
 }
 
-Proxy.setSystem = async function (afterSuccess) {
+Proxy.setSystem = async function (afterSuccess = () => {}) {
   const config = Proxy._systemConfig()
   Proxy._set(config, afterSuccess)
 }

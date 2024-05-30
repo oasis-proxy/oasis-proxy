@@ -1,5 +1,11 @@
 # ChangeLogs
 
+## v1.0.4.1
+
+BugFix:
+
+- Fixed a silly bug
+
 ## v1.0.4
 
 Features:

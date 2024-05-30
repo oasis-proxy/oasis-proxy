@@ -1,5 +1,25 @@
 # ChangeLogs
 
+## v1.0.4
+
+Features:
+
+- Support export the PAC file in Auto-Policy.
+
+Optimization:
+
+- Improved the method of adding internal rules and segment divider in Auto-Policy.
+- Rewrote the rule parsing for wildcards and regular expressions.
+- Optimized the position of the Toast notification.
+- Added unit tests.
+
+BugFix:
+
+- Fixed some UI bugs.
+- Fixed the issue with the plugin's background auto-updating external rules.
+- Fixed the issue with the plugin's background determining the status of link monitoring.
+- Fixed the issue with the cancel button not working on the strategy and proxy configuration pages.
+
 ## v1.0.3
 
 Features:

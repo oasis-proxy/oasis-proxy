@@ -5,20 +5,19 @@ import { downloadUrl } from '@/core/utils'
 import Browser from '@/Browser/main'
 import { useStatusStore } from '@/options/stores/status'
 
-const externalItem = defineModel('externalItem', {
+const rulesSet = defineModel('rulesSet', {
   type: Object,
   default: () => {
     return {
-      scheme: 'default',
-      host: '',
-      port: null,
-      username: '',
-      password: ''
+      url: 'default',
+      data: '',
+      urlUpdatedAt: null,
+      valid: true
     }
   }
 })
 const storeStatus = useStatusStore()
-const emit = defineEmits(['updateExternalData'])
+const emit = defineEmits(['updateRulesSetData'])
 
 defineProps({
   urlTitle: String,
@@ -29,11 +28,11 @@ defineProps({
 const isUrlValid = ref(true)
 
 const dataInputDisabled = computed(() => {
-  return externalItem.value.url != ''
+  return rulesSet.value.url != ''
 })
 
 const urlInputDisabled = computed(() => {
-  return externalItem.value.data != '' && externalItem.value.url == ''
+  return rulesSet.value.data != '' && rulesSet.value.url == ''
 })
 
 const urlInputClass = computed(() => {
@@ -41,28 +40,28 @@ const urlInputClass = computed(() => {
 })
 
 async function updateData() {
-  console.log('updateData', externalItem.value)
+  console.log('updateData', rulesSet.value)
   isUrlValid.value = true
-  if (externalItem.value.url == '') {
-    externalItem.value.urlUpdatedAt = ''
-    externalItem.value.data = ''
+  if (rulesSet.value.url == '') {
+    rulesSet.value.urlUpdatedAt = ''
+    rulesSet.value.data = ''
     return
   }
   try {
-    const response = await downloadUrl(externalItem.value.url, 'base64')
-    externalItem.value.data = response.data
-    externalItem.value.urlUpdatedAt = response.updated
+    const response = await downloadUrl(rulesSet.value.url, 'base64')
+    rulesSet.value.data = response.data
+    rulesSet.value.urlUpdatedAt = response.updated
   } catch (err) {
     console.error(err)
-    externalItem.value.urlUpdatedAt = ''
-    externalItem.value.data = ''
+    rulesSet.value.urlUpdatedAt = ''
+    rulesSet.value.data = ''
     isUrlValid.value = false
   }
 }
 
 async function handleClickUpdate() {
   if (!storeStatus.isUnsaved) {
-    emit('updateExternalData')
+    emit('updateRulesSetData')
   } else {
     updateData()
   }
@@ -77,7 +76,7 @@ async function handleClickUpdate() {
           <input
             type="text"
             class="form-control form-control-sm"
-            v-model="externalItem.url"
+            v-model="rulesSet.url"
             @blur="updateData"
             :disabled="urlInputDisabled"
           />
@@ -95,11 +94,11 @@ async function handleClickUpdate() {
     </div>
     <div
       class="mb-3 row d-flex align-items-center"
-      v-if="externalItem.urlUpdatedAt != ''"
+      v-if="rulesSet.urlUpdatedAt != ''"
     >
       <label class="col-2 col-form-label">{{ urlUpdatedAtTitle }}</label>
       <div class="col-10">
-        <span>{{ externalItem.urlUpdatedAt }}</span>
+        <span>{{ rulesSet.urlUpdatedAt }}</span>
       </div>
     </div>
     <div class="mb-3 row d-flex align-items-top">
@@ -108,7 +107,7 @@ async function handleClickUpdate() {
         <textarea
           class="form-control form-control-sm"
           rows="10"
-          v-model="externalItem.data"
+          v-model="rulesSet.data"
           :disabled="dataInputDisabled"
         ></textarea>
       </div>

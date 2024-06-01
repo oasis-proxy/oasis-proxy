@@ -113,7 +113,7 @@ function handleCancel() {
         :urlTitle="Browser.I18n.getMessage('form_label_pac_url')"
         :urlUpdatedAtTitle="Browser.I18n.getMessage('form_label_update_date')"
         :dataTitle="Browser.I18n.getMessage('form_label_pac_script')"
-        v-model:externalItem="pacRule"
+        v-model:rulesSet="pacRule"
       ></LinkTextItem>
       <div class="hstack gap-3">
         <button

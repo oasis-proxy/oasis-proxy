@@ -1,6 +1,5 @@
 <script setup>
 import { computed, defineModel, onMounted, ref, watch } from 'vue'
-import ProxySelect from '@/components/ProxySelect.vue'
 import Browser from '@/Browser/main'
 import { getRegConst } from '@/core/rules_parser.js'
 import * as ipaddr from 'ipaddr.js'
@@ -123,7 +122,7 @@ function handleBlur() {
       </div>
     </div>
     <div>
-      <ProxySelect v-model="rule.proxy" style="width: 150px"></ProxySelect>
+      <slot></slot>
     </div>
     <i class="bi bi-layer-backward icon-btn mt-1" @click="$emit('addItem')"></i>
     <i class="bi bi-inboxes-fill icon-btn mt-1" @click="$emit('hrItem')"></i>

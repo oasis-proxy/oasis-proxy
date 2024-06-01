@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import draggable from 'vuedraggable'
 import LinkTextItem from '../components/LinkTextItem.vue'
 import ProxySelect from '@/components/ProxySelect.vue'
-import InternalRuleGroup from '../components/InternalRuleGroup.vue'
+import RuleItem from '../components/InternalRuleGroup.vue'
 import PopoverTips from '@/components/PopoverTips.vue'
 
 import Browser from '@/Browser/main'
@@ -12,7 +12,7 @@ import { useStatusStore } from '@/options/stores/status'
 import { saveForAuto } from '@/core/proxy_config.js'
 import { generatePacfile } from '@/core/pacfile_generator.js'
 import { getNextLocalVersion } from '@/core/version_control.js'
-import { updateExternalData } from '@/core/proxy_config.js'
+import { updateRulesSetData } from '@/core/proxy_config.js'
 
 const handleUpdate = inject('handleUpdate')
 const handleDelete = inject('handleDelete')
@@ -25,17 +25,18 @@ const instance = getCurrentInstance()
 const confirmModal = instance?.appContext.config.globalProperties.$confirm
 const toast = instance?.appContext.config.globalProperties.$toast
 
-const internalRules = ref([])
-const externalProxy = ref('direct')
+const localRuleList = ref([])
+const rejectRuleList = ref([])
 const defaultProxy = ref('direct')
 const focusText = ref('')
-const externalRule = ref({
+const localRulesSet = ref({
   url: '',
   urlUpdatedAt: '',
-  data: ''
+  data: '',
+  proxy: 'direct'
 })
 
-const rejectRule = ref({
+const rejectRulesSet = ref({
   url: '',
   urlUpdatedAt: '',
   data: ''
@@ -46,7 +47,18 @@ const dragableDivider = {
   data: Browser.I18n.getMessage('input_label_divider'),
   proxy: 'direct'
 }
-
+const rejectRuleItem = {
+  mode: 'domain',
+  data: '',
+  proxy: '+reject',
+  valid: true
+}
+const localRuleItem = {
+  mode: 'domain',
+  data: '',
+  proxy: 'direct',
+  valid: true
+}
 onMounted(() => {
   load('proxy_' + encodeURIComponent(route.params.name))
 })
@@ -58,7 +70,7 @@ watch(
   }
 )
 watch(
-  () => internalRules,
+  () => localRuleList,
   (newValue) => {
     const countOccurrences = (array) => {
       return array.reduce((accumulator, currentValue) => {
@@ -75,25 +87,30 @@ async function load(proxyKey) {
   resetData()
   const result = await Browser.Storage.getLocal([proxyKey])
   defaultProxy.value = result[proxyKey].config.rules.defaultProxy
-  externalProxy.value = result[proxyKey].config.rules.external.proxy
 
-  externalRule.value.url = result[proxyKey].config.rules.external.url
-  externalRule.value.urlUpdatedAt =
-    result[proxyKey].config.rules.external.urlUpdatedAt
-  externalRule.value.data = result[proxyKey].config.rules.external.data
+  localRulesSet.value.url = result[proxyKey].config.rules.local.rulesSet.url
+  localRulesSet.value.urlUpdatedAt =
+    result[proxyKey].config.rules.local.rulesSet.urlUpdatedAt
+  localRulesSet.value.data = result[proxyKey].config.rules.local.rulesSet.data
+  localRulesSet.value.proxy = result[proxyKey].config.rules.local.rulesSet.proxy
 
-  rejectRule.value.url = result[proxyKey].config.rules.reject.url
-  rejectRule.value.urlUpdatedAt =
-    result[proxyKey].config.rules.reject.urlUpdatedAt
-  rejectRule.value.data = result[proxyKey].config.rules.reject.data
+  rejectRulesSet.value.url = result[proxyKey].config.rules.reject.rulesSet.url
+  rejectRulesSet.value.urlUpdatedAt =
+    result[proxyKey].config.rules.reject.rulesSet.urlUpdatedAt
+  rejectRulesSet.value.data = result[proxyKey].config.rules.reject.rulesSet.data
 
-  const tmpInternalRules = JSON.parse(
-    JSON.stringify(result[proxyKey].config.rules.internal)
+  const tmpRuleList = JSON.parse(
+    JSON.stringify(result[proxyKey].config.rules.local.ruleList)
   )
-  for (const e of tmpInternalRules) {
+  for (const e of tmpRuleList) {
     if (e.valid == undefined) e.valid = true
-    internalRules.value.push(e)
+    localRuleList.value.push(e)
   }
+
+  const tmpRejectRuleList = JSON.parse(
+    JSON.stringify(result[proxyKey].config.rules.reject.ruleList)
+  )
+  rejectRuleList.value = tmpRejectRuleList
 }
 
 async function handleExportPAC() {
@@ -108,16 +125,16 @@ async function handleExportPAC() {
 }
 
 function resetData() {
-  internalRules.value = []
-  externalProxy.value = 'direct'
+  localRuleList.value = []
+  rejectRuleList.value = []
   defaultProxy.value = 'direct'
-  externalRule.value = {
+  localRulesSet.value = {
     url: '',
     urlUpdatedAt: '',
-    data: ''
+    data: '',
+    proxy: 'direct'
   }
-
-  rejectRule.value = {
+  rejectRulesSet.value = {
     url: '',
     urlUpdatedAt: '',
     data: ''
@@ -128,25 +145,24 @@ function setFocusText(text) {
   focusText.value = text
 }
 
-function addInternalRule(index, divider = false) {
+function insertRule(index, target, obj = { divider: false, mode: 'local' }) {
   let tmp
-  if (divider) {
-    tmp = dragableDivider
+  if (obj.divider) {
+    tmp = JSON.parse(JSON.stringify(dragableDivider))
   } else {
-    tmp = {
-      mode: 'domain',
-      data: '',
-      proxy: 'direct',
-      valid: true
-    }
+    tmp = JSON.parse(
+      JSON.stringify(obj.mode == 'reject' ? rejectRuleItem : localRuleItem)
+    )
   }
-  internalRules.value.splice(index + 1, 0, tmp)
-}
-
-function removeInternalRule(index) {
-  internalRules.value.splice(index, 1)
+  target.splice(index + 1, 0, tmp)
   storeStatus.setUnsaved()
 }
+
+function removeRule(index, target) {
+  target.splice(index, 1)
+  storeStatus.setUnsaved()
+}
+
 function inputClassName(item) {
   if (item.data == '') return
   let name = []
@@ -158,11 +174,10 @@ function inputClassName(item) {
   }
   return name.join(' ')
 }
-
 async function handleUpdateUrl(subject) {
   const key = 'proxy_' + encodeURIComponent(route.params.name)
   const allConfig = await Browser.Storage.getLocalAll()
-  const updateProxyConfig = await updateExternalData(allConfig[key], subject)
+  const updateProxyConfig = await updateRulesSetData(allConfig[key], subject)
   if (JSON.stringify(updateProxyConfig) != '{}') {
     await Browser.Storage.setLocal({ [key]: updateProxyConfig })
     if (allConfig.status_proxyKey == key) {
@@ -181,10 +196,10 @@ async function handleSubmit() {
   const tmpObj = saveForAuto(
     encodeName,
     defaultProxy.value,
-    internalRules.value,
-    externalProxy.value,
-    externalRule.value,
-    rejectRule.value
+    localRuleList.value,
+    rejectRuleList.value,
+    localRulesSet.value,
+    rejectRulesSet.value
   )
   const version = await getNextLocalVersion()
   await Browser.Storage.setLocal({
@@ -212,6 +227,10 @@ function handleCancel() {
       storeStatus.resetUnsaved()
     }
   )
+}
+
+function setUnsaved() {
+  storeStatus.setUnsaved()
 }
 </script>
 <template>
@@ -279,30 +298,37 @@ function handleCancel() {
                 }}</span>
                 <i
                   class="bi bi-plus-circle-fill icon-btn ms-2"
-                  @click="addInternalRule(-1)"
+                  @click="insertRule(-1, localRuleList)"
                 ></i>
               </div>
             </div>
             <div class="card-body">
-              <div id="internalRules">
+              <div id="localRuleList">
                 <draggable
-                  :list="internalRules"
+                  :list="localRuleList"
                   :group="'shared'"
                   @end="setUnsaved"
                   handle=".drag-handle"
                   item-key="index"
                 >
                   <template #item="{ element, index }">
-                    <InternalRuleGroup
+                    <RuleItem
                       :key="index"
-                      v-model="internalRules[index]"
+                      v-model="localRuleList[index]"
                       :class="inputClassName(element)"
                       @getFocusText="setFocusText(element.data)"
                       @clearFousText="setFocusText(null)"
-                      @deleteItem="removeInternalRule(index)"
-                      @addItem="addInternalRule(index)"
-                      @hrItem="addInternalRule(index, true)"
-                    ></InternalRuleGroup>
+                      @deleteItem="removeRule(index, localRuleList)"
+                      @addItem="insertRule(index, localRuleList)"
+                      @hrItem="
+                        insertRule(index, localRuleList, { divider: true })
+                      "
+                    >
+                      <ProxySelect
+                        v-model="element.proxy"
+                        style="width: 150px"
+                      ></ProxySelect
+                    ></RuleItem>
                   </template>
                 </draggable>
               </div>
@@ -314,7 +340,7 @@ function handleCancel() {
                   <div>
                     <ProxySelect
                       style="width: 150px"
-                      v-model="externalProxy"
+                      v-model="localRulesSet.proxy"
                     ></ProxySelect>
                   </div>
                   <i
@@ -377,8 +403,8 @@ function handleCancel() {
                   Browser.I18n.getMessage('form_label_update_date')
                 "
                 :dataTitle="Browser.I18n.getMessage('form_label_rule_data')"
-                @updateExternalData="handleUpdateUrl('external')"
-                v-model:externalItem="externalRule"
+                @updateRulesSetData="handleUpdateUrl('local')"
+                v-model:rulesSet="localRulesSet"
               ></LinkTextItem>
             </div>
           </div>
@@ -389,6 +415,48 @@ function handleCancel() {
           role="tabpanel"
           aria-labelledby="v-pills-advance-tab"
         >
+          <div class="card">
+            <div class="card-header">
+              <span class="fw-bold">{{
+                Browser.I18n.getMessage('section_label_reject')
+              }}</span>
+              <i
+                class="bi bi-plus-circle-fill icon-btn ms-2"
+                @click="insertRule(-1, rejectRuleList, { mode: 'reject' })"
+              ></i>
+            </div>
+            <div class="card-body">
+              <div id="rejectRuleList">
+                <draggable
+                  :list="rejectRuleList"
+                  :group="'shared'"
+                  @end="setUnsaved"
+                  handle=".drag-handle"
+                  item-key="index"
+                >
+                  <template #item="{ element, index }">
+                    <RuleItem
+                      :key="index"
+                      v-model="rejectRuleList[index]"
+                      :class="inputClassName(element)"
+                      @getFocusText="setFocusText(element.data)"
+                      @clearFousText="setFocusText(null)"
+                      @deleteItem="removeRule(index, rejectRuleList)"
+                      @addItem="
+                        insertRule(index, rejectRuleList, { mode: 'reject' })
+                      "
+                      @hrItem="
+                        insertRule(index, rejectRuleList, {
+                          divider: true,
+                          mode: 'reject'
+                        })
+                      "
+                    ></RuleItem>
+                  </template>
+                </draggable>
+              </div>
+            </div>
+          </div>
           <div class="card">
             <div class="card-header">
               <span class="fw-bold">{{
@@ -408,8 +476,8 @@ function handleCancel() {
                   Browser.I18n.getMessage('form_label_update_date')
                 "
                 :dataTitle="Browser.I18n.getMessage('form_label_rule_data')"
-                @updateExternalData="handleUpdateUrl('reject')"
-                v-model:externalItem="rejectRule"
+                @updateRulesSetData="handleUpdateUrl('reject')"
+                v-model:rulesSet="rejectRulesSet"
               ></LinkTextItem>
             </div>
           </div>

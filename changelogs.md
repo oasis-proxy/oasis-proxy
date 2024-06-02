@@ -1,5 +1,12 @@
 # ChangeLogs
 
+## v1.0.5
+
+Optimizations:
+
+- Display the configuration file save time in data synchronization, to help users select versions more easily.
+- Move the rejection rules from internal rules to the advanced configuration tab and add separate toggles for rule sets (rules lists loaded via URL).
+
 ## v1.0.4.1
 
 BugFix:

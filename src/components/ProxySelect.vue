@@ -21,9 +21,6 @@ onMounted(async () => {
     <option value="direct">
       {{ Browser.I18n.getMessage('input_label_direct') }}
     </option>
-    <option value="+reject">
-      {{ Browser.I18n.getMessage('input_label_reject') }}
-    </option>
     <option
       :value="'+' + item"
       v-for="(item, index) in proxyNames"

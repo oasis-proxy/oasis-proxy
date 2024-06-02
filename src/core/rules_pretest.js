@@ -1,6 +1,6 @@
 import {
   parseAutoProxyFile,
-  parseInternalRule,
+  parseRuleItem,
   parseBypassRule
 } from './rules_parser.js'
 import * as ipaddr from 'ipaddr.js'
@@ -12,9 +12,10 @@ export const getRules = function (proxyConfig) {
 }
 const getDefaultRules = function (defaultProxy) {
   return {
-    internal: [],
-    external: [],
-    reject: [],
+    localRuleList: [],
+    localRulesSet: [],
+    rejectRulesSet: [],
+    rejectRuleList: [],
     default: defaultProxy,
     bypass: []
   }
@@ -23,42 +24,45 @@ const getFixedRules = function (proxyConfig) {
   const config = proxyConfig.config
   const bypass = getBypassRulesList(config.rules.bypassList)
   return {
-    internal: [],
-    external: [],
-    reject: [],
+    localRuleList: [],
+    localRulesSet: [],
+    rejectRulesSet: [],
+    rejectRuleList: [],
     default: proxyConfig.name,
     bypass
   }
 }
 const getAutoRules = function (proxyConfig) {
   const config = proxyConfig.config
-  const external = getExternalRulesList(config.rules.external)
-  const reject = getExternalRulesList(config.rules.reject)
-  const internal = getInternalRulesList(config.rules.internal)
+  const localRulesSet = getRulesSet(config.rules.local.rulesSet)
+  const rejectRulesSet = getRulesSet(config.rules.reject.rulesSet)
+  const localRuleList = getRulesList(config.rules.local.ruleList)
+  const rejectRuleList = getRulesList(config.rules.reject.ruleList)
   return {
-    internal,
-    external,
-    reject,
+    localRuleList,
+    localRulesSet,
+    rejectRulesSet,
+    rejectRuleList,
     default: proxyConfig.config.rules.defaultProxy,
     bypass: []
   }
 }
 
-export const getInternalRulesList = function (internalRules) {
-  const filteredRules = internalRules.filter(function (element) {
+export const getRulesList = function (ruleList) {
+  const filteredRules = ruleList.filter(function (element) {
     return (
       element.data !== '' && element.valid != false && element.mode != 'divider'
     )
   })
   const formattedRules = filteredRules.map((rule) => {
-    return parseInternalRule(rule)
+    return parseRuleItem(rule)
   })
 
   return formattedRules
 }
 
-export const getExternalRulesList = function (externalRule) {
-  return parseAutoProxyFile(externalRule.data, externalRule.proxy)
+export const getRulesSet = function (rulesSet) {
+  return parseAutoProxyFile(rulesSet.data, rulesSet.proxy)
 }
 
 const getBypassRulesList = function (bypassList) {
@@ -78,7 +82,13 @@ const getBypassRulesList = function (bypassList) {
 
 export const checkRules = function (url, formattedRulesList) {
   let res = {}
-  for (const group of ['internal', 'reject', 'external', 'bypass']) {
+  for (const group of [
+    'localRuleList',
+    'rejectRuleList',
+    'rejectRulesSet',
+    'localRulesSet',
+    'bypass'
+  ]) {
     for (const item of formattedRulesList[group]) {
       if (testRule(url, item)) {
         res.rule = item.orgin.data

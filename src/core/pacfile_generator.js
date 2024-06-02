@@ -1,7 +1,7 @@
 import { proxyUses, CONST_DEFAULT_PORT } from './proxy_config.js'
 import {
   parseAutoProxyFile,
-  parseInternalRule,
+  parseRuleItem,
   parseBypassRule
 } from './rules_parser.js'
 
@@ -55,21 +55,29 @@ const createRejectCodeBlock = function (proxyConfig) {
 
 const createAutoCodeBlock = function (proxyConfig) {
   const config = proxyConfig.config
-  const externalStr = createAutoExternalRules(config.rules.external)
-  const rejectStr = createAutoExternalRules(config.rules.reject)
-  const internalStr = createAutoInternalRules(config.rules.internal)
+  const localRulesSetStr =
+    config.rules.local.rulesSet.valid == false
+      ? ''
+      : createRulesSet(config.rules.local.rulesSet)
+  const rejectRulesSetStr =
+    config.rules.reject.rulesSet.valid == false
+      ? ''
+      : createRulesSet(config.rules.reject.rulesSet)
+  const localRuleListStr = createRuleList(config.rules.local.ruleList)
+  const rejectRuleListStr = createRuleList(config.rules.reject.ruleList)
   const tmpl = `"+${proxyConfig.name}": function(url, host, scheme) {
     "use strict";
-${internalStr}
-${rejectStr}
-${externalStr}
+${localRuleListStr}
+${rejectRuleListStr}
+${rejectRulesSetStr}
+${localRulesSetStr}
     return "${config.rules.defaultProxy}";
   }, `
   return tmpl
 }
 
-const createAutoExternalRules = function (externalRule) {
-  const apFileRules = parseAutoProxyFile(externalRule.data, externalRule.proxy)
+const createRulesSet = function (rulesSet) {
+  const apFileRules = parseAutoProxyFile(rulesSet.data, rulesSet.proxy)
 
   let block = ''
   block =
@@ -84,8 +92,8 @@ const createAutoExternalRules = function (externalRule) {
   return block
 }
 
-const createAutoInternalRules = function (internalRules) {
-  const rules = internalRules.filter(function (element) {
+const createRuleList = function (ruleList) {
+  const rules = ruleList.filter(function (element) {
     return (
       element.data !== '' && element.valid != false && element.mode != 'divider'
     )
@@ -94,7 +102,7 @@ const createAutoInternalRules = function (internalRules) {
   block =
     rules
       .map((rule) => {
-        const formattedRule = parseInternalRule(rule)
+        const formattedRule = parseRuleItem(rule)
         return generateConditionCode(formattedRule)
       })
       .join('\n') + '\n'

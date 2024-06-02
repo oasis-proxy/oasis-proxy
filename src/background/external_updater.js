@@ -1,5 +1,5 @@
 import Browser from '../Browser/main'
-import { updateExternalData } from '@/core/proxy_config.js'
+import { updateRulesSetData } from '@/core/proxy_config.js'
 
 export const startUpdateUrl = async () => {
   let per = 3
@@ -18,7 +18,7 @@ export const handleUpdateUrl = async function () {
   const result = await Browser.Storage.getLocalAll()
   for (let key of Object.keys(result)) {
     if (!key.startsWith('proxy_') || result[key].mode != 'auto') continue
-    const proxyConfig = await updateExternalData(result[key])
+    const proxyConfig = await updateRulesSetData(result[key])
     console.info('handleUpdateUrl', key, result[key], proxyConfig)
     if (JSON.stringify(proxyConfig) != '{}') {
       Browser.Storage.setLocal({ [key]: proxyConfig })

@@ -18,20 +18,25 @@ export const createProxy = function (name, mode) {
         mode: 'auto',
         rules: {
           defaultProxy: 'direct',
-          internal: [],
-          external: {
-            url: '',
-            urlUpdatedAt: '',
-            data: '',
-            proxy: 'direct',
-            mode: 'autoProxy'
+          local: {
+            rulesSet: {
+              url: '',
+              urlUpdatedAt: '',
+              data: '',
+              proxy: 'direct',
+              mode: 'autoProxy'
+            },
+            ruleList: []
           },
           reject: {
-            url: '',
-            urlUpdatedAt: '',
-            data: '',
-            proxy: '+reject',
-            mode: 'autoProxy'
+            rulesSet: {
+              url: '',
+              urlUpdatedAt: '',
+              data: '',
+              proxy: '+reject',
+              mode: 'autoProxy'
+            },
+            ruleList: []
           }
         }
       }
@@ -62,7 +67,7 @@ export const createProxy = function (name, mode) {
 
 // 返回所有使用代理的名称，包含direct和reject
 export const proxyUses = function (proxyConfig) {
-  const proxyNames = []
+  const proxyNames = ['reject']
   if (proxyConfig.mode !== 'auto') {
     return proxyNames
   }
@@ -70,18 +75,14 @@ export const proxyUses = function (proxyConfig) {
   let tmpName = proxyConfig.config.rules.defaultProxy
   proxyNames.push(tmpName.startsWith('+') ? tmpName.substring(1) : tmpName)
 
-  // internal rules
-  proxyConfig.config.rules.internal.forEach((item) => {
+  // local ruleList
+  proxyConfig.config.rules.local.ruleList.forEach((item) => {
     tmpName = item.proxy
     proxyNames.push(tmpName.startsWith('+') ? tmpName.substring(1) : tmpName)
   })
 
-  // external rules
-  tmpName = proxyConfig.config.rules.external?.proxy
-  proxyNames.push(tmpName.startsWith('+') ? tmpName.substring(1) : tmpName)
-
-  // reject rules
-  tmpName = proxyConfig.config.rules.reject?.proxy
+  // local rulesSet
+  tmpName = proxyConfig.config.rules.local.rulesSet?.proxy
   proxyNames.push(tmpName.startsWith('+') ? tmpName.substring(1) : tmpName)
 
   const uniqNames = [...new Set(proxyNames)]
@@ -137,14 +138,14 @@ export const replaceProxyNameForSingleProxy = function (
     tmp.config.rules.defaultProxy = proxyNewName
   }
 
-  for (const [i, e] of proxyConfig.config.rules.internal.entries()) {
+  for (const [i, e] of proxyConfig.config.rules.local.ruleList.entries()) {
     if (e.proxy == proxyOldName) {
-      tmp.config.rules.internal[i].proxy = proxyNewName
+      tmp.config.rules.local.ruleList[i].proxy = proxyNewName
     }
   }
 
-  if (proxyConfig.config.rules.external?.proxy == proxyOldName) {
-    tmp.config.rules.external.proxy = proxyNewName
+  if (proxyConfig.config.rules.local.rulesSet?.proxy == proxyOldName) {
+    tmp.config.rules.local.rulesSet.proxy = proxyNewName
   }
 
   return tmp
@@ -210,10 +211,10 @@ export const saveForFixed = function (
 export const saveForAuto = function (
   name,
   defaultProxy,
-  internalRules,
-  externalProxy,
-  externalRule,
-  rejectRule
+  localRuleList,
+  rejectRuleList,
+  localRulesSet,
+  rejectRulesSet
 ) {
   let tmp = {
     name,
@@ -222,41 +223,49 @@ export const saveForAuto = function (
       mode: 'auto',
       rules: {
         defaultProxy,
-        internal: [],
-        external: {
-          url: externalRule.url,
-          urlUpdatedAt: externalRule.urlUpdatedAt,
-          data: externalRule.data,
-          proxy: externalProxy,
-          mode: 'autoProxy'
+        local: {
+          rulesSet: {
+            url: localRulesSet.url,
+            urlUpdatedAt: localRulesSet.urlUpdatedAt,
+            data: localRulesSet.data,
+            proxy: localRulesSet.proxy,
+            mode: 'autoProxy',
+            valid: localRulesSet.valid
+          },
+          ruleList: []
         },
         reject: {
-          url: rejectRule.url,
-          urlUpdatedAt: rejectRule.urlUpdatedAt,
-          data: rejectRule.data,
-          proxy: '+reject',
-          mode: 'autoProxy'
+          rulesSet: {
+            url: rejectRulesSet.url,
+            urlUpdatedAt: rejectRulesSet.urlUpdatedAt,
+            data: rejectRulesSet.data,
+            proxy: '+reject',
+            mode: 'autoProxy',
+            valid: rejectRulesSet.valid
+          },
+          ruleList: []
         }
       }
     }
   }
-  tmp.config.rules.internal = JSON.parse(JSON.stringify(internalRules))
+  tmp.config.rules.local.ruleList = JSON.parse(JSON.stringify(localRuleList))
+  tmp.config.rules.reject.ruleList = JSON.parse(JSON.stringify(rejectRuleList))
   return tmp
 }
 
-export const addInternalRulesForAuto = function (internalRules, proxyConfig) {
+export const addLocalRuleItemForAuto = function (localRuleList, proxyConfig) {
   const tmpProxyConfig = JSON.parse(JSON.stringify(proxyConfig))
   if (tmpProxyConfig.mode == 'auto') {
-    for (const item of internalRules) {
+    for (const item of localRuleList) {
       let isExistRule = false
-      for (const e of tmpProxyConfig.config.rules.internal) {
+      for (const e of tmpProxyConfig.config.rules.local.ruleList) {
         if (JSON.stringify(e) == JSON.stringify(item)) {
           isExistRule = true
           break
         }
       }
       if (!isExistRule) {
-        tmpProxyConfig.config.rules.internal.unshift(item)
+        tmpProxyConfig.config.rules.local.ruleList.unshift(item)
       }
     }
     return tmpProxyConfig
@@ -389,36 +398,24 @@ function getAuthListInFixed(proxyConfig) {
   }
 }
 
-export const updateExternalData = async function (
+export const updateRulesSetData = async function (
   proxyConfig,
-  subject = 'all'
+  subjectList = ['reject', 'local']
 ) {
   let updateFlag = false
   let response
   try {
-    if (
-      proxyConfig.config.rules.external.url != '' &&
-      (subject == 'all' || subject == 'external')
-    ) {
-      response = await downloadUrl(
-        proxyConfig.config.rules.external.url,
-        'base64'
-      )
-      proxyConfig.config.rules.external.data = response.data
-      proxyConfig.config.rules.external.urlUpdatedAt = response.updated
-      updateFlag = true
-    }
-    if (
-      proxyConfig.config.rules.reject.url != '' &&
-      (subject == 'all' || subject == 'reject')
-    ) {
-      response = await downloadUrl(
-        proxyConfig.config.rules.reject.url,
-        'base64'
-      )
-      proxyConfig.config.rules.reject.data = response.data
-      proxyConfig.config.rules.reject.urlUpdatedAt = response.updated
-      updateFlag = true
+    for (const element of subjectList) {
+      if (proxyConfig.config.rules[element]?.rulesSet.url != '') {
+        response = await downloadUrl(
+          proxyConfig.config.rules[element]?.rulesSet.url,
+          'base64'
+        )
+        proxyConfig.config.rules[element].rulesSet.data = response.data
+        proxyConfig.config.rules[element].rulesSet.urlUpdatedAt =
+          response.updated
+        updateFlag = true
+      }
     }
     if (updateFlag) {
       return proxyConfig
@@ -438,11 +435,11 @@ export const simplify = function (config) {
       switch (config[key].mode) {
         case 'auto':
           simplifyConfig[key] = config[key]
-          if (config[key].config.rules.external.url != '') {
-            simplifyConfig[key].config.rules.external.data = ''
+          if (config[key].config.rules.local.rulesSet.url != '') {
+            simplifyConfig[key].config.rules.local.rulesSet.data = ''
           }
-          if (config[key].config.rules.reject.url != '') {
-            simplifyConfig[key].config.rules.reject.data = ''
+          if (config[key].config.rules.reject.rulesSet.url != '') {
+            simplifyConfig[key].config.rules.reject.rulesSet.data = ''
           }
           break
         case 'pac_script':
@@ -473,22 +470,22 @@ export const enrich = async function (config) {
       switch (config[key].mode) {
         case 'auto':
           enrichConfig[key] = config[key]
-          if (config[key].config.rules.external.url != '') {
+          if (config[key].config.rules.local.rulesSet.url != '') {
             response = await downloadUrl(
-              config[key].config.rules.external.url,
+              config[key].config.rules.local.rulesSet.url,
               'base64'
             )
-            enrichConfig[key].config.rules.external.data = response.data
-            enrichConfig[key].config.rules.external.urlUpdatedAt =
+            enrichConfig[key].config.rules.local.rulesSet.data = response.data
+            enrichConfig[key].config.rules.local.rulesSet.urlUpdatedAt =
               response.updated
           }
-          if (config[key].config.rules.reject.url != '') {
+          if (config[key].config.rules.reject.rulesSet.url != '') {
             response = await downloadUrl(
-              config[key].config.rules.reject.url,
+              config[key].config.rules.reject.rulesSet.url,
               'base64'
             )
-            enrichConfig[key].config.rules.reject.data = response.data
-            enrichConfig[key].config.rules.reject.urlUpdatedAt =
+            enrichConfig[key].config.rules.reject.rulesSet.data = response.data
+            enrichConfig[key].config.rules.reject.rulesSet.urlUpdatedAt =
               response.updated
           }
           break

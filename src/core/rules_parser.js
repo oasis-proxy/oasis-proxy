@@ -23,7 +23,7 @@ export const parseAutoProxyFile = function (data, proxy) {
   return [...directRules, ...proxyRules]
 }
 
-export const parseInternalRule = function (rule) {
+export const parseRuleItem = function (rule) {
   let regConst
   switch (rule.mode) {
     case 'domain':

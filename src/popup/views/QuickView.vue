@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import ProxySelect from '../../components/ProxySelect.vue'
-import { addInternalRulesForAuto } from '@/core/proxy_config.js'
+import { addLocalRuleItemForAuto } from '@/core/proxy_config.js'
 import Browser from '@/Browser/main'
 import {
   getNextLocalVersion,
@@ -48,26 +48,13 @@ onMounted(async () => {
   })
 })
 
-// function suffixByIndex(domain, level = 2) {
-//   const parts = domain.split('.')
-//   let suffix = []
-
-//   if (level <= parts.length) {
-//     suffix = parts.splice(1 - level)
-//     suffix.unshift('')
-//   } else {
-//     suffix = parts
-//   }
-//   return suffix.join('.')
-// }
-
-async function quickAddInternalRules() {
+async function quickAddLocalRuleList() {
   const result = await Browser.Storage.getLocalAll()
   const newRules = []
   checkedDomains.value.forEach((item) => {
     newRules.push({ mode: 'domain', data: item, proxy: selectedProxy.value })
   })
-  const newProxyConfig = addInternalRulesForAuto(
+  const newProxyConfig = addLocalRuleItemForAuto(
     newRules,
     result[result.status_proxyKey]
   )
@@ -140,7 +127,7 @@ async function quickAddInternalRules() {
         <button
           type="button"
           class="btn btn-sm btn-primary"
-          @click="quickAddInternalRules"
+          @click="quickAddLocalRuleList"
         >
           <i class="bi bi-check-circle-fill me-2"></i>
           <span>{{ Browser.I18n.getMessage('btn_label_add_config') }}</span>

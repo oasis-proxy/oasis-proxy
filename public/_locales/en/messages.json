@@ -141,6 +141,10 @@
     "message": "Update URLs",
     "description": ""
   },
+  "form_label_rule_valid": {
+    "message": "Rule Status",
+    "description": ""
+  },
   "form_label_version": {
     "message": "Version",
     "description": ""
@@ -263,6 +267,10 @@
   },
   "section_label_reject": {
     "message": "Reject Rule Settings",
+    "description": ""
+  },
+  "section_label_reject_set": {
+    "message": "Reject Rules Set Settings",
     "description": ""
   },
   "section_label_local_data": {

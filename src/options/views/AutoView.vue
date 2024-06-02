@@ -95,11 +95,14 @@ async function load(proxyKey) {
     result[proxyKey].config.rules.local.rulesSet.urlUpdatedAt
   localRulesSet.value.data = result[proxyKey].config.rules.local.rulesSet.data
   localRulesSet.value.proxy = result[proxyKey].config.rules.local.rulesSet.proxy
+  localRulesSet.value.valid = result[proxyKey].config.rules.local.rulesSet.valid
 
   rejectRulesSet.value.url = result[proxyKey].config.rules.reject.rulesSet.url
   rejectRulesSet.value.urlUpdatedAt =
     result[proxyKey].config.rules.reject.rulesSet.urlUpdatedAt
   rejectRulesSet.value.data = result[proxyKey].config.rules.reject.rulesSet.data
+  rejectRulesSet.value.valid =
+    result[proxyKey].config.rules.reject.rulesSet.valid
 
   const tmpRuleList = JSON.parse(
     JSON.stringify(result[proxyKey].config.rules.local.ruleList)

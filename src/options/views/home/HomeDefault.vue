@@ -2,7 +2,7 @@
 import { watch, getCurrentInstance } from 'vue'
 import PopoverTips from '@/components/PopoverTips.vue'
 import { useConfigStore } from '@/options/stores/config'
-
+import { resetAppConfig } from '@/core/app_config.js'
 import Browser from '@/Browser/main'
 
 const storeConfig = useConfigStore()
@@ -50,20 +50,7 @@ function clearConfig() {
     Browser.I18n.getMessage('modal_desc_resetall'),
     async function () {
       await Browser.Storage.clearLocal()
-      const obj = {
-        config_ui: 'dark',
-        config_updateUrl: true,
-        config_monitor: false,
-        config_autoSync: false,
-        config_version: 1,
-        direct: { mode: 'direct', name: 'direct', config: { mode: 'direct' } },
-        system: { mode: 'system', name: 'system', config: { mode: 'system' } },
-        reject: {
-          mode: 'reject',
-          name: 'reject',
-          config: { mode: 'reject', rules: 'HTTPS 127.0.0.1:65432' }
-        }
-      }
+      const obj = resetAppConfig()
       await Browser.Storage.setLocal(obj)
       await Browser.Proxy.setDirect(async () => {
         await Browser.Storage.setLocal({ status_proxyKey: 'direct' })

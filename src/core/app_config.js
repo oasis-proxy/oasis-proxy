@@ -13,6 +13,26 @@ export const convertToNewVersionConfig = async function (toVersion) {
   }
 }
 
+export const resetAppConfig = function () {
+  const obj = {
+    config_app_version: 2,
+    config_ui: 'dark',
+    config_updateUrl: true,
+    config_monitor: false,
+    config_autoSync: false,
+    config_version: 1,
+    config_iptags: [],
+    direct: { mode: 'direct', name: 'direct', config: { mode: 'direct' } },
+    system: { mode: 'system', name: 'system', config: { mode: 'system' } },
+    reject: {
+      mode: 'reject',
+      name: 'reject',
+      config: { mode: 'reject', rules: 'HTTPS 127.0.0.1:65432' }
+    }
+  }
+  return obj
+}
+
 // version null to 2
 function transformReject(appConfig) {
   const updatedProxyConfigList = []

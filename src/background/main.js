@@ -5,7 +5,7 @@ import {
 } from './external_updater.js'
 import { startAutoSync, endAutoSync, handleAutoSync } from './auto_sync.js'
 import { getAuthList } from '@/core/proxy_config.js'
-import { convertToNewVersionConfig } from '@/core/app_config.js'
+import { convertToNewVersionConfig, resetAppConfig } from '@/core/app_config.js'
 
 let current = new Date().toLocaleString()
 console.log('background:', current)
@@ -279,20 +279,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 chrome.runtime.onInstalled.addListener(async ({ reason }) => {
   console.debug('onInstalled', reason)
   if (reason === 'install') {
-    await chrome.storage.local.set({
-      config_ui: 'dark',
-      config_updateUrl: true,
-      config_monitor: false,
-      config_autoSync: false,
-      config_version: 1,
-      direct: { mode: 'direct', name: 'direct', config: { mode: 'direct' } },
-      system: { mode: 'system', name: 'system', config: { mode: 'system' } },
-      reject: {
-        mode: 'reject',
-        name: 'reject',
-        config: { mode: 'reject', rules: 'HTTPS 127.0.0.1:65432' }
-      }
-    })
+    await chrome.storage.local.set(resetAppConfig())
     chrome.runtime.openOptionsPage()
   } else if (reason === 'update') {
     const result = await chrome.storage.local.get(null)

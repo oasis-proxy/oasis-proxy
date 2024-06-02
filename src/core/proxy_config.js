@@ -428,6 +428,8 @@ export const updateRulesSetData = async function (
   }
 }
 
+const SYNC_CONFIG_KEY_LIST = ['config_app_version', 'config_iptags']
+
 export const simplify = function (config) {
   const simplifyConfig = {}
   for (const key of Object.keys(config)) {
@@ -456,9 +458,11 @@ export const simplify = function (config) {
       }
     }
   }
-  if (config.config_iptags != null) {
-    simplifyConfig.config_iptags = config.config_iptags
-  }
+  SYNC_CONFIG_KEY_LIST.forEach((key) => {
+    if (config[key] != null) {
+      simplifyConfig[key] = config[key]
+    }
+  })
   return simplifyConfig
 }
 
@@ -505,8 +509,10 @@ export const enrich = async function (config) {
       }
     }
   }
-  if (config.config_iptags != null) {
-    enrichConfig.config_iptags = config.config_iptags
-  }
+  SYNC_CONFIG_KEY_LIST.forEach((key) => {
+    if (config[key] != null) {
+      enrichConfig[key] = config[key]
+    }
+  })
   return enrichConfig
 }

@@ -33,13 +33,15 @@ const localRulesSet = ref({
   url: '',
   urlUpdatedAt: '',
   data: '',
-  proxy: 'direct'
+  proxy: 'direct',
+  valid: true
 })
 
 const rejectRulesSet = ref({
   url: '',
   urlUpdatedAt: '',
-  data: ''
+  data: '',
+  valid: true
 })
 const occurrences = ref([])
 const dragableDivider = {
@@ -132,12 +134,14 @@ function resetData() {
     url: '',
     urlUpdatedAt: '',
     data: '',
-    proxy: 'direct'
+    proxy: 'direct',
+    valid: true
   }
   rejectRulesSet.value = {
     url: '',
     urlUpdatedAt: '',
-    data: ''
+    data: '',
+    valid: true
   }
 }
 
@@ -402,6 +406,7 @@ function setUnsaved() {
                 :urlUpdatedAtTitle="
                   Browser.I18n.getMessage('form_label_update_date')
                 "
+                :validTitle="Browser.I18n.getMessage('form_label_rule_valid')"
                 :dataTitle="Browser.I18n.getMessage('form_label_rule_data')"
                 @updateRulesSetData="handleUpdateUrl('local')"
                 v-model:rulesSet="localRulesSet"
@@ -460,7 +465,7 @@ function setUnsaved() {
           <div class="card">
             <div class="card-header">
               <span class="fw-bold">{{
-                Browser.I18n.getMessage('section_label_reject')
+                Browser.I18n.getMessage('section_label_reject_set')
               }}</span>
               <PopoverTips
                 className="bi bi-question-circle-fill icon-btn ms-2"
@@ -475,6 +480,7 @@ function setUnsaved() {
                 :urlUpdatedAtTitle="
                   Browser.I18n.getMessage('form_label_update_date')
                 "
+                :validTitle="Browser.I18n.getMessage('form_label_rule_valid')"
                 :dataTitle="Browser.I18n.getMessage('form_label_rule_data')"
                 @updateRulesSetData="handleUpdateUrl('reject')"
                 v-model:rulesSet="rejectRulesSet"

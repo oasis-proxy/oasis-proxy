@@ -229,7 +229,8 @@ export const saveForAuto = function (
             urlUpdatedAt: localRulesSet.urlUpdatedAt,
             data: localRulesSet.data,
             proxy: localRulesSet.proxy,
-            mode: 'autoProxy'
+            mode: 'autoProxy',
+            valid: localRulesSet.valid
           },
           ruleList: []
         },
@@ -239,7 +240,8 @@ export const saveForAuto = function (
             urlUpdatedAt: rejectRulesSet.urlUpdatedAt,
             data: rejectRulesSet.data,
             proxy: '+reject',
-            mode: 'autoProxy'
+            mode: 'autoProxy',
+            valid: rejectRulesSet.valid
           },
           ruleList: []
         }

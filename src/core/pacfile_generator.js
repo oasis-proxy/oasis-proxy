@@ -55,8 +55,14 @@ const createRejectCodeBlock = function (proxyConfig) {
 
 const createAutoCodeBlock = function (proxyConfig) {
   const config = proxyConfig.config
-  const localRulesSetStr = createRulesSet(config.rules.local.rulesSet)
-  const rejectRulesSetStr = createRulesSet(config.rules.reject.rulesSet)
+  const localRulesSetStr =
+    config.rules.local.rulesSet.valid == false
+      ? ''
+      : createRulesSet(config.rules.local.rulesSet)
+  const rejectRulesSetStr =
+    config.rules.reject.rulesSet.valid == false
+      ? ''
+      : createRulesSet(config.rules.reject.rulesSet)
   const localRuleListStr = createRuleList(config.rules.local.ruleList)
   const rejectRuleListStr = createRuleList(config.rules.reject.ruleList)
   const tmpl = `"+${proxyConfig.name}": function(url, host, scheme) {

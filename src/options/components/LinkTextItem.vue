@@ -21,6 +21,7 @@ const emit = defineEmits(['updateRulesSetData'])
 
 defineProps({
   urlTitle: String,
+  validTitle: String,
   urlUpdatedAtTitle: String,
   dataTitle: String
 })
@@ -89,6 +90,28 @@ async function handleClickUpdate() {
         </div>
         <div class="invalid-feedback">
           {{ Browser.I18n.getMessage('feedback_request_failed') }}
+        </div>
+      </div>
+    </div>
+    <div
+      class="mb-3 row d-flex align-items-center"
+      v-if="rulesSet.valid != null"
+    >
+      <label class="col-2 col-form-label">{{ validTitle }}</label>
+      <div class="col-10">
+        <div class="form-check form-switch ms-2 mt-1">
+          <input
+            class="form-check-input form-check-input"
+            type="checkbox"
+            role="switch"
+            v-model="rulesSet.valid"
+            checked
+          />
+          <span>{{
+            rulesSet.valid == false
+              ? Browser.I18n.getMessage('input_label_off')
+              : Browser.I18n.getMessage('input_label_on')
+          }}</span>
         </div>
       </div>
     </div>

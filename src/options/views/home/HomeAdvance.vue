@@ -96,15 +96,19 @@ async function handleBlur(event) {
           </label>
           <div class="col-10">
             <div class="form-check-sm d-flex align-items-center">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                id="monitorCheck"
-                v-model="storeConfig.configMonitor"
-              />
-              <label class="form-check-label ms-2 me-2" for="monitorCheck">
-                <span>{{ Browser.I18n.getMessage('input_label_on') }}</span>
-              </label>
+              <div class="form-check form-switch ms-2 mt-1">
+                <input
+                  class="form-check-input form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  v-model="storeConfig.configMonitor"
+                />
+                <span>{{
+                  storeConfig.configMonitor == false
+                    ? Browser.I18n.getMessage('input_label_off')
+                    : Browser.I18n.getMessage('input_label_on')
+                }}</span>
+              </div>
               <PopoverTips
                 className="bi bi-bug-fill icon-btn ms-2 mt-1"
                 :content="Browser.I18n.getMessage('btn_label_monitor')"
@@ -143,16 +147,20 @@ async function handleBlur(event) {
           </label>
           <div class="col-10">
             <div class="form-check-sm d-flex align-items-center">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                id="autoSyncCheck"
-                :checked="configAutoSync"
-                @change="handleAutoSyncChange"
-              />
-              <label class="form-check-label ms-2" for="autoSyncCheck">
-                <span>{{ Browser.I18n.getMessage('input_label_on') }}</span>
-              </label>
+              <div class="form-check form-switch ms-2 mt-1">
+                <input
+                  class="form-check-input form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  :checked="configAutoSync"
+                  @change="handleAutoSyncChange"
+                />
+                <span>{{
+                  configAutoSync == false
+                    ? Browser.I18n.getMessage('input_label_off')
+                    : Browser.I18n.getMessage('input_label_on')
+                }}</span>
+              </div>
             </div>
           </div>
         </div>

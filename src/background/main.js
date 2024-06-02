@@ -5,6 +5,8 @@ import {
 } from './external_updater.js'
 import { startAutoSync, endAutoSync, handleAutoSync } from './auto_sync.js'
 import { getAuthList } from '@/core/proxy_config.js'
+import { convertToNewVersionConfig } from '@/core/app_config.js'
+
 let current = new Date().toLocaleString()
 console.log('background:', current)
 
@@ -328,6 +330,8 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
       removeList.push('config_reject')
     }
     await chrome.storage.local.remove(removeList)
+
+    await convertToNewVersionConfig(2)
   }
   chrome.storage.session.clear()
   const result = await chrome.storage.local.get([

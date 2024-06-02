@@ -141,6 +141,10 @@
     "message": "规则更新",
     "description": ""
   },
+  "form_label_rule_valid": {
+    "message": "规则状态",
+    "description": ""
+  },
   "form_label_version": {
     "message": "版本号",
     "description": ""
@@ -258,11 +262,15 @@
     "description": ""
   },
   "section_label_external": {
-    "message": "外部规则设置",
+    "message": "外部规则集设置",
     "description": ""
   },
   "section_label_reject": {
     "message": "拒绝规则设置",
+    "description": ""
+  },
+  "section_label_reject_set": {
+    "message": "拒绝规则集设置",
     "description": ""
   },
   "section_label_local_data": {

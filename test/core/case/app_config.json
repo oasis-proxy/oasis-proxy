@@ -1,0 +1,318 @@
+[
+  {
+    "test": {
+      "direct": {
+        "mode": "direct",
+        "name": "direct",
+        "config": { "mode": "direct" }
+      },
+      "system": {
+        "mode": "system",
+        "name": "system",
+        "config": { "mode": "system" }
+      },
+      "reject": {
+        "mode": "reject",
+        "name": "reject",
+        "config": { "mode": "reject", "rules": "HTTPS 127.0.0.1:65432" }
+      },
+      "proxy_fixed": {
+        "config": {
+          "mode": "fixed_servers",
+          "rules": {
+            "bypassList": ["127.0.0.1", "::1", "localhost"],
+            "singleProxy": {
+              "host": "example.com",
+              "password": "",
+              "port": 443,
+              "scheme": "https",
+              "username": ""
+            }
+          }
+        },
+        "mode": "fixed_servers",
+        "name": "fixed"
+      },
+      "proxy_pac_policy": {
+        "config": {
+          "mode": "pac_script",
+          "rules": {
+            "data": "",
+            "url": "https://github.com/",
+            "urlUpdatedAt": ""
+          }
+        },
+        "mode": "pac_script",
+        "name": "pac_policy"
+      }
+    },
+    "result": []
+  },
+  {
+    "test": {
+      "proxy_auto": {
+        "config": {
+          "mode": "auto",
+          "rules": {
+            "defaultProxy": "direct",
+            "external": {
+              "data": "[AutoProxy]\n||.test-example.xyz\n",
+              "mode": "autoProxy",
+              "proxy": "+proxy",
+              "url": "https://raw.githubusercontent.com/path111/reject.list",
+              "urlUpdatedAt": "2000/1/1 10:31:04"
+            },
+            "internal": [
+              {
+                "data": ".cloudfront.net",
+                "mode": "domain",
+                "proxy": "+proxy",
+                "valid": true
+              },
+              {
+                "data": ".test-example.com",
+                "mode": "domain",
+                "proxy": "+reject",
+                "valid": true
+              }
+            ],
+            "reject": {
+              "data": "[AutoProxy]\n||example.com\n",
+              "mode": "autoProxy",
+              "proxy": "+reject",
+              "url": "https://raw.githubusercontent.com/path/reject.list",
+              "urlUpdatedAt": "2000/1/1 10:31:04"
+            }
+          }
+        },
+        "mode": "auto",
+        "name": "auto"
+      }
+    },
+    "result": [
+      {
+        "proxy_auto": {
+          "config": {
+            "mode": "auto",
+            "rules": {
+              "defaultProxy": "direct",
+              "local": {
+                "rulesSet": {
+                  "data": "[AutoProxy]\n||.test-example.xyz\n",
+                  "mode": "autoProxy",
+                  "proxy": "+proxy",
+                  "url": "https://raw.githubusercontent.com/path111/reject.list",
+                  "urlUpdatedAt": "2000/1/1 10:31:04",
+                  "valid": true
+                },
+                "ruleList": [
+                  {
+                    "data": ".cloudfront.net",
+                    "mode": "domain",
+                    "proxy": "+proxy",
+                    "valid": true
+                  }
+                ]
+              },
+              "reject": {
+                "rulesSet": {
+                  "data": "[AutoProxy]\n||example.com\n",
+                  "mode": "autoProxy",
+                  "proxy": "+reject",
+                  "url": "https://raw.githubusercontent.com/path/reject.list",
+                  "urlUpdatedAt": "2000/1/1 10:31:04",
+                  "valid": true
+                },
+                "ruleList": [
+                  {
+                    "data": ".test-example.com",
+                    "mode": "domain",
+                    "proxy": "+reject",
+                    "valid": true
+                  }
+                ]
+              }
+            }
+          },
+          "mode": "auto",
+          "name": "auto"
+        }
+      }
+    ]
+  },
+  {
+    "test": {
+      "direct": {
+        "mode": "direct",
+        "name": "direct",
+        "config": { "mode": "direct" }
+      },
+      "system": {
+        "mode": "system",
+        "name": "system",
+        "config": { "mode": "system" }
+      },
+      "proxy_auto": {
+        "config": {
+          "mode": "auto",
+          "rules": {
+            "defaultProxy": "direct",
+            "external": {
+              "data": "[AutoProxy]\n||.test-example.xyz\n",
+              "mode": "autoProxy",
+              "proxy": "+proxy",
+              "url": "https://raw.githubusercontent.com/path111/reject.list",
+              "urlUpdatedAt": "2000/1/1 10:31:04"
+            },
+            "internal": [
+              {
+                "data": ".cloudfront.net",
+                "mode": "domain",
+                "proxy": "+proxy",
+                "valid": true
+              },
+              {
+                "data": ".test-example.com",
+                "mode": "domain",
+                "proxy": "+reject",
+                "valid": true
+              }
+            ],
+            "reject": {
+              "data": "[AutoProxy]\n||example.com\n",
+              "mode": "autoProxy",
+              "proxy": "+reject",
+              "url": "https://raw.githubusercontent.com/path/reject.list",
+              "urlUpdatedAt": "2000/1/1 10:31:04"
+            }
+          }
+        },
+        "mode": "auto",
+        "name": "auto"
+      },
+      "proxy_auto-policy": {
+        "config": {
+          "mode": "auto",
+          "rules": {
+            "defaultProxy": "direct",
+            "external": {
+              "data": "[AutoProxy]\n||.test-example.xyz\n",
+              "mode": "autoProxy",
+              "proxy": "+proxy",
+              "url": "https://raw.githubusercontent.com/path111/reject.list",
+              "urlUpdatedAt": "2000/1/1 10:31:04"
+            },
+            "internal": [
+              {
+                "data": ".cloudfront.net",
+                "mode": "domain",
+                "proxy": "+proxy",
+                "valid": true
+              }
+            ],
+            "reject": {
+              "data": "",
+              "mode": "autoProxy",
+              "proxy": "+reject",
+              "url": "",
+              "urlUpdatedAt": ""
+            }
+          }
+        },
+        "mode": "auto",
+        "name": "auto-policy"
+      }
+    },
+    "result": [
+      {
+        "proxy_auto": {
+          "config": {
+            "mode": "auto",
+            "rules": {
+              "defaultProxy": "direct",
+              "local": {
+                "rulesSet": {
+                  "data": "[AutoProxy]\n||.test-example.xyz\n",
+                  "mode": "autoProxy",
+                  "proxy": "+proxy",
+                  "url": "https://raw.githubusercontent.com/path111/reject.list",
+                  "urlUpdatedAt": "2000/1/1 10:31:04",
+                  "valid": true
+                },
+                "ruleList": [
+                  {
+                    "data": ".cloudfront.net",
+                    "mode": "domain",
+                    "proxy": "+proxy",
+                    "valid": true
+                  }
+                ]
+              },
+              "reject": {
+                "rulesSet": {
+                  "data": "[AutoProxy]\n||example.com\n",
+                  "mode": "autoProxy",
+                  "proxy": "+reject",
+                  "url": "https://raw.githubusercontent.com/path/reject.list",
+                  "urlUpdatedAt": "2000/1/1 10:31:04",
+                  "valid": true
+                },
+                "ruleList": [
+                  {
+                    "data": ".test-example.com",
+                    "mode": "domain",
+                    "proxy": "+reject",
+                    "valid": true
+                  }
+                ]
+              }
+            }
+          },
+          "mode": "auto",
+          "name": "auto"
+        }
+      },
+      {
+        "proxy_auto-policy": {
+          "config": {
+            "mode": "auto",
+            "rules": {
+              "defaultProxy": "direct",
+              "local": {
+                "rulesSet": {
+                  "data": "[AutoProxy]\n||.test-example.xyz\n",
+                  "mode": "autoProxy",
+                  "proxy": "+proxy",
+                  "url": "https://raw.githubusercontent.com/path111/reject.list",
+                  "urlUpdatedAt": "2000/1/1 10:31:04",
+                  "valid": true
+                },
+                "ruleList": [
+                  {
+                    "data": ".cloudfront.net",
+                    "mode": "domain",
+                    "proxy": "+proxy",
+                    "valid": true
+                  }
+                ]
+              },
+              "reject": {
+                "rulesSet": {
+                  "data": "",
+                  "mode": "autoProxy",
+                  "proxy": "+reject",
+                  "url": "",
+                  "urlUpdatedAt": "",
+                  "valid": true
+                },
+                "ruleList": []
+              }
+            }
+          },
+          "mode": "auto",
+          "name": "auto-policy"
+        }
+      }
+    ]
+  }
+]

@@ -11,6 +11,17 @@ export const convertToNewVersionConfig = async function (toVersion) {
       await Browser.Storage.setLocal({ config_app_version: 2 })
     }
   }
+
+  const oldSyncAppConfig = await Browser.Storage.getSyncAll()
+  if (oldSyncAppConfig['config_app_version'] == null) {
+    if (toVersion == 2) {
+      const updatedProxyConfigList = transformReject(oldSyncAppConfig)
+      updatedProxyConfigList.forEach(async (item) => {
+        await Browser.Storage.setSync(item)
+      })
+      await Browser.Storage.setSync({ config_app_version: 2 })
+    }
+  }
 }
 
 export const resetAppConfig = function () {
@@ -85,4 +96,8 @@ function transformReject(appConfig) {
     updatedProxyConfigList.push({ [key]: resObj })
   })
   return updatedProxyConfigList
+}
+
+export const __private__ = {
+  transformReject
 }

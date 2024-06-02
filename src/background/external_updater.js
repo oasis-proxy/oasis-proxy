@@ -15,11 +15,11 @@ export const endUpdateUrl = async () => {
 }
 
 export const handleUpdateUrl = async function () {
+  console.info('handleUpdateUrl', new Date().toLocaleTimeString())
   const result = await Browser.Storage.getLocalAll()
   for (let key of Object.keys(result)) {
     if (!key.startsWith('proxy_') || result[key].mode != 'auto') continue
     const proxyConfig = await updateRulesSetData(result[key])
-    console.info('handleUpdateUrl', key, result[key], proxyConfig)
     if (JSON.stringify(proxyConfig) != '{}') {
       Browser.Storage.setLocal({ [key]: proxyConfig })
       if (key == result.status_proxyKey) {

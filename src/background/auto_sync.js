@@ -18,6 +18,7 @@ export const endAutoSync = async () => {
 }
 
 export const handleAutoSync = async function () {
+  console.info('handleAutoSync', new Date().toLocaleTimeString())
   switch (await getSyncDownloadStatus()) {
     case 'download':
       await overWriteToLocal()

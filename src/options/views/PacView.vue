@@ -63,7 +63,8 @@ async function handleSubmit() {
   const version = await getNextLocalVersion()
   await Browser.Storage.setLocal({
     [key]: tmpObj,
-    config_version: version
+    config_version: version,
+    config_syncTime: new Date().getTime()
   })
   toast.info(`${name} ${Browser.I18n.getMessage('desc_save_success')}`)
   const result = await Browser.Storage.getLocalAll()

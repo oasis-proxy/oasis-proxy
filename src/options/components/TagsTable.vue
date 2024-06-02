@@ -40,7 +40,8 @@ async function addTags() {
   const version = await getNextLocalVersion()
   await Browser.Storage.setLocal({
     config_iptags: iptags.value,
-    config_version: version
+    config_version: version,
+    config_syncTime: new Date().getTime()
   })
   getTags()
   name.value = ''
@@ -57,7 +58,8 @@ async function deleteTags(ip) {
   const version = await getNextLocalVersion()
   await Browser.Storage.setLocal({
     config_iptags: iptags.value,
-    config_version: version
+    config_version: version,
+    config_syncTime: new Date().getTime()
   })
   getTags()
   showUploadConflictModal()

@@ -428,7 +428,11 @@ export const updateRulesSetData = async function (
   }
 }
 
-const SYNC_CONFIG_KEY_LIST = ['config_app_version', 'config_iptags']
+const SYNC_CONFIG_KEY_LIST = [
+  'config_app_version',
+  'config_iptags',
+  'config_syncTime'
+]
 
 export const simplify = function (config) {
   const simplifyConfig = {}

@@ -78,7 +78,8 @@ async function handleSubmit() {
   const version = await getNextLocalVersion()
   await Browser.Storage.setLocal({
     [key]: proxyConfig,
-    config_version: version
+    config_version: version,
+    config_syncTime: new Date().getTime()
   })
   toast.info(`${name.value} ${Browser.I18n.getMessage('desc_save_success')}`)
   handleCancel()

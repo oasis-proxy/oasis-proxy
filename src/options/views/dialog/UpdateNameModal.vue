@@ -92,6 +92,7 @@ async function handleSubmit() {
   }
   const version = await getNextLocalVersion()
   storeProxy.config_version = version
+  storeProxy.config_syncTime = new Date().getTime()
   await Browser.Storage.setLocal(storeProxy)
   await Browser.Storage.removeLocal(oldKey)
   toast.info(Browser.I18n.getMessage('desc_save_success'))

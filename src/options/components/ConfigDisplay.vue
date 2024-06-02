@@ -16,6 +16,7 @@ const localFixed = ref([])
 const localPac = ref([])
 const localAuto = ref([])
 const localVersion = ref(0)
+const localUpdateDate = ref('')
 
 const syncFixed = ref([])
 const syncPac = ref([])
@@ -81,6 +82,8 @@ async function reloadLocalData() {
     }
   })
   if (result.config_version != null) localVersion.value = result.config_version
+  if (result.config_syncTime != null)
+    localUpdateDate.value = new Date(result.config_syncTime).toLocaleString()
 }
 
 function handleSetLocal() {
@@ -117,7 +120,11 @@ function handleSetSync() {
           {{ Browser.I18n.getMessage('section_label_local_data') }}
         </p>
         <p class="card-text">
-          {{ Browser.I18n.getMessage('page_title_version') + localVersion }}
+          {{
+            Browser.I18n.getMessage('page_title_version') +
+            localVersion +
+            (localUpdateDate == '' ? '' : `  (${localUpdateDate})`)
+          }}
         </p>
         <p class="card-text" v-if="localFixed.length > 0">
           {{

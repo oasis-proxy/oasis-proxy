@@ -46,7 +46,7 @@ export const overWriteToCloud = async function () {
   } else {
     simplifiedConfigs.config_version = localVersion
   }
-  simplifiedConfigs.config_syncTime = new Date().getTime()
+  // simplifiedConfigs.config_syncTime = new Date().getTime()
   await Browser.Storage.setSync(simplifiedConfigs)
 }
 

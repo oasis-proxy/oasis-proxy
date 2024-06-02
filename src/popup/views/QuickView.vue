@@ -94,7 +94,9 @@ async function quickAddLocalRuleList() {
       <i class="bi bi-speedometer me-2"></i>
       <span>{{ Browser.I18n.getMessage('desc_monitor') }}</span>
     </div>
-    <div class="ms-auto">{{ activeProxyLabel }}</div>
+    <div class="ms-auto text-truncate" style="max-width: 50%">
+      {{ activeProxyLabel }}
+    </div>
   </div>
   <hr class="my-1" />
   <div class="px-3 py-2 vstack gap-2 mb-1">

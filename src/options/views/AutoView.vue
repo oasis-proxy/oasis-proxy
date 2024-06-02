@@ -184,7 +184,7 @@ function inputClassName(item) {
 async function handleUpdateUrl(subject) {
   const key = 'proxy_' + encodeURIComponent(route.params.name)
   const allConfig = await Browser.Storage.getLocalAll()
-  const updateProxyConfig = await updateRulesSetData(allConfig[key], subject)
+  const updateProxyConfig = await updateRulesSetData(allConfig[key], [subject])
   if (JSON.stringify(updateProxyConfig) != '{}') {
     await Browser.Storage.setLocal({ [key]: updateProxyConfig })
     if (allConfig.status_proxyKey == key) {

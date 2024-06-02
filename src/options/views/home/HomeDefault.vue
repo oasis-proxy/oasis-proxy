@@ -35,6 +35,7 @@ function handleImportConfig(event) {
   reader.onload = async function (event) {
     const tmpObj = JSON.parse(event.target.result)
     tmpObj.config_autoSync = false
+    tmpObj.status_proxyKey = 'direct'
     const result = await Browser.Storage.getLocalAll()
     console.log(Object.keys(result))
     await Browser.Storage.removeLocal(Object.keys(result))

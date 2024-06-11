@@ -1,5 +1,11 @@
 # ChangeLogs
 
+## v1.0.6
+
+BugFix:
+
+- Fixed the issue where remote rules-set might be cleared during automatic updates
+
 ## v1.0.5
 
 Optimizations:

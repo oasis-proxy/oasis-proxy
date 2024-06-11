@@ -1,5 +1,5 @@
 <script setup>
-import { defineModel, computed, ref } from 'vue'
+import { defineModel, computed } from 'vue'
 
 import { downloadUrl } from '@/core/utils'
 import Browser from '@/Browser/main'

@@ -36,6 +36,7 @@ const localRulesSet = ref({
   proxy: 'direct',
   valid: true
 })
+const urlValid = ref({ reject: true, local: true })
 
 const rejectRulesSet = ref({
   url: '',
@@ -193,6 +194,8 @@ async function handleUpdateUrl(subject) {
       })
     }
     load(key)
+  } else {
+    urlValid.value[subject] = false
   }
 }
 
@@ -414,6 +417,7 @@ function setUnsaved() {
                 :dataTitle="Browser.I18n.getMessage('form_label_rule_data')"
                 @updateRulesSetData="handleUpdateUrl('local')"
                 v-model:rulesSet="localRulesSet"
+                v-model:isUrlValid="urlValid.local"
               ></LinkTextItem>
             </div>
           </div>
@@ -488,6 +492,7 @@ function setUnsaved() {
                 :dataTitle="Browser.I18n.getMessage('form_label_rule_data')"
                 @updateRulesSetData="handleUpdateUrl('reject')"
                 v-model:rulesSet="rejectRulesSet"
+                v-model:isUrlValid="urlValid.reject"
               ></LinkTextItem>
             </div>
           </div>

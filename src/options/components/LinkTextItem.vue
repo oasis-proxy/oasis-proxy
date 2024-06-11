@@ -16,6 +16,10 @@ const rulesSet = defineModel('rulesSet', {
     }
   }
 })
+const isUrlValid = defineModel('isUrlValid', {
+  type: Boolean,
+  default: true
+})
 const storeStatus = useStatusStore()
 const emit = defineEmits(['updateRulesSetData'])
 
@@ -25,8 +29,6 @@ defineProps({
   urlUpdatedAtTitle: String,
   dataTitle: String
 })
-
-const isUrlValid = ref(true)
 
 const dataInputDisabled = computed(() => {
   return rulesSet.value.url != ''
@@ -48,14 +50,11 @@ async function updateData() {
     rulesSet.value.data = ''
     return
   }
-  try {
-    const response = await downloadUrl(rulesSet.value.url, 'base64')
+  const response = await downloadUrl(rulesSet.value.url, 'base64')
+  if (JSON.stringify(response) != '{}') {
     rulesSet.value.data = response.data
     rulesSet.value.urlUpdatedAt = response.updated
-  } catch (err) {
-    console.error(err)
-    rulesSet.value.urlUpdatedAt = ''
-    rulesSet.value.data = ''
+  } else {
     isUrlValid.value = false
   }
 }

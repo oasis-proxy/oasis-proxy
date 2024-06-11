@@ -411,10 +411,12 @@ export const updateRulesSetData = async function (
           proxyConfig.config.rules[element]?.rulesSet.url,
           'base64'
         )
-        proxyConfig.config.rules[element].rulesSet.data = response.data
-        proxyConfig.config.rules[element].rulesSet.urlUpdatedAt =
-          response.updated
-        updateFlag = true
+        if (JSON.stringify(response) != '{}') {
+          proxyConfig.config.rules[element].rulesSet.data = response.data
+          proxyConfig.config.rules[element].rulesSet.urlUpdatedAt =
+            response.updated
+          updateFlag = true
+        }
       }
     }
     if (updateFlag) {
@@ -483,26 +485,33 @@ export const enrich = async function (config) {
               config[key].config.rules.local.rulesSet.url,
               'base64'
             )
-            enrichConfig[key].config.rules.local.rulesSet.data = response.data
-            enrichConfig[key].config.rules.local.rulesSet.urlUpdatedAt =
-              response.updated
+            if (JSON.stringify(response) != '{}') {
+              enrichConfig[key].config.rules.local.rulesSet.data = response.data
+              enrichConfig[key].config.rules.local.rulesSet.urlUpdatedAt =
+                response.updated
+            }
           }
           if (config[key].config.rules.reject.rulesSet.url != '') {
             response = await downloadUrl(
               config[key].config.rules.reject.rulesSet.url,
               'base64'
             )
-            enrichConfig[key].config.rules.reject.rulesSet.data = response.data
-            enrichConfig[key].config.rules.reject.rulesSet.urlUpdatedAt =
-              response.updated
+            if (JSON.stringify(response) != '{}') {
+              enrichConfig[key].config.rules.reject.rulesSet.data =
+                response.data
+              enrichConfig[key].config.rules.reject.rulesSet.urlUpdatedAt =
+                response.updated
+            }
           }
           break
         case 'pac_script':
           enrichConfig[key] = config[key]
           if (config[key].config.rules.url != '') {
             response = await downloadUrl(config[key].config.rules.url, 'base64')
-            enrichConfig[key].config.rules.data = response.data
-            enrichConfig[key].config.rules.urlUpdatedAt = response.updated
+            if (JSON.stringify(response) != '{}') {
+              enrichConfig[key].config.rules.data = response.data
+              enrichConfig[key].config.rules.urlUpdatedAt = response.updated
+            }
           }
           break
         case 'fixed_servers':

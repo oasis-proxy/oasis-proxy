@@ -9,6 +9,7 @@ import testCase_parseAutoProxyRule from './case/autoproxy_rule.json'
 import testCase_parseHostnameForBypass from './case/bypass_domain.json'
 import testCase_parseBypassRule from './case/bypass_rule.json'
 import testCase_parseWildcardDomain from './case/internal_domain.json'
+import testCase_parseAutoProxyFile from './case/autoproxy_file.json'
 
 describe('rules_parser utils', () => {
   testCase_getRegConst.forEach((t) => {
@@ -123,6 +124,15 @@ describe('rules_parser Internel Rules', () => {
         reg: t.result,
         proxy: 'testproxy'
       })
+    })
+  })
+})
+
+describe('autoproxy file', () => {
+  testCase_parseAutoProxyFile.forEach((t) => {
+    test(t.test, () => {
+      const res = __private__.parseAutoProxyFile(t.test, 'testproxy')
+      expect(res).toEqual(t.result)
     })
   })
 })

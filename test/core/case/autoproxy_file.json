@@ -1,0 +1,37 @@
+[
+  {
+    "test": "||.example.com\n@@.example1.com\n\r|https://example2.com",
+    "result": [
+      {
+        "mode": "host",
+        "orgin": {
+          "data": "||.example.com"
+        },
+        "proxy": "testproxy",
+        "rule": {
+          "regex": "/(?:^|\\.)\\.example\\.com$/"
+        }
+      },
+      {
+        "mode": "url",
+        "orgin": {
+          "data": ".example1.com"
+        },
+        "proxy": "direct",
+        "rule": {
+          "regex": "/^http:\\/\\/.*\\.example1\\.com.*$/"
+        }
+      },
+      {
+        "mode": "url",
+        "orgin": {
+          "data": "|https://example2.com"
+        },
+        "proxy": "testproxy",
+        "rule": {
+          "regex": "/^https:\\/\\/example2\\.com.*$/"
+        }
+      }
+    ]
+  }
+]

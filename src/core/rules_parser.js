@@ -2,8 +2,7 @@ import * as ipaddr from 'ipaddr.js'
 
 export const parseAutoProxyFile = function (data, proxy) {
   const lines = data.split(/\r?\n/)
-  const proxyRules = []
-  const directRules = []
+  const rulesList = []
   lines.forEach((line) => {
     line = line.trim()
     if (line == '' || line.startsWith('!') || line.startsWith('[')) {
@@ -14,13 +13,13 @@ export const parseAutoProxyFile = function (data, proxy) {
         data: line.substring(2),
         proxy: 'direct'
       })
-      if (rule.mode != 'invalid') directRules.push(rule)
+      if (rule.mode != 'invalid') rulesList.push(rule)
     } else {
       const rule = parseAutoProxyRule({ data: line, proxy: proxy })
-      if (rule.mode != 'invalid') proxyRules.push(rule)
+      if (rule.mode != 'invalid') rulesList.push(rule)
     }
   })
-  return [...directRules, ...proxyRules]
+  return rulesList
 }
 
 export const parseRuleItem = function (rule) {
@@ -289,5 +288,6 @@ export const __private__ = {
   parseAutoProxyRule,
   parseHostnameForBypass,
   parseBypassRule,
-  parseWildcardDomain
+  parseWildcardDomain,
+  parseAutoProxyFile
 }

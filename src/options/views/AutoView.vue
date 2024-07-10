@@ -97,6 +97,9 @@ async function load(proxyKey) {
   localRulesSet.value.data = result[proxyKey].config.rules.local.rulesSet.data
   localRulesSet.value.proxy = result[proxyKey].config.rules.local.rulesSet.proxy
   localRulesSet.value.valid = result[proxyKey].config.rules.local.rulesSet.valid
+  if (localRulesSet.value.valid == null) {
+    localRulesSet.value.valid = true
+  }
 
   rejectRulesSet.value.url = result[proxyKey].config.rules.reject.rulesSet.url
   rejectRulesSet.value.urlUpdatedAt =
@@ -104,6 +107,9 @@ async function load(proxyKey) {
   rejectRulesSet.value.data = result[proxyKey].config.rules.reject.rulesSet.data
   rejectRulesSet.value.valid =
     result[proxyKey].config.rules.reject.rulesSet.valid
+  if (rejectRulesSet.value.valid == null) {
+    rejectRulesSet.value.valid = true
+  }
 
   const tmpRuleList = JSON.parse(
     JSON.stringify(result[proxyKey].config.rules.local.ruleList)

@@ -24,7 +24,8 @@ export const createProxy = function (name, mode) {
               urlUpdatedAt: '',
               data: '',
               proxy: 'direct',
-              mode: 'autoProxy'
+              mode: 'autoProxy',
+              valid: true
             },
             ruleList: []
           },
@@ -34,7 +35,8 @@ export const createProxy = function (name, mode) {
               urlUpdatedAt: '',
               data: '',
               proxy: '+reject',
-              mode: 'autoProxy'
+              mode: 'autoProxy',
+              valid: true
             },
             ruleList: []
           }

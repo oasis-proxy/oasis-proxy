@@ -1,5 +1,15 @@
 # ChangeLogs
 
+## v1.0.7
+
+Optimization:
+
+- Optimized the internal rule parsing order for the auto-policy.
+
+BugFix:
+
+- Fixed the validation status for auto-proxy
+
 ## v1.0.6
 
 BugFix:

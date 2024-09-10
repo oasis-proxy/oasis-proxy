@@ -18,6 +18,7 @@ const instance = getCurrentInstance()
 const confirmModal = instance?.appContext.config.globalProperties.$confirm
 const toast = instance?.appContext.config.globalProperties.$toast
 
+const tagColor = ref('#3498db')
 const fallbackProxy = ref({
   scheme: 'direct',
   host: '',
@@ -61,6 +62,8 @@ watch(
 async function load(proxyKey) {
   resetData()
   const result = await Browser.Storage.getLocal([proxyKey])
+
+  tagColor.value = result[proxyKey].tagColor
   if (result[proxyKey]?.config.rules.singleProxy != null) {
     fallbackProxy.value = JSON.parse(
       JSON.stringify(result[proxyKey]?.config.rules.singleProxy)
@@ -93,6 +96,7 @@ async function load(proxyKey) {
 }
 
 function resetData() {
+  tagColor.value = '#3498db'
   fallbackProxy.value = {
     scheme: 'direct',
     host: '',
@@ -177,6 +181,14 @@ function handleCancel() {
 <template>
   <div id="profile_fixed">
     <div class="hstack gap-3 pb-4 mb-3">
+      <div>
+        <i
+          class="bi bi-bookmark-fill cursor-point fs-4"
+          :style="'color: ' + tagColor"
+          @click="$refs.colorPicker.click()"
+        ></i>
+        <input ref="colorPicker" type="color" v-model="tagColor" />
+      </div>
       <div class="fs-5 fw-bold text-truncate">
         {{ Browser.I18n.getMessage('page_title_fixed') + route.params.name }}
       </div>

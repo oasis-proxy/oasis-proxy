@@ -12,6 +12,7 @@ const handleUpdate = inject('handleUpdate')
 const handleDelete = inject('handleDelete')
 const showUploadConflictModal = inject('showUploadConflictModal')
 
+const tagColor = ref('#3498db')
 const pacRule = ref({
   url: '',
   urlUpdatedAt: '',
@@ -37,12 +38,15 @@ watch(
 async function load(proxyKey) {
   resetData()
   const result = await Browser.Storage.getLocal([proxyKey])
+
+  tagColor.value = result[proxyKey].tagColor
   pacRule.value.url = result[proxyKey].config.rules.url
   pacRule.value.data = result[proxyKey].config.rules.data
   pacRule.value.urlUpdatedAt = result[proxyKey].config.rules.urlUpdatedAt
 }
 
 function resetData() {
+  tagColor.value = '#3498db'
   pacRule.value = {
     url: '',
     urlUpdatedAt: '',
@@ -92,6 +96,14 @@ function handleCancel() {
 <template>
   <div id="profile_pac">
     <div class="hstack gap-3 pb-4 mb-3">
+      <div>
+        <i
+          class="bi bi-bookmark-fill cursor-point fs-4"
+          :style="'color: ' + tagColor"
+          @click="$refs.colorPicker.click()"
+        ></i>
+        <input ref="colorPicker" type="color" v-model="tagColor" />
+      </div>
       <div class="fs-5 fw-bold text-truncate" id="title">
         {{ Browser.I18n.getMessage('page_title_pac') + route.params.name }}
       </div>

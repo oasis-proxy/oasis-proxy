@@ -100,3 +100,10 @@ body i.icon-btn:hover {
 .modal-dialog.large-dialog {
   max-width: 860px;
 }
+
+input[type='color'] {
+  width: 0px;
+  height: 0px;
+  padding: 0;
+  visibility: hidden;
+}

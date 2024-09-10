@@ -38,6 +38,7 @@ const localRulesSet = ref({
 })
 const urlValid = ref({ reject: true, local: true })
 
+const tagColor = ref('#3498db')
 const rejectRulesSet = ref({
   url: '',
   urlUpdatedAt: '',
@@ -89,6 +90,8 @@ watch(
 async function load(proxyKey) {
   resetData()
   const result = await Browser.Storage.getLocal([proxyKey])
+
+  tagColor.value = result[proxyKey].tagColor
   defaultProxy.value = result[proxyKey].config.rules.defaultProxy
 
   localRulesSet.value.url = result[proxyKey].config.rules.local.rulesSet.url
@@ -137,6 +140,7 @@ async function handleExportPAC() {
 }
 
 function resetData() {
+  tagColor.value = '#3498db'
   localRuleList.value = []
   rejectRuleList.value = []
   defaultProxy.value = 'direct'
@@ -211,6 +215,7 @@ async function handleSubmit() {
   const key = 'proxy_' + encodeName
   const tmpObj = saveForAuto(
     encodeName,
+    // tagColor.value,
     defaultProxy.value,
     localRuleList.value,
     rejectRuleList.value,
@@ -253,6 +258,14 @@ function setUnsaved() {
 <template>
   <div id="profileAuto">
     <div class="hstack gap-3 pb-4 mb-3">
+      <div>
+        <i
+          class="bi bi-bookmark-fill cursor-point fs-4"
+          :style="'color: ' + tagColor"
+          @click="$refs.colorPicker.click()"
+        ></i>
+        <input ref="colorPicker" type="color" v-model="tagColor" />
+      </div>
       <div class="fs-5 fw-bold text-truncate" id="title">
         {{ Browser.I18n.getMessage('page_title_auto') + route.params.name }}
       </div>

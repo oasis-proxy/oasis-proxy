@@ -215,7 +215,7 @@ async function handleSubmit() {
   const key = 'proxy_' + encodeName
   const tmpObj = saveForAuto(
     encodeName,
-    // tagColor.value,
+    tagColor.value,
     defaultProxy.value,
     localRuleList.value,
     rejectRuleList.value,

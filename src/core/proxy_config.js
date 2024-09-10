@@ -153,12 +153,19 @@ export const replaceProxyNameForSingleProxy = function (
   return tmp
 }
 
-export const saveForPac = function (name, data, url = '', urlUpdatedAt = '') {
+export const saveForPac = function (
+  name,
+  tagColor,
+  data,
+  url = '',
+  urlUpdatedAt = ''
+) {
   if (name == null || name == '') {
     return -1
   }
   return {
     name,
+    tagColor,
     mode: 'pac_script',
     config: { mode: 'pac_script', rules: { url, urlUpdatedAt, data } }
   }
@@ -166,6 +173,7 @@ export const saveForPac = function (name, data, url = '', urlUpdatedAt = '') {
 
 export const saveForFixed = function (
   name,
+  tagColor,
   fallbackProxy,
   proxyForHttp,
   proxyForHttps,
@@ -177,6 +185,7 @@ export const saveForFixed = function (
   }
   let tmp = {
     name,
+    tagColor,
     mode: 'fixed_servers',
     config: {
       mode: 'fixed_servers',
@@ -212,7 +221,7 @@ export const saveForFixed = function (
 
 export const saveForAuto = function (
   name,
-  // tagColor,
+  tagColor,
   defaultProxy,
   localRuleList,
   rejectRuleList,
@@ -221,7 +230,7 @@ export const saveForAuto = function (
 ) {
   let tmp = {
     name,
-    // tagColor,
+    tagColor,
     mode: 'auto',
     config: {
       mode: 'auto',

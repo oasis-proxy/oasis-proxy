@@ -134,6 +134,7 @@ async function handleSubmit() {
   const key = 'proxy_' + encodeName
   const tmpObj = saveForFixed(
     encodeName,
+    tagColor.value,
     fallbackProxy.value,
     proxyForHttp.value,
     proxyForHttps.value,

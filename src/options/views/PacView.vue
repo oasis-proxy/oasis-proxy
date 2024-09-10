@@ -60,6 +60,7 @@ async function handleSubmit() {
   const key = 'proxy_' + encodeName
   const tmpObj = saveForPac(
     encodeName,
+    tagColor.value,
     pacRule.value.data.trim(),
     pacRule.value.url.trim(),
     pacRule.value.urlUpdatedAt

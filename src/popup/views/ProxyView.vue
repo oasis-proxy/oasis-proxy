@@ -19,13 +19,22 @@ onMounted(async () => {
     if (!key.startsWith('proxy_')) return
     switch (result[key].mode) {
       case 'auto':
-        auto.value.push(result[key].name)
+        auto.value.push({
+          name: result[key].name,
+          tagColor: result[key].tagColor ? result[key].tagColor : '#3498db'
+        })
         break
       case 'pac_script':
-        pac.value.push(result[key].name)
+        pac.value.push({
+          name: result[key].name,
+          tagColor: result[key].tagColor ? result[key].tagColor : '#3498db'
+        })
         break
       case 'fixed_servers':
-        fixed.value.push(result[key].name)
+        fixed.value.push({
+          name: result[key].name,
+          tagColor: result[key].tagColor ? result[key].tagColor : '#3498db'
+        })
         break
       default:
     }
@@ -84,14 +93,16 @@ function setProxy(proxyConfigs, key) {
       class="nav-item"
       v-for="(item, index) in fixed"
       :key="index"
-      @click="setProxy(proxyConfigs, 'proxy_' + item)"
+      @click="setProxy(proxyConfigs, 'proxy_' + item.name)"
     >
       <a
-        :class="activeProxyKey == 'proxy_' + item ? activeClassName : className"
+        :class="
+          activeProxyKey == 'proxy_' + item.name ? activeClassName : className
+        "
       >
-        <i class="bi bi-pc-display mx-2"></i>
+        <i class="bi bi-pc-display mx-2" :style="'color: ' + item.tagColor"></i>
         <span class="d-inline-block text-truncate">{{
-          decodeURIComponent(item)
+          decodeURIComponent(item.name)
         }}</span>
       </a>
     </li>
@@ -99,14 +110,19 @@ function setProxy(proxyConfigs, key) {
       class="nav-item"
       v-for="(item, index) in pac"
       :key="index"
-      @click="setProxy(proxyConfigs, 'proxy_' + item)"
+      @click="setProxy(proxyConfigs, 'proxy_' + item.name)"
     >
       <a
-        :class="activeProxyKey == 'proxy_' + item ? activeClassName : className"
+        :class="
+          activeProxyKey == 'proxy_' + item.name ? activeClassName : className
+        "
       >
-        <i class="bi bi-file-earmark-ppt-fill mx-2"></i>
+        <i
+          class="bi bi-file-earmark-ppt-fill mx-2"
+          :style="'color: ' + item.tagColor"
+        ></i>
         <span class="d-inline-block text-truncate">{{
-          decodeURIComponent(item)
+          decodeURIComponent(item.name)
         }}</span>
       </a>
     </li>
@@ -114,14 +130,19 @@ function setProxy(proxyConfigs, key) {
       class="nav-item"
       v-for="(item, index) in auto"
       :key="index"
-      @click="setProxy(proxyConfigs, 'proxy_' + item)"
+      @click="setProxy(proxyConfigs, 'proxy_' + item.name)"
     >
       <a
-        :class="activeProxyKey == 'proxy_' + item ? activeClassName : className"
+        :class="
+          activeProxyKey == 'proxy_' + item.name ? activeClassName : className
+        "
       >
-        <i class="bi bi-signpost-split-fill mx-2"></i>
+        <i
+          class="bi bi-signpost-split-fill mx-2"
+          :style="'color: ' + item.tagColor"
+        ></i>
         <span class="d-inline-block text-truncate">{{
-          decodeURIComponent(item)
+          decodeURIComponent(item.name)
         }}</span>
       </a>
     </li>

@@ -25,16 +25,31 @@ const proxyNamesObj = computed(() => {
   Object.keys(storeStatus.proxyConfigs).forEach((key) => {
     switch (storeStatus.proxyConfigs[key]?.mode) {
       case 'auto':
-        auto.push(storeStatus.proxyConfigs[key].name)
-        auto.sort()
+        auto.push({
+          name: storeStatus.proxyConfigs[key].name,
+          tagColor: storeStatus.proxyConfigs[key].tagColor
+            ? storeStatus.proxyConfigs[key].tagColor
+            : '#3498db'
+        })
+        auto.sort((a, b) => a.name - b.name)
         break
       case 'pac_script':
-        pac.push(storeStatus.proxyConfigs[key].name)
-        pac.sort()
+        pac.push({
+          name: storeStatus.proxyConfigs[key].name,
+          tagColor: storeStatus.proxyConfigs[key].tagColor
+            ? storeStatus.proxyConfigs[key].tagColor
+            : '#3498db'
+        })
+        pac.sort((a, b) => a.name - b.name)
         break
       case 'fixed_servers':
-        fixed.push(storeStatus.proxyConfigs[key].name)
-        fixed.sort()
+        fixed.push({
+          name: storeStatus.proxyConfigs[key].name,
+          tagColor: storeStatus.proxyConfigs[key].tagColor
+            ? storeStatus.proxyConfigs[key].tagColor
+            : '#3498db'
+        })
+        fixed.sort((a, b) => a.name - b.name)
         break
       default:
         break
@@ -122,16 +137,19 @@ function addServer() {
         >
           <a
             :class="
-              route.path == '/fixed/' + item
+              route.path == '/fixed/' + item.name
                 ? 'nav-link d-inline-block text-truncate w-100 active'
                 : 'nav-link d-inline-block text-truncate w-100'
             "
-            @click="toPath('/fixed/' + item)"
+            @click="toPath('/fixed/' + item.name)"
             ><span class="position-relative d-flex align-items-center">
-              <i class="bi bi-pc-display me-3"></i
-              ><span>{{ decodeURIComponent(item) }}</span
+              <i
+                class="bi bi-pc-display me-3"
+                :style="'color: ' + item.tagColor"
+              ></i
+              ><span>{{ decodeURIComponent(item.name) }}</span
               ><span
-                v-if="storeStatus.activeProxyKey == 'proxy_' + item"
+                v-if="storeStatus.activeProxyKey == 'proxy_' + item.name"
                 class="badge rounded-pill bg-info ms-3"
               >
                 {{ Browser.I18n.getMessage('badge_label_using') }}
@@ -159,16 +177,19 @@ function addServer() {
         >
           <a
             :class="
-              route.path == '/pac/' + item
+              route.path == '/pac/' + item.name
                 ? 'nav-link d-inline-block text-truncate w-100 active'
                 : 'nav-link d-inline-block text-truncate w-100'
             "
-            @click="toPath('/pac/' + item)"
+            @click="toPath('/pac/' + item.name)"
             ><span class="position-relative d-flex align-items-center">
-              <i class="bi bi-file-earmark-ppt-fill me-3"></i
-              ><span>{{ decodeURIComponent(item) }}</span
+              <i
+                class="bi bi-file-earmark-ppt-fill me-3"
+                :style="'color: ' + item.tagColor"
+              ></i
+              ><span>{{ decodeURIComponent(item.name) }}</span
               ><span
-                v-if="storeStatus.activeProxyKey == 'proxy_' + item"
+                v-if="storeStatus.activeProxyKey == 'proxy_' + item.name"
                 class="badge rounded-pill bg-info ms-3"
               >
                 {{ Browser.I18n.getMessage('badge_label_using') }}
@@ -183,16 +204,19 @@ function addServer() {
         >
           <a
             :class="
-              route.path == '/auto/' + item
+              route.path == '/auto/' + item.name
                 ? 'nav-link d-inline-block text-truncate w-100 active'
                 : 'nav-link d-inline-block text-truncate w-100'
             "
-            @click="toPath('/auto/' + item)"
+            @click="toPath('/auto/' + item.name)"
             ><span class="position-relative d-flex align-items-center">
-              <i class="bi bi-signpost-split-fill me-3"></i
-              ><span>{{ decodeURIComponent(item) }}</span
+              <i
+                class="bi bi-signpost-split-fill me-3"
+                :style="'color: ' + item.tagColor"
+              ></i>
+              <span>{{ decodeURIComponent(item.name) }}</span
               ><span
-                v-if="storeStatus.activeProxyKey == 'proxy_' + item"
+                v-if="storeStatus.activeProxyKey == 'proxy_' + item.name"
                 class="badge rounded-pill bg-info ms-3"
               >
                 {{ Browser.I18n.getMessage('badge_label_using') }}

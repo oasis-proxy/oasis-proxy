@@ -67,7 +67,7 @@ async function handleSubmit() {
     isNameValid.value = false
     return
   }
-  const proxyConfig = createProxy(encodeName, mode.value)
+  const proxyConfig = createProxy(encodeName, '#000', mode.value)
   if (proxyConfig == -1) {
     toast.warning(
       `${name.value} ${Browser.I18n.getMessage('desc_save_failed')}`

@@ -7,11 +7,11 @@ export const CONST_DEFAULT_PORT = {
   socks5: 1080
 }
 
-export const createProxy = function (name, mode) {
+export const createProxy = function (name, tagColor, mode) {
   if (name == null || name == '' || mode == null || mode == '') {
     return -1
   }
-  let proxy = { name, mode, config: { mode: mode } }
+  let proxy = { name, tagColor, mode, config: { mode: mode } }
   switch (mode) {
     case 'auto':
       proxy.config = {
@@ -212,6 +212,7 @@ export const saveForFixed = function (
 
 export const saveForAuto = function (
   name,
+  // tagColor,
   defaultProxy,
   localRuleList,
   rejectRuleList,
@@ -220,6 +221,7 @@ export const saveForAuto = function (
 ) {
   let tmp = {
     name,
+    // tagColor,
     mode: 'auto',
     config: {
       mode: 'auto',

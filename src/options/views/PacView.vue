@@ -40,6 +40,8 @@ async function load(proxyKey) {
   const result = await Browser.Storage.getLocal([proxyKey])
 
   tagColor.value = result[proxyKey].tagColor
+    ? result[proxyKey].tagColor
+    : '#3498db'
   pacRule.value.url = result[proxyKey].config.rules.url
   pacRule.value.data = result[proxyKey].config.rules.data
   pacRule.value.urlUpdatedAt = result[proxyKey].config.rules.urlUpdatedAt

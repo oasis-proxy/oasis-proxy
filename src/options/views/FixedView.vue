@@ -64,6 +64,8 @@ async function load(proxyKey) {
   const result = await Browser.Storage.getLocal([proxyKey])
 
   tagColor.value = result[proxyKey].tagColor
+    ? result[proxyKey].tagColor
+    : '#3498db'
   if (result[proxyKey]?.config.rules.singleProxy != null) {
     fallbackProxy.value = JSON.parse(
       JSON.stringify(result[proxyKey]?.config.rules.singleProxy)

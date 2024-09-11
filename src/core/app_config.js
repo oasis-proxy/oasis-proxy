@@ -1,26 +1,55 @@
 import Browser from '@/Browser/main'
 
 export const convertToNewVersionConfig = async function (toVersion) {
+  switch (toVersion) {
+    case '2':
+      await newVersionConfigTo2()
+      break
+    case '2.1':
+      await newVersionConfigTo2_1()
+      break
+    default:
+      break
+  }
+}
+
+const newVersionConfigTo2 = async function () {
   const oldAppConfig = await Browser.Storage.getLocalAll()
   if (oldAppConfig['config_app_version'] == null) {
-    if (toVersion == 2) {
-      const updatedProxyConfigList = transformReject(oldAppConfig)
-      updatedProxyConfigList.forEach(async (item) => {
-        await Browser.Storage.setLocal(item)
-      })
-      await Browser.Storage.setLocal({ config_app_version: 2 })
-    }
+    const updatedProxyConfigList = transformReject(oldAppConfig)
+    updatedProxyConfigList.forEach(async (item) => {
+      await Browser.Storage.setLocal(item)
+    })
+    await Browser.Storage.setLocal({ config_app_version: 2 })
   }
 
   const oldSyncAppConfig = await Browser.Storage.getSyncAll()
   if (oldSyncAppConfig['config_app_version'] == null) {
-    if (toVersion == 2) {
-      const updatedProxyConfigList = transformReject(oldSyncAppConfig)
-      updatedProxyConfigList.forEach(async (item) => {
-        await Browser.Storage.setSync(item)
-      })
-      await Browser.Storage.setSync({ config_app_version: 2 })
-    }
+    const updatedProxyConfigList = transformReject(oldSyncAppConfig)
+    updatedProxyConfigList.forEach(async (item) => {
+      await Browser.Storage.setSync(item)
+    })
+    await Browser.Storage.setSync({ config_app_version: 2 })
+  }
+}
+
+const newVersionConfigTo2_1 = async function () {
+  const oldAppConfig = await Browser.Storage.getLocalAll()
+  if (oldAppConfig['config_app_version'] == '2') {
+    const updatedProxyConfigList = transformTagColor(oldAppConfig)
+    updatedProxyConfigList.forEach(async (item) => {
+      await Browser.Storage.setLocal(item)
+    })
+    await Browser.Storage.setLocal({ config_app_version: 2.1 })
+  }
+
+  const oldSyncAppConfig = await Browser.Storage.getSyncAll()
+  if (oldSyncAppConfig['config_app_version'] == '2') {
+    const updatedProxyConfigList = transformTagColor(oldSyncAppConfig)
+    updatedProxyConfigList.forEach(async (item) => {
+      await Browser.Storage.setSync(item)
+    })
+    await Browser.Storage.setSync({ config_app_version: 2.1 })
   }
 }
 
@@ -33,8 +62,18 @@ export const resetAppConfig = function () {
     config_autoSync: false,
     config_version: 1,
     config_iptags: [],
-    direct: { mode: 'direct', name: 'direct', config: { mode: 'direct' } },
-    system: { mode: 'system', name: 'system', config: { mode: 'system' } },
+    direct: {
+      mode: 'direct',
+      name: 'direct',
+      tagColor: '#fff',
+      config: { mode: 'direct' }
+    },
+    system: {
+      mode: 'system',
+      name: 'system',
+      tagColor: '#000',
+      config: { mode: 'system' }
+    },
     reject: {
       mode: 'reject',
       name: 'reject',
@@ -92,6 +131,20 @@ function transformReject(appConfig) {
         }
       }
     }
+
+    updatedProxyConfigList.push({ [key]: resObj })
+  })
+  return updatedProxyConfigList
+}
+
+function transformTagColor(appConfig) {
+  const updatedProxyConfigList = []
+  Object.keys(appConfig).forEach((key) => {
+    if (!key.startsWith('proxy_') && key != 'direct' && key != 'system') {
+      return
+    }
+    const resObj = JSON.parse(JSON.stringify(appConfig[key]))
+    resObj.tagColor = '#3498db'
 
     updatedProxyConfigList.push({ [key]: resObj })
   })

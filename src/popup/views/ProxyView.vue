@@ -21,19 +21,19 @@ onMounted(async () => {
       case 'auto':
         auto.value.push({
           name: result[key].name,
-          tagColor: result[key].tagColor ? result[key].tagColor : '#3498db'
+          tagColor: result[key].tagColor
         })
         break
       case 'pac_script':
         pac.value.push({
           name: result[key].name,
-          tagColor: result[key].tagColor ? result[key].tagColor : '#3498db'
+          tagColor: result[key].tagColor
         })
         break
       case 'fixed_servers':
         fixed.value.push({
           name: result[key].name,
-          tagColor: result[key].tagColor ? result[key].tagColor : '#3498db'
+          tagColor: result[key].tagColor
         })
         break
       default:
@@ -43,15 +43,28 @@ onMounted(async () => {
 })
 
 function setProxy(proxyConfigs, key) {
-  Browser.Proxy.set(proxyConfigs, key, async () => {
-    await Browser.Storage.setLocal({ status_proxyKey: key })
-    Browser.Action.setBadgeBackgroundColor(
-      proxyConfigs[key].tagColor ? proxyConfigs[key].tagColor : '#3498db'
-    )
-    if (import.meta.env.VITE_APP_DEBUG != 'debug') {
-      window.close()
-    }
-  })
+  if (key == 'direct') {
+    Browser.Proxy.setDirect(async () => {
+      await Browser.Storage.setLocal({ status_proxyKey: key })
+      if (import.meta.env.VITE_APP_DEBUG != 'debug') {
+        window.close()
+      }
+    })
+  } else if (key == 'system') {
+    Browser.Proxy.setSystem(async () => {
+      await Browser.Storage.setLocal({ status_proxyKey: key })
+      if (import.meta.env.VITE_APP_DEBUG != 'debug') {
+        window.close()
+      }
+    })
+  } else {
+    Browser.Proxy.set(proxyConfigs, key, async () => {
+      await Browser.Storage.setLocal({ status_proxyKey: key })
+      if (import.meta.env.VITE_APP_DEBUG != 'debug') {
+        window.close()
+      }
+    })
+  }
 
   activeProxyKey.value = key
 }

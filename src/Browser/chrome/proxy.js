@@ -4,17 +4,35 @@ const Proxy = {}
 
 Proxy.set = async function (proxyConfigs, key, afterSuccess = function () {}) {
   const config = Proxy._createConfig(proxyConfigs, key)
-  Proxy._set(config, afterSuccess)
+  Proxy._set(config, async () => {
+    await chrome.action.setBadgeBackgroundColor({
+      color: proxyConfigs[key].tagColor
+    })
+    await chrome.action.setBadgeText({ text: ' ' })
+    afterSuccess()
+  })
 }
 
 Proxy.setDirect = async function (afterSuccess = () => {}) {
   const config = Proxy._directConfig()
-  Proxy._set(config, afterSuccess)
+  Proxy._set(config, async () => {
+    await chrome.action.setBadgeBackgroundColor({
+      color: '#fff'
+    })
+    await chrome.action.setBadgeText({ text: 'Dir' })
+    afterSuccess()
+  })
 }
 
 Proxy.setSystem = async function (afterSuccess = () => {}) {
   const config = Proxy._systemConfig()
-  Proxy._set(config, afterSuccess)
+  Proxy._set(config, async () => {
+    await chrome.action.setBadgeBackgroundColor({
+      color: '#000'
+    })
+    await chrome.action.setBadgeText({ text: 'Sys' })
+    afterSuccess()
+  })
 }
 
 Proxy._set = async function (config, afterSuccess, scope = 'regular') {
@@ -146,7 +164,7 @@ Proxy._pacConfig = function (proxyConfig) {
 // proxyRules = {host, port, scheme, username, password}
 Proxy._getFixedServer = function (proxyRules) {
   const config = { scheme: proxyRules.scheme, host: proxyRules.host }
-  if (proxyRules.port != null) {
+  if (proxyRules.port != null && proxyRules.port != '') {
     config.port = proxyRules.port
   }
   return config

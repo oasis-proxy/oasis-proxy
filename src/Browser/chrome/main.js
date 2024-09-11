@@ -20,7 +20,13 @@ Runtime.getURL = function (options) {
 Runtime.addMessageListener = function (func) {
   chrome.runtime.onMessage.addListener(func)
 }
-const Browser = { Storage, Proxy, Tabs, Message, Runtime, I18n }
+
+const Action = {}
+
+Action.setBadgeBackgroundColor = function (color) {
+  chrome.action.setBadgeBackgroundColor({ color: color })
+}
+const Browser = { Action, Storage, Proxy, Tabs, Message, Runtime, I18n }
 
 Browser.saveFile = function (obj, filename) {
   let fileContent

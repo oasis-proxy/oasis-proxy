@@ -28,8 +28,6 @@ const proxyNamesObj = computed(() => {
         auto.push({
           name: storeStatus.proxyConfigs[key].name,
           tagColor: storeStatus.proxyConfigs[key].tagColor
-            ? storeStatus.proxyConfigs[key].tagColor
-            : '#3498db'
         })
         auto.sort((a, b) => a.name - b.name)
         break
@@ -37,8 +35,6 @@ const proxyNamesObj = computed(() => {
         pac.push({
           name: storeStatus.proxyConfigs[key].name,
           tagColor: storeStatus.proxyConfigs[key].tagColor
-            ? storeStatus.proxyConfigs[key].tagColor
-            : '#3498db'
         })
         pac.sort((a, b) => a.name - b.name)
         break
@@ -46,8 +42,6 @@ const proxyNamesObj = computed(() => {
         fixed.push({
           name: storeStatus.proxyConfigs[key].name,
           tagColor: storeStatus.proxyConfigs[key].tagColor
-            ? storeStatus.proxyConfigs[key].tagColor
-            : '#3498db'
         })
         fixed.sort((a, b) => a.name - b.name)
         break

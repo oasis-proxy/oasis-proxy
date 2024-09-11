@@ -4,8 +4,18 @@ import { defineStore } from 'pinia'
 export const useStatusStore = defineStore('status', () => {
   const activeProxyKey = ref('')
   const proxyConfigs = ref({
-    direct: { mode: 'direct', name: 'direct', config: { mode: 'direct' } },
-    system: { mode: 'system', name: 'system', config: { mode: 'system' } },
+    direct: {
+      mode: 'direct',
+      name: 'direct',
+      tagColor: '#fff',
+      config: { mode: 'direct' }
+    },
+    system: {
+      mode: 'system',
+      name: 'system',
+      tagColor: '#000',
+      config: { mode: 'system' }
+    },
     reject: {
       mode: 'reject',
       name: 'reject',

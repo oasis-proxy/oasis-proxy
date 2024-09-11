@@ -37,18 +37,45 @@ const updateTabBadgeText = async () => {
             requestSession[activeTabId]
           ).length.toString()
           if (numText == '0') {
-            numText = ''
+            numText = ' '
           }
           chrome.action.setPopup({ popup: '/popup.html#/monitor' })
           chrome.action.setBadgeText({ text: numText })
           return
         }
       }
+    } else {
+      chrome.action.setPopup({ popup: '/popup.html#/' })
     }
-    chrome.action.setBadgeText({ text: '' })
-    chrome.action.setPopup({ popup: '/popup.html#/' })
   } catch (err) {
     console.error('updateTabBadgeText', err)
+  }
+}
+
+const clearTabBadgeText = async () => {
+  try {
+    let result = await chrome.storage.local.get(null)
+    const activeProxyKey = result.status_proxyKey
+    const mode = result[activeProxyKey]?.mode
+    if (mode == 'direct') {
+      await chrome.action.setBadgeBackgroundColor({
+        color: '#fff'
+      })
+      await chrome.action.setBadgeText({ text: 'Dir' })
+    } else if (mode == 'system') {
+      await chrome.action.setBadgeBackgroundColor({
+        color: '#000'
+      })
+      await chrome.action.setBadgeText({ text: 'Sys' })
+    } else {
+      await chrome.action.setBadgeBackgroundColor({
+        color: result[activeProxyKey]?.tagColor
+      })
+      await chrome.action.setBadgeText({ text: ' ' })
+    }
+    chrome.action.setPopup({ popup: '/popup.html#/' })
+  } catch (err) {
+    console.error('clearTabBadgeText', err)
   }
 }
 
@@ -203,6 +230,8 @@ const removeMonitor = () => {
   chrome.tabs.onUpdated.removeListener(tabUpdated)
 
   chrome.tabs.onRemoved.removeListener(tabRemoved)
+
+  clearTabBadgeText()
 }
 
 const isMonitorEffective = () => {
@@ -295,6 +324,7 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
       add.direct = {
         mode: 'direct',
         name: 'direct',
+        tagColor: '#fff',
         config: { mode: 'direct' }
       }
     }
@@ -302,6 +332,7 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
       add.system = {
         mode: 'system',
         name: 'system',
+        tagColor: '#000',
         config: { mode: 'system' }
       }
     }
@@ -318,7 +349,17 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
     }
     await chrome.storage.local.remove(removeList)
 
-    await convertToNewVersionConfig(2)
+    await convertToNewVersionConfig('2')
+    await convertToNewVersionConfig('2.1')
+
+    let color = '#3498db'
+    if (result.status_proxyKey == undefined) {
+      color = '#3498db'
+    } else {
+      color = result[result.status_proxyKey].tagColor
+    }
+    chrome.action.setBadgeBackgroundColor({ color: color })
+    clearTabBadgeText()
   }
   chrome.storage.session.clear()
   const result = await chrome.storage.local.get([
@@ -341,6 +382,17 @@ chrome.runtime.onStartup.addListener(async () => {
   result.config_updateUrl ? startUpdateUrl() : endUpdateUrl()
   result.config_autoSync ? startAutoSync() : endAutoSync()
 
+  let color = '#3498db'
+  if (
+    result.status_proxyKey == undefined ||
+    result[result.status_proxyKey].tagColor == undefined
+  ) {
+    color = '#3498db'
+  } else {
+    color = result[result.status_proxyKey].tagColor
+  }
+  chrome.action.setBadgeBackgroundColor({ color: color })
+  clearTabBadgeText()
   chrome.webRequest.onAuthRequired.addListener(
     setProxyAuths,
     { urls: ['<all_urls>'] },

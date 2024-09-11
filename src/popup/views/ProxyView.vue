@@ -45,11 +45,14 @@ onMounted(async () => {
 function setProxy(proxyConfigs, key) {
   Browser.Proxy.set(proxyConfigs, key, async () => {
     await Browser.Storage.setLocal({ status_proxyKey: key })
-
+    Browser.Action.setBadgeBackgroundColor(
+      proxyConfigs[key].tagColor ? proxyConfigs[key].tagColor : '#3498db'
+    )
     if (import.meta.env.VITE_APP_DEBUG != 'debug') {
       window.close()
     }
   })
+
   activeProxyKey.value = key
 }
 </script>

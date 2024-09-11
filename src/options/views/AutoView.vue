@@ -236,6 +236,9 @@ async function handleSubmit() {
   if (result.status_proxyKey == key) {
     Browser.Proxy.set(result, key, async () => {
       await Browser.Storage.setLocal({ status_proxyKey: key })
+      Browser.Action.setBadgeBackgroundColor(
+        result[key].tagColor ? result[key].tagColor : '#3498db'
+      )
       toast.info(Browser.I18n.getMessage('desc_proxy_update'))
     })
   }

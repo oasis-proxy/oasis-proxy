@@ -1,5 +1,16 @@
 # ChangeLogs
 
+## v1.0.8
+
+Features:
+
+- Added the ability to differentiate the currently active proxy policy by the BadgeText background color on the extension icon. The color can be configured by clicking the bookmark icon to the left of the name in the “Proxy Node or Policy Mode -> Configuration Page -> Name”
+
+BugFix:
+
+- Fixed UI issues on the popup page.
+- Fixed an issue where the proxy could not switch due to incorrect proxy node configuration under certain conditions.
+
 ## v1.0.7
 
 Optimization:

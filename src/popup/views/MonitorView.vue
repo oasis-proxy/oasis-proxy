@@ -69,7 +69,7 @@ async function copyToClipboard(text) {
       <i class="bi bi-send-check me-2"></i>
       <span>{{ Browser.I18n.getMessage('desc_proxy_selection') }}</span>
     </div>
-    <div class="col-4 d-inline-flex">
+    <div class="col-4 d-inline-flex justify-content-center">
       <Transition>
         <div v-show="copyShow">
           <i class="bi bi-check-circle-fill me-2 icon-btn"></i>
@@ -77,7 +77,7 @@ async function copyToClipboard(text) {
         </div>
       </Transition>
     </div>
-    <div class="col-4 d-inline-flex">
+    <div class="col-4 d-inline-flex justify-content-end">
       <div
         class="d-inline-flex align-items-center cursor-point"
         v-if="quickEnabled"

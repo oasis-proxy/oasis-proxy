@@ -4,7 +4,9 @@ OasisProxy is a browser proxy configuration extension. A substitute of SwitchOme
 
 ## Highlights
 
-Currently only supports Chrome browser, Firefox is in the plan.
+~~Currently only supports Chrome browser, Firefox is in the plan.~~
+
+Only supports Chrome browser, Firefox is not being considered for now.
 
 - Support user-configured browser proxies (HTTP/HTTPS/SOCKS4/SOCKS5).
 - Support proxy policies(& reject policy) in autoProxy format or internal-rule format.

@@ -1,5 +1,12 @@
 # ChangeLogs
 
+## v1.0.9
+
+BugFix:
+
+- Fixed an issue where the configuration reload did not take effect when synchronizing remote configurations to the local environment.
+- Fixed an issue where the automatic policy configuration was not effective under certain conditions.
+
 ## v1.0.8
 
 Features:

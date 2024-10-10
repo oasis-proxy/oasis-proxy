@@ -141,7 +141,7 @@ const createFixedServerCodeBlock = function (proxyConfig) {
         scheme = config.rules.singleProxy.scheme
         host = config.rules.singleProxy.host
         port = config.rules.singleProxy.port
-        if (port == null) port = CONST_DEFAULT_PORT[scheme]
+        if (port == null || port == '') port = CONST_DEFAULT_PORT[scheme]
         proxyStr = proxyStr + `  return "${scheme} ${host}:${port}";`
       }
     } else {
@@ -153,7 +153,7 @@ const createFixedServerCodeBlock = function (proxyConfig) {
         scheme = config.rules.proxyForHttp.scheme
         host = config.rules.proxyForHttp.host
         port = config.rules.proxyForHttp.port
-        if (port == null) port = CONST_DEFAULT_PORT[scheme]
+        if (port == null || port == '') port = CONST_DEFAULT_PORT[scheme]
 
         proxyStr =
           proxyStr +
@@ -169,7 +169,7 @@ const createFixedServerCodeBlock = function (proxyConfig) {
         scheme = config.rules.proxyForHttps.scheme
         host = config.rules.proxyForHttps.host
         port = config.rules.proxyForHttps.port
-        if (port == null) port = CONST_DEFAULT_PORT[scheme]
+        if (port == null || port == '') port = CONST_DEFAULT_PORT[scheme]
 
         proxyStr =
           proxyStr +
@@ -185,7 +185,7 @@ const createFixedServerCodeBlock = function (proxyConfig) {
         scheme = config.rules.proxyForFtp.scheme
         host = config.rules.proxyForFtp.host
         port = config.rules.proxyForFtp.port
-        if (port == null) port = CONST_DEFAULT_PORT[scheme]
+        if (port == null || port == '') port = CONST_DEFAULT_PORT[scheme]
 
         proxyStr =
           proxyStr +
@@ -201,7 +201,7 @@ const createFixedServerCodeBlock = function (proxyConfig) {
         scheme = config.rules.fallbackProxy.scheme
         host = config.rules.fallbackProxy.host
         port = config.rules.fallbackProxy.port
-        if (port == null) port = CONST_DEFAULT_PORT[scheme]
+        if (port == null || port == '') port = CONST_DEFAULT_PORT[scheme]
         proxyStr =
           proxyStr +
           `

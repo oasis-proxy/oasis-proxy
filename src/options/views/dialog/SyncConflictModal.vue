@@ -53,7 +53,8 @@ async function handleSetSync() {
   }, 2000)
 }
 async function handleSetLocal() {
-  overWriteToLocal()
+  await overWriteToLocal()
+  await Browser.Proxy.reloadOrDirect()
   storeConfig.configAutoSync = true
   hide()
   toast.info(Browser.I18n.getMessage('desc_override_local'))

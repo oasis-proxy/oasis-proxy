@@ -1,6 +1,21 @@
 import { generatePacfile } from '../../core/pacfile_generator.js'
+import Storage from './storage.js'
 
 const Proxy = {}
+
+Proxy.reloadOrDirect = async function () {
+  const proxyConfigs = await Storage.getLocalAll()
+  const key = proxyConfigs.status_proxyKey
+  if (key == 'direct' || key == 'system') {
+    return
+  } else if (Object.prototype.hasOwnProperty.call(proxyConfigs, key)) {
+    Proxy.set(proxyConfigs, proxyConfigs.status_proxyKey)
+  } else {
+    Proxy.setDirect(async () => {
+      Storage.setLocal({ status_proxyKey: 'direct' })
+    })
+  }
+}
 
 Proxy.set = async function (proxyConfigs, key, afterSuccess = function () {}) {
   const config = Proxy._createConfig(proxyConfigs, key)

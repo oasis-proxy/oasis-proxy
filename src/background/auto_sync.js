@@ -2,6 +2,7 @@ import {
   overWriteToLocal,
   getSyncDownloadStatus
 } from '@/core/version_control.js'
+import Browser from '@/Browser/main'
 
 export const startAutoSync = async () => {
   let per = 1
@@ -22,6 +23,7 @@ export const handleAutoSync = async function () {
   switch (await getSyncDownloadStatus()) {
     case 'download':
       await overWriteToLocal()
+      await Browser.Proxy.reloadOrDirect()
       break
     case 'conflict':
       chrome.runtime.openOptionsPage()

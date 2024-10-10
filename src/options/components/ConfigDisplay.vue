@@ -90,8 +90,9 @@ function handleSetLocal() {
   confirmModal.createConfirm(
     Browser.I18n.getMessage('modal_title_warning'),
     Browser.I18n.getMessage('modal_desc_override_local'),
-    () => {
-      overWriteToLocal()
+    async () => {
+      await overWriteToLocal()
+      await Browser.Proxy.reloadOrDirect()
       toast.info(Browser.I18n.getMessage('desc_override_local'))
       setTimeout(() => {
         location.reload()

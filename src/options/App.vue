@@ -46,6 +46,7 @@ onMounted(async () => {
     switch (await getSyncDownloadStatus()) {
       case 'download':
         await overWriteToLocal()
+        await Browser.Proxy.reloadOrDirect()
         break
       case 'conflict':
         showSyncConflictModal(Browser.I18n.getMessage('modal_desc_conflict'))

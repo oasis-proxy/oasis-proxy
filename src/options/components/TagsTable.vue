@@ -2,6 +2,9 @@
 import { ref, onMounted, computed, getCurrentInstance, inject } from 'vue'
 import Browser from '@/Browser/main'
 import { getNextLocalVersion } from '@/core/version_control.js'
+
+import * as ipaddr from 'ipaddr.js'
+
 const iptags = ref({})
 onMounted(() => {
   getTags()
@@ -21,7 +24,11 @@ const title = [
 
 const list = computed(() => {
   console.info(iptags.value, Object.keys(iptags.value).sort())
-  return Object.keys(iptags.value).sort()
+  return Object.keys(iptags.value).sort(
+    (a, b) =>
+      ipaddr.parse(a).octets.reduce((acc, curr) => acc * 256 + curr, 0) -
+      ipaddr.parse(b).octets.reduce((acc, curr) => acc * 256 + curr, 0)
+  )
 })
 
 async function getTags() {

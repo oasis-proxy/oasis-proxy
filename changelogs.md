@@ -1,5 +1,11 @@
 # ChangeLogs
 
+## v1.0.10
+
+Feature:
+
+- The sorting of the iptag has been corrected.
+
 ## v1.0.9
 
 BugFix:

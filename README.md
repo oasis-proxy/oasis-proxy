@@ -13,6 +13,13 @@ Only supports Chrome browser, Firefox is not being considered for now.
 - Support switching of proxy policies in one-click, viewing request IP for debugging, quickly adding proxy rules.
 - Support automatic synchronization of proxy configuration.
 
+## Store Release
+
+Oasis is now published in the Microsoft Edge Add-ons Store and the Chrome Web Store.
+
+- [Chrome Web Store](https://chromewebstore.google.com/detail/oasis-proxy/canfhmdhlkplkkpglgleikdjipcokjof)
+- [Microsoft Edge Add-ons Store](https://microsoftedge.microsoft.com/addons/detail/nijeodiignggdicdeompofjlaikjobjf)
+
 ## ChangeLogs
 
 [ChangeLogs](https://github.com/oasis-proxy/oasis-proxy/blob/main/changelogs.md)

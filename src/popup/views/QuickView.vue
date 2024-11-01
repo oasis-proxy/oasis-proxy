@@ -52,7 +52,12 @@ async function quickAddLocalRuleList() {
   const result = await Browser.Storage.getLocalAll()
   const newRules = []
   checkedDomains.value.forEach((item) => {
-    newRules.push({ mode: 'domain', data: item, proxy: selectedProxy.value })
+    newRules.push({
+      data: item,
+      mode: 'domain',
+      proxy: selectedProxy.value,
+      valid: true
+    })
   })
   const newProxyConfig = addLocalRuleItemForAuto(
     newRules,
@@ -63,12 +68,13 @@ async function quickAddLocalRuleList() {
     [result.status_proxyKey]: newProxyConfig,
     config_version: version
   })
-  Browser.Proxy.set(result, result.status_proxyKey)
-  if (result.config_autoSync) {
+  const newResult = await Browser.Storage.getLocalAll()
+  Browser.Proxy.set(newResult, newResult.status_proxyKey)
+  if (newResult.config_autoSync) {
     const url =
       Browser.Runtime.getURL('options.html') +
       '#/auto/' +
-      result.status_proxyKey.substring(6)
+      newResult.status_proxyKey.substring(6)
     switch (await getSyncUploadStatus()) {
       case 'upload':
         await overWriteToCloud()

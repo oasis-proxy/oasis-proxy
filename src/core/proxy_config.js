@@ -1,4 +1,4 @@
-import { downloadUrl } from './utils.js'
+import { downloadUrl, objIsEqual } from './utils.js'
 
 export const CONST_DEFAULT_PORT = {
   http: 80,
@@ -272,7 +272,7 @@ export const addLocalRuleItemForAuto = function (localRuleList, proxyConfig) {
     for (const item of localRuleList) {
       let isExistRule = false
       for (const e of tmpProxyConfig.config.rules.local.ruleList) {
-        if (JSON.stringify(e) == JSON.stringify(item)) {
+        if (objIsEqual(e, item)) {
           isExistRule = true
           break
         }

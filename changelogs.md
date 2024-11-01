@@ -1,5 +1,17 @@
 # ChangeLogs
 
+## v1.0.12
+
+BugFix:
+
+- Fixed the issue where the proxy needs to be manually reselected when quickly adding a rule.
+
+## v1.0.11
+
+Features:
+
+- Published on the Microsoft Edge Add-ons store and updated the description file.
+
 ## v1.0.10
 
 Feature:

@@ -23,12 +23,28 @@ const title = [
 ]
 
 const list = computed(() => {
-  console.info(iptags.value, Object.keys(iptags.value).sort())
-  return Object.keys(iptags.value).sort(
-    (a, b) =>
-      ipaddr.parse(a).octets.reduce((acc, curr) => acc * 256 + curr, 0) -
-      ipaddr.parse(b).octets.reduce((acc, curr) => acc * 256 + curr, 0)
-  )
+  return Object.keys(iptags.value).sort((a, b) => {
+    let tmpA, tmpB
+    if (ipaddr.IPv4.isValid(a)) {
+      tmpA =
+        ipaddr.parse(a).octets.reduce((acc, curr) => acc * 256 + curr, 0) -
+        2 ** 32
+    } else if (ipaddr.IPv6.isValid(a)) {
+      tmpA = ipaddr.parse(a).parts.reduce((acc, curr) => acc * 256 + curr, 0)
+    } else {
+      tmpA = -1 - 2 ** 32
+    }
+    if (ipaddr.IPv4.isValid(b)) {
+      tmpB =
+        ipaddr.parse(b).octets.reduce((acc, curr) => acc * 256 + curr, 0) -
+        2 ** 32
+    } else if (ipaddr.IPv6.isValid(b)) {
+      tmpB = ipaddr.parse(b).parts.reduce((acc, curr) => acc * 256 + curr, 0)
+    } else {
+      tmpB = -1 - 2 ** 32
+    }
+    return tmpA - tmpB
+  })
 })
 
 async function getTags() {

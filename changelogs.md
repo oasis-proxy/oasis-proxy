@@ -1,5 +1,11 @@
 # ChangeLogs
 
+## v1.0.13
+
+BugFix:
+
+- Fixed the page display issue caused by adding an IPv6 address in the IP tags configuration.
+
 ## v1.0.12
 
 BugFix:

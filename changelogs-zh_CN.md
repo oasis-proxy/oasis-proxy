@@ -1,5 +1,11 @@
 # ChangeLogs
 
+## v1.0.13
+
+BugFix:
+
+- 修复在IP标签配置时，填入IPv6地址导致的页面显示故障
+
 ## v1.0.12
 
 BugFix:

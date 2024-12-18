@@ -17,8 +17,9 @@ Only supports Chrome browser, Firefox is not being considered for now.
 
 Oasis is now published in the Microsoft Edge Add-ons Store and the Chrome Web Store.
 
-- [Chrome Web Store](https://chromewebstore.google.com/detail/oasis-proxy/canfhmdhlkplkkpglgleikdjipcokjof)
-- [Microsoft Edge Add-ons Store](https://microsoftedge.microsoft.com/addons/detail/nijeodiignggdicdeompofjlaikjobjf)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/canfhmdhlkplkkpglgleikdjipcokjof)](https://chromewebstore.google.com/detail/oasis-proxy/canfhmdhlkplkkpglgleikdjipcokjof)
+
+[![Microsoft Edge Add-ons Store](https://img.shields.io/badge/edge%20addons%20store-v1.0.x%20latest-blue)](https://microsoftedge.microsoft.com/addons/detail/nijeodiignggdicdeompofjlaikjobjf)
 
 ## ChangeLogs
 

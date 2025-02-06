@@ -1,0 +1,9 @@
+[AutoProxy]
+||example1.com
+||example2.com
+||example3.com
+||example4.com
+||example5.com
+||example6.com
+||example7.com
+||example8.com

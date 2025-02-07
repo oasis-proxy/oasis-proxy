@@ -35,14 +35,24 @@ jobs:
           google-chrome --pack-extension=$(pwd)/dist --pack-extension-key=$(pwd)/extension.pem
 
       - name: Rename and Move CRX
+        id: make_release_files
         run: |
           mkdir -p release
           mv *.crx release/oasis-proxy-extension.crx
           cd dist
           zip -r ../release/oasis-proxy-extension.zip .
+          echo "The latest tag is ${{ github.ref }}"
+          latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
+          echo "latest_tag=$latest_tag" >> $GITHUB_OUTPUT
 
       - name: Upload Artifact (ZIP)
         uses: actions/upload-artifact@v4
         with:
           name: chrome-extension-OasisProxy
-          path: dist/chrome-extension-OasisProxy.zip
+          path: release/
+
+      - name: release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: 'release/*'

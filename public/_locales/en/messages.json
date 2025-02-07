@@ -488,7 +488,7 @@
     "message": "Requests monitoring is not enabled"
   },
   "feedback_request_failed": {
-    "message": "Failed to get the content"
+    "message": "Failed to get the content, Check your URL & the Content Format"
   },
   "feedback_reject_invalid": {
     "message": "Format to fill in: SCHEME[space]HOST:PORT. Suggestion: HTTPS 127.0.0.1:65432"

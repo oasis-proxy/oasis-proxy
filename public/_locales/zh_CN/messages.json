@@ -488,7 +488,7 @@
     "message": "链接监控未开启"
   },
   "feedback_request_failed": {
-    "message": "地址获取内容失败"
+    "message": "地址获取内容失败, 请检查URL地址和数据格式"
   },
   "feedback_reject_invalid": {
     "message": "填写格式：SCHEME[空格]HOST:PORT。建议：HTTPS 127.0.0.1:65432"

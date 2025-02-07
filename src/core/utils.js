@@ -1,4 +1,4 @@
-export const downloadUrl = async function (url, format = '') {
+export const downloadUrl = async function (url, format = null) {
   try {
     const response = await fetch(url)
     if (!response.ok) {
@@ -14,10 +14,14 @@ export const downloadUrl = async function (url, format = '') {
       let base64data = ''
       if (reg.test(rawdata)) {
         base64data = atob(rawdata)
+      } else {
+        throw new Error('Base64 Decode Error!')
       }
       return { data: base64data, updated: curr }
-    } else {
+    } else if (format == 'raw' || format == null) {
       return { data: rawdata, updated: curr }
+    } else {
+      throw new Error('Unsupported Format ==> ' + format)
     }
   } catch (error) {
     console.error('There was a problem with the fetch operation:', error)

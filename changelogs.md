@@ -1,5 +1,11 @@
 # ChangeLogs
 
+## v1.0.14
+
+Features:
+
+- Add support for external rule sets that are not base64 encoded.
+
 ## v1.0.13
 
 BugFix:

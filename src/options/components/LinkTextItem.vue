@@ -9,6 +9,7 @@ const rulesSet = defineModel('rulesSet', {
   type: Object,
   default: () => {
     return {
+      format: null,
       url: 'default',
       data: '',
       urlUpdatedAt: null,
@@ -50,7 +51,7 @@ async function updateData() {
     rulesSet.value.data = ''
     return
   }
-  const response = await downloadUrl(rulesSet.value.url, 'base64')
+  const response = await downloadUrl(rulesSet.value.url, rulesSet.value.format)
   if (JSON.stringify(response) != '{}') {
     rulesSet.value.data = response.data
     rulesSet.value.urlUpdatedAt = response.updated
@@ -73,6 +74,16 @@ async function handleClickUpdate() {
       <label class="col-2 col-form-label">{{ urlTitle }}</label>
       <div class="col-10">
         <div :class="urlInputClass">
+          <select
+            v-if="rulesSet.format != null"
+            v-model="rulesSet.format"
+            @change="updateData"
+            class="form-select form-select-sm"
+            style="width: 100px; flex: 0 0 auto"
+          >
+            <option value="base64">Base64</option>
+            <option value="raw">Raw</option>
+          </select>
           <input
             type="text"
             class="form-control form-control-sm"

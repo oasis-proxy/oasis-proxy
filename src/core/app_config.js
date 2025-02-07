@@ -8,6 +8,9 @@ export const convertToNewVersionConfig = async function (toVersion) {
     case '2.1':
       await newVersionConfigTo2_1()
       break
+    case '2.2':
+      await newVersionConfigTo2_2()
+      break
     default:
       break
   }
@@ -50,6 +53,26 @@ const newVersionConfigTo2_1 = async function () {
       await Browser.Storage.setSync(item)
     })
     await Browser.Storage.setSync({ config_app_version: 2.1 })
+  }
+}
+
+const newVersionConfigTo2_2 = async function () {
+  const oldAppConfig = await Browser.Storage.getLocalAll()
+  if (oldAppConfig['config_app_version'] == 2.1) {
+    const updatedProxyConfigList = transformRulesSetFormat(oldAppConfig)
+    updatedProxyConfigList.forEach(async (item) => {
+      await Browser.Storage.setLocal(item)
+    })
+    await Browser.Storage.setLocal({ config_app_version: 2.2 })
+  }
+
+  const oldSyncAppConfig = await Browser.Storage.getSyncAll()
+  if (oldSyncAppConfig['config_app_version'] == 2.1) {
+    const updatedProxyConfigList = transformRulesSetFormat(oldSyncAppConfig)
+    updatedProxyConfigList.forEach(async (item) => {
+      await Browser.Storage.setSync(item)
+    })
+    await Browser.Storage.setSync({ config_app_version: 2.2 })
   }
 }
 
@@ -147,6 +170,22 @@ function transformTagColor(appConfig) {
     resObj.tagColor = '#3498db'
 
     updatedProxyConfigList.push({ [key]: resObj })
+  })
+  return updatedProxyConfigList
+}
+
+function transformRulesSetFormat(appConfig) {
+  const updatedProxyConfigList = []
+  Object.keys(appConfig).forEach((key) => {
+    if (!key.startsWith('proxy_')) {
+      return
+    }
+    const resObj = JSON.parse(JSON.stringify(appConfig[key]))
+    if (resObj.mode == 'auto') {
+      resObj.config.rules.local.rulesSet.format = 'base64'
+      resObj.config.rules.reject.rulesSet.format = 'base64'
+      updatedProxyConfigList.push({ [key]: resObj })
+    }
   })
   return updatedProxyConfigList
 }

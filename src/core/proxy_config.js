@@ -20,6 +20,7 @@ export const createProxy = function (name, tagColor, mode) {
           defaultProxy: 'direct',
           local: {
             rulesSet: {
+              format: 'base64',
               url: '',
               urlUpdatedAt: '',
               data: '',
@@ -31,6 +32,7 @@ export const createProxy = function (name, tagColor, mode) {
           },
           reject: {
             rulesSet: {
+              format: 'base64',
               url: '',
               urlUpdatedAt: '',
               data: '',
@@ -422,7 +424,7 @@ export const updateRulesSetData = async function (
       if (proxyConfig.config.rules[element]?.rulesSet.url != '') {
         response = await downloadUrl(
           proxyConfig.config.rules[element]?.rulesSet.url,
-          'base64'
+          proxyConfig.config.rules[element]?.rulesSet.format
         )
         if (JSON.stringify(response) != '{}') {
           proxyConfig.config.rules[element].rulesSet.data = response.data
@@ -496,7 +498,7 @@ export const enrich = async function (config) {
           if (config[key].config.rules.local.rulesSet.url != '') {
             response = await downloadUrl(
               config[key].config.rules.local.rulesSet.url,
-              'base64'
+              config[key].config.rules.local.rulesSet.format
             )
             if (JSON.stringify(response) != '{}') {
               enrichConfig[key].config.rules.local.rulesSet.data = response.data
@@ -507,7 +509,7 @@ export const enrich = async function (config) {
           if (config[key].config.rules.reject.rulesSet.url != '') {
             response = await downloadUrl(
               config[key].config.rules.reject.rulesSet.url,
-              'base64'
+              config[key].config.rules.reject.rulesSet.format
             )
             if (JSON.stringify(response) != '{}') {
               enrichConfig[key].config.rules.reject.rulesSet.data =
@@ -520,7 +522,7 @@ export const enrich = async function (config) {
         case 'pac_script':
           enrichConfig[key] = config[key]
           if (config[key].config.rules.url != '') {
-            response = await downloadUrl(config[key].config.rules.url, 'base64')
+            response = await downloadUrl(config[key].config.rules.url)
             if (JSON.stringify(response) != '{}') {
               enrichConfig[key].config.rules.data = response.data
               enrichConfig[key].config.rules.urlUpdatedAt = response.updated

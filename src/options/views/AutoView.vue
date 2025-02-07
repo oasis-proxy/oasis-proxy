@@ -30,6 +30,7 @@ const rejectRuleList = ref([])
 const defaultProxy = ref('direct')
 const focusText = ref('')
 const localRulesSet = ref({
+  format: 'base64',
   url: '',
   urlUpdatedAt: '',
   data: '',
@@ -40,6 +41,7 @@ const urlValid = ref({ reject: true, local: true })
 
 const tagColor = ref('#3498db')
 const rejectRulesSet = ref({
+  format: 'base64',
   url: '',
   urlUpdatedAt: '',
   data: '',
@@ -103,6 +105,8 @@ async function load(proxyKey) {
   if (localRulesSet.value.valid == null) {
     localRulesSet.value.valid = true
   }
+  localRulesSet.value.format =
+    result[proxyKey].config.rules.local.rulesSet.format
 
   rejectRulesSet.value.url = result[proxyKey].config.rules.reject.rulesSet.url
   rejectRulesSet.value.urlUpdatedAt =
@@ -113,6 +117,8 @@ async function load(proxyKey) {
   if (rejectRulesSet.value.valid == null) {
     rejectRulesSet.value.valid = true
   }
+  rejectRulesSet.value.format =
+    result[proxyKey].config.rules.reject.rulesSet.format
 
   const tmpRuleList = JSON.parse(
     JSON.stringify(result[proxyKey].config.rules.local.ruleList)
@@ -145,6 +151,7 @@ function resetData() {
   rejectRuleList.value = []
   defaultProxy.value = 'direct'
   localRulesSet.value = {
+    format: 'base64',
     url: '',
     urlUpdatedAt: '',
     data: '',
@@ -152,6 +159,7 @@ function resetData() {
     valid: true
   }
   rejectRulesSet.value = {
+    format: 'base64',
     url: '',
     urlUpdatedAt: '',
     data: '',

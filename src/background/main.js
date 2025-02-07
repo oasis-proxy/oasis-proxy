@@ -351,6 +351,7 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
 
     await convertToNewVersionConfig('2')
     await convertToNewVersionConfig('2.1')
+    await convertToNewVersionConfig('2.2')
 
     let color = '#3498db'
     if (result.status_proxyKey == undefined) {

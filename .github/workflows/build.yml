@@ -37,13 +37,13 @@ jobs:
       - name: Rename and Move CRX
         id: make_release_files
         run: |
+          latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
+          echo "latest_tag=$latest_tag" >> $GITHUB_OUTPUT
           mkdir -p release
           mv *.crx release/oasis-proxy-extension.crx
           cd dist
           zip -r ../release/oasis-proxy-extension.zip .
           echo "The latest tag is ${{ github.ref }}"
-          latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
-          echo "latest_tag=$latest_tag" >> $GITHUB_OUTPUT
 
       - name: Upload Artifact (ZIP)
         uses: actions/upload-artifact@v4

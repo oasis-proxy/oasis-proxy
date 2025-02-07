@@ -1,12 +1,9 @@
-name: Build and Package Chrome Extension
+name: Build and Package Browser Extension
 
 on:
   push:
-    branches:
-      - main # 监听 main 分支的 push 事件
-  pull_request:
-    branches:
-      - main
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -46,7 +43,7 @@ jobs:
       - name: Upload Artifact (ZIP)
         uses: actions/upload-artifact@v4
         with:
-          name: chrome-extension-OasisProxy
+          name: oasisproxy-extension
           path: release/
 
       - name: release

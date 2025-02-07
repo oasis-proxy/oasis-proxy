@@ -1,0 +1,48 @@
+name: Build and Package Chrome Extension
+
+on:
+  push:
+    branches:
+      - main # 监听 main 分支的 push 事件
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Project
+        run: npm run build
+
+      - name: Restore Private Key
+        run: echo "${{ secrets.EXTENSION_PRIVATE_KEY }}" > extension.pem
+
+      - name: Package Chrome Extension as CRX
+        run: |
+          google-chrome --pack-extension=$(pwd)/dist --pack-extension-key=$(pwd)/extension.pem
+
+      - name: Rename and Move CRX
+        run: |
+          mkdir -p release
+          mv *.crx release/oasis-proxy-extension.crx
+          cd dist
+          zip -r ../release/oasis-proxy-extension.zip .
+
+      - name: Upload Artifact (ZIP)
+        uses: actions/upload-artifact@v4
+        with:
+          name: chrome-extension-OasisProxy
+          path: dist/chrome-extension-OasisProxy.zip

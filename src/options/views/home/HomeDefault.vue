@@ -33,14 +33,22 @@ function handleImportConfig(event) {
   const file = event.target.files[0]
   const reader = new FileReader()
   reader.onload = async function (event) {
-    const tmpObj = JSON.parse(event.target.result)
-    tmpObj.config_autoSync = false
-    tmpObj.status_proxyKey = 'direct'
-    const result = await Browser.Storage.getLocalAll()
-    console.log(Object.keys(result))
-    await Browser.Storage.removeLocal(Object.keys(result))
-    await Browser.Storage.setLocal(tmpObj)
-    location.reload()
+    try {
+      const tmpObj = JSON.parse(event.target.result)
+      tmpObj.config_autoSync = false
+      tmpObj.status_proxyKey = 'direct'
+      const result = await Browser.Storage.getLocalAll()
+      console.log(Object.keys(result))
+      await Browser.Storage.removeLocal(Object.keys(result))
+      await Browser.Storage.setLocal(tmpObj)
+      toast.info(Browser.I18n.getMessage('desc_import_config_success'))
+      setTimeout(() => {
+        location.reload()
+      }, 2000)
+    } catch (err) {
+      toast.warning(Browser.I18n.getMessage('desc_import_config_failed'))
+      console.log('Error: ', err)
+    }
   }
   reader.readAsText(file)
 }

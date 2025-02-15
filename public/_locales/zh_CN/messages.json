@@ -427,6 +427,12 @@
   "desc_save_success": {
     "message": "保存成功"
   },
+  "desc_import_config_success": {
+    "message": "恢复配置成功，2s后刷新配置页面"
+  },
+  "desc_import_config_failed": {
+    "message": "恢复配置失败，请检查备份文件"
+  },
   "desc_save_failed": {
     "message": "保存失败"
   },

@@ -427,6 +427,12 @@
   "desc_save_success": {
     "message": "is saved successfully"
   },
+  "desc_import_config_success": {
+    "message": "Imported the configuration successfully. The page will be refreshed in 2 seconds"
+  },
+  "desc_import_config_failed": {
+    "message": "failed to Import the configuration. Please check the backup file"
+  },
   "desc_save_failed": {
     "message": "is save Failed"
   },
@@ -488,7 +494,7 @@
     "message": "Requests monitoring is not enabled"
   },
   "feedback_request_failed": {
-    "message": "Failed to get the content, Check your URL & the Content Format"
+    "message": "Failed to get the content. Check your Url & the content format"
   },
   "feedback_reject_invalid": {
     "message": "Format to fill in: SCHEME[space]HOST:PORT. Suggestion: HTTPS 127.0.0.1:65432"

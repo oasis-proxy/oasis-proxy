@@ -50,7 +50,7 @@ jobs:
       - name: release
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.make_release_files.outputs.TAG_NAME }}
+          tag: ${{ github.ref }}
           name: ${{ format('Oasis-Proxy-{0}', steps.make_release_files.outputs.TAG_NAME) }}
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: 'release/*'

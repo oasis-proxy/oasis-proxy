@@ -39,6 +39,7 @@ jobs:
           cd dist
           zip -r ../release/oasis-proxy-extension.zip .
           echo "The latest tag is ${{ github.ref }}"
+          echo "TAG_NAME=$(echo ${{ github.ref }} | awk -F '/' '{print $3}')" >> $GITHUB_OUTPUT
 
       - name: Upload Artifact (ZIP)
         uses: actions/upload-artifact@v4
@@ -49,5 +50,7 @@ jobs:
       - name: release
         uses: ncipollo/release-action@v1
         with:
+          tag: ${{ steps.make_release_files.outputs.TAG_NAME }}
+          name: ${{ format('Oasis-Proxy-{0}', steps.make_release_files.outputs.TAG_NAME) }}
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: 'release/*'

@@ -56,6 +56,8 @@ async function updateData() {
     rulesSet.value.data = response.data
     rulesSet.value.urlUpdatedAt = response.updated
   } else {
+    rulesSet.value.urlUpdatedAt = ''
+    rulesSet.value.data = ''
     isUrlValid.value = false
   }
 }

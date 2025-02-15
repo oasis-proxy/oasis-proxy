@@ -240,6 +240,7 @@ export const saveForAuto = function (
         defaultProxy,
         local: {
           rulesSet: {
+            format: localRulesSet.format,
             url: localRulesSet.url,
             urlUpdatedAt: localRulesSet.urlUpdatedAt,
             data: localRulesSet.data,
@@ -251,6 +252,7 @@ export const saveForAuto = function (
         },
         reject: {
           rulesSet: {
+            format: rejectRulesSet.format,
             url: rejectRulesSet.url,
             urlUpdatedAt: rejectRulesSet.urlUpdatedAt,
             data: rejectRulesSet.data,

@@ -6,6 +6,7 @@ import {
 import { startAutoSync, endAutoSync, handleAutoSync } from './auto_sync.js'
 import { getAuthList } from '@/core/proxy_config.js'
 import { convertToNewVersionConfig, resetAppConfig } from '@/core/app_config.js'
+import { subStringForName } from '@/core/utils.js'
 
 let current = new Date().toLocaleString()
 console.log('background:', current)
@@ -37,7 +38,7 @@ const updateTabBadgeText = async () => {
             requestSession[activeTabId]
           ).length.toString()
           if (numText == '0') {
-            numText = ' '
+            numText = subStringForName(result[activeProxyKey].name)
           }
           chrome.action.setPopup({ popup: '/popup.html#/monitor' })
           chrome.action.setBadgeText({ text: numText })
@@ -71,7 +72,9 @@ const clearTabBadgeText = async () => {
       await chrome.action.setBadgeBackgroundColor({
         color: result[activeProxyKey]?.tagColor
       })
-      await chrome.action.setBadgeText({ text: ' ' })
+      await chrome.action.setBadgeText({
+        text: subStringForName(result[activeProxyKey].name)
+      })
     }
     chrome.action.setPopup({ popup: '/popup.html#/' })
   } catch (err) {

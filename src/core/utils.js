@@ -54,3 +54,13 @@ export const objIsEqual = function (obj1, obj2) {
 
   return true
 }
+
+export const subStringForName = function (name) {
+  const subName = decodeURIComponent(name).substring(0, 3)
+  if (subName.length == encodeURIComponent(subName).length) {
+    if (subName.length < name.length) {
+      return subName + '..'
+    }
+    return subName
+  } else return subName.substring(0, 2) + '..'
+}

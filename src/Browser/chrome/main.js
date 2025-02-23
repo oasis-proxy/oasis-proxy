@@ -26,6 +26,9 @@ const Action = {}
 Action.setBadgeBackgroundColor = function (color) {
   chrome.action.setBadgeBackgroundColor({ color: color })
 }
+Action.setBadgeText = function (text) {
+  chrome.action.setBadgeText({ text: text })
+}
 const Browser = { Action, Storage, Proxy, Tabs, Message, Runtime, I18n }
 
 Browser.saveFile = function (obj, filename) {

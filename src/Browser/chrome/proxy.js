@@ -1,4 +1,5 @@
 import { generatePacfile } from '../../core/pacfile_generator.js'
+import { subStringForName } from '../../core/utils.js'
 import Storage from './storage.js'
 
 const Proxy = {}
@@ -23,7 +24,9 @@ Proxy.set = async function (proxyConfigs, key, afterSuccess = function () {}) {
     await chrome.action.setBadgeBackgroundColor({
       color: proxyConfigs[key].tagColor
     })
-    await chrome.action.setBadgeText({ text: ' ' })
+    await chrome.action.setBadgeText({
+      text: subStringForName(proxyConfigs[key].name)
+    })
     afterSuccess()
   })
 }

@@ -3,6 +3,7 @@ import { computed, ref, getCurrentInstance, onMounted, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ModalBase from '@/components/modal/ModalBase.vue'
 import { getNextLocalVersion } from '@/core/version_control.js'
+import { subStringForName } from '@/core/utils.js'
 import Browser from '@/Browser/main'
 import {
   createProxy,
@@ -170,6 +171,7 @@ async function handleSubmitUpdateName(result) {
   storeProxy.config_version = version
   storeProxy.config_syncTime = new Date().getTime()
   await Browser.Storage.setLocal(storeProxy)
+  await Browser.Action.setBadgeText(subStringForName(storeProxy[newKey].name))
   await Browser.Storage.removeLocal(oldKey)
   toast.info(Browser.I18n.getMessage('desc_save_success'))
   handleCancel()

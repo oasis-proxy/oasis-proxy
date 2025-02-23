@@ -107,3 +107,17 @@ input[type='color'] {
   padding: 0;
   visibility: hidden;
 }
+
+.dropdown-menu-sm {
+  --bs-dropdown-min-width: 2rem;
+  --bs-dropdown-font-size: 0.875rem;
+  --bs-dropdown-padding-x: 0;
+  --bs-dropdown-padding-y: 0.25rem;
+  border-color: var(--bs-border-color);
+  --bs-dropdown-item-padding-x: 0.75rem;
+  --bs-dropdown-item-padding-y: 0.25rem;
+}
+
+.dropdown-toggle::after {
+  display: none;
+}

@@ -1,15 +1,13 @@
 <script setup>
-import { computed, ref, getCurrentInstance } from 'vue'
+import { computed, ref, getCurrentInstance, inject } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import PolicyModal from './dialog/PolicyModal.vue'
-import ServerModal from './dialog/ServerModal.vue'
 import { useConfigStore } from '@/options/stores/config'
 import { useStatusStore } from '@/options/stores/status'
 
 import Browser from '@/Browser/main'
 
-const policyModal = ref(null)
-const serverModal = ref(null)
+const handleNewConfig = inject('handleNewConfig')
+
 const router = useRouter()
 const route = useRoute()
 const storeConfig = useConfigStore()
@@ -59,22 +57,6 @@ function toPath(path) {
   }
   router.push(path)
 }
-
-function addPolicy() {
-  if (storeStatus.isUnsaved) {
-    toast.warning(Browser.I18n.getMessage('desc_unsave_toast'))
-    return
-  }
-  if (policyModal.value) policyModal.value.show()
-}
-
-function addServer() {
-  if (storeStatus.isUnsaved) {
-    toast.warning(Browser.I18n.getMessage('desc_unsave_toast'))
-    return
-  }
-  if (serverModal.value) serverModal.value.show()
-}
 </script>
 <template>
   <div class="w-100 mb-4 d-flex justify-content-center">
@@ -120,7 +102,10 @@ function addServer() {
       <div class="fw-bold">
         {{ Browser.I18n.getMessage('aside_label_proxy_server') }}
       </div>
-      <i class="bi bi-plus-circle-fill ms-auto icon-btn" @click="addServer"></i>
+      <i
+        class="bi bi-plus-circle-fill ms-auto icon-btn"
+        @click="handleNewConfig('servers')"
+      ></i>
     </div>
     <div class="card-body">
       <ul class="nav nav-pills flex-column">
@@ -159,7 +144,10 @@ function addServer() {
       <div class="fw-bold">
         {{ Browser.I18n.getMessage('aside_label_proxy_policy') }}
       </div>
-      <i class="bi bi-plus-circle-fill icon-btn ms-auto" @click="addPolicy">
+      <i
+        class="bi bi-plus-circle-fill icon-btn ms-auto"
+        @click="handleNewConfig('policy')"
+      >
       </i>
     </div>
     <div class="card-body">
@@ -221,6 +209,4 @@ function addServer() {
       </ul>
     </div>
   </div>
-  <PolicyModal ref="policyModal"></PolicyModal>
-  <ServerModal ref="serverModal"></ServerModal>
 </template>

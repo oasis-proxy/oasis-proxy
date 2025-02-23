@@ -15,6 +15,7 @@ import { getNextLocalVersion } from '@/core/version_control.js'
 import { updateRulesSetData } from '@/core/proxy_config.js'
 
 const handleUpdate = inject('handleUpdate')
+const handleCopy = inject('handleCopy')
 const handleDelete = inject('handleDelete')
 const showUploadConflictModal = inject('showUploadConflictModal')
 
@@ -285,16 +286,42 @@ function setUnsaved() {
         <i class="bi bi-backspace-reverse me-2"></i>
         <span>{{ Browser.I18n.getMessage('btn_label_delete_config') }}</span>
       </button>
-      <button class="btn btn-sm btn-outline-secondary" @click="handleUpdate">
-        <i class="bi bi-pencil-square me-2"></i>
-        <span>{{
-          Browser.I18n.getMessage('btn_label_update_name_config')
+      <button
+        class="dropdown-toggle btn btn-outline-secondary btn-sm"
+        type="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+        data-bs-offset="0,5"
+      >
+        <span class="ms-2">{{
+          Browser.I18n.getMessage('btn_label_more')
         }}</span>
+        <i class="bi bi-caret-down-fill ms-2"></i>
       </button>
-      <button class="btn btn-sm btn-outline-secondary" @click="handleExportPAC">
-        <i class="bi bi-file-earmark-ppt-fill me-2"></i>
-        <span>{{ Browser.I18n.getMessage('btn_label_export_pac') }}</span>
-      </button>
+      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-sm">
+        <li @click="handleUpdate">
+          <div class="hstack gap-2 dropdown-item cursor-point">
+            <i class="bi bi-pencil-square"></i>
+            <span>{{
+              Browser.I18n.getMessage('btn_label_update_name_config')
+            }}</span>
+          </div>
+        </li>
+        <li @click="handleCopy('policy')">
+          <div class="hstack gap-2 dropdown-item cursor-point">
+            <i class="bi bi-copy"></i>
+            <span>{{
+              Browser.I18n.getMessage('btn_label_copy_new_config')
+            }}</span>
+          </div>
+        </li>
+        <li @click="handleExportPAC">
+          <div class="hstack gap-2 dropdown-item cursor-point">
+            <i class="bi bi-file-earmark-ppt-fill"></i>
+            <span>{{ Browser.I18n.getMessage('btn_label_export_pac') }}</span>
+          </div>
+        </li>
+      </ul>
     </div>
     <div>
       <div class="nav nav-tabs mb-2" id="v-pills-tab" role="tablist">

@@ -3,7 +3,7 @@ import Browser from '@/Browser/main'
 import { provide, ref, getCurrentInstance, onMounted, watch } from 'vue'
 import { useRoute, useRouter, RouterView } from 'vue-router'
 import AsideView from './views/AsideView.vue'
-import UpdateNameModal from './views/dialog/UpdateNameModal.vue'
+import BasicConfigModal from './views/dialog/BasicConfigModal.vue'
 import SyncConflictModal from './views/dialog/SyncConflictModal.vue'
 import UploadConflictModal from './views/dialog/UploadConflictModal.vue'
 import { useConfigStore } from '@/options/stores/config'
@@ -19,9 +19,12 @@ const storeConfig = useConfigStore()
 const storeStatus = useStatusStore()
 const route = useRoute()
 const router = useRouter()
-const updateNameModal = ref(null)
 const uploadConflictModal = ref(null)
 const syncConflictModal = ref(null)
+
+const basicConfigModal = ref(null)
+const bCMOperationType = ref('newConfig')
+const bCMConfigMode = ref('servers')
 
 const instance = getCurrentInstance()
 const toast = instance?.appContext.config.globalProperties.$toast
@@ -129,8 +132,34 @@ function handleUpdate() {
     toast.warning(Browser.I18n.getMessage('desc_unsave_toast'))
     return
   }
+  if (basicConfigModal.value) {
+    bCMOperationType.value = 'updateName'
+    basicConfigModal.value.show()
+  }
+}
 
-  if (updateNameModal.value) updateNameModal.value.show()
+function handleCopy() {
+  if (storeStatus.isUnsaved) {
+    toast.warning(Browser.I18n.getMessage('desc_unsave_toast'))
+    return
+  }
+  if (basicConfigModal.value) {
+    // bCMConfigMode.value = configMode
+    bCMOperationType.value = 'copyConfig'
+    basicConfigModal.value.show()
+  }
+}
+
+function handleNewConfig(configMode) {
+  if (storeStatus.isUnsaved) {
+    toast.warning(Browser.I18n.getMessage('desc_unsave_toast'))
+    return
+  }
+  if (basicConfigModal.value) {
+    bCMConfigMode.value = configMode
+    bCMOperationType.value = 'newConfig'
+    basicConfigModal.value.show()
+  }
 }
 
 function showUploadConflictModal(cbAfterHide = () => {}) {
@@ -142,7 +171,9 @@ function showSyncConflictModal(desc) {
   if (syncConflictModal.value) syncConflictModal.value.createModal(desc)
 }
 
+provide('handleNewConfig', handleNewConfig)
 provide('handleUpdate', handleUpdate)
+provide('handleCopy', handleCopy)
 provide('handleDelete', handleDelete)
 provide('showUploadConflictModal', showUploadConflictModal)
 provide('showSyncConflictModal', showSyncConflictModal)
@@ -162,7 +193,11 @@ provide('showSyncConflictModal', showSyncConflictModal)
       </div>
     </div>
   </div>
-  <UpdateNameModal ref="updateNameModal"></UpdateNameModal>
+  <BasicConfigModal
+    ref="basicConfigModal"
+    :operation-type="bCMOperationType"
+    :config-mode="bCMConfigMode"
+  ></BasicConfigModal>
   <UploadConflictModal ref="uploadConflictModal"></UploadConflictModal>
   <SyncConflictModal ref="syncConflictModal"></SyncConflictModal>
 </template>

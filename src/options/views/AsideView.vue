@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, getCurrentInstance, inject } from 'vue'
+import { computed, getCurrentInstance, inject } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useConfigStore } from '@/options/stores/config'
 import { useStatusStore } from '@/options/stores/status'

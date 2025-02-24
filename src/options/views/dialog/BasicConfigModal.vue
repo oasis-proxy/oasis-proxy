@@ -265,7 +265,7 @@ async function handleSubmitNew() {
 </script>
 <template>
   <ModalBase id="basicConfigModal" mode="form">
-    <template #title>{{ '111' + titleLabel }}</template>
+    <template #title>{{ titleLabel }}</template>
     <template #default>
       <form action="" id="basicConfigModalForm">
         <div

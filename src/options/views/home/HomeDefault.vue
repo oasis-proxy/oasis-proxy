@@ -100,7 +100,7 @@ function toGithub() {
                 v-model="storeConfig.configUI"
               />
               <label class="form-check-label" for="uiLight">
-                <i class="bi bi-sun ms-2 me-1"></i>
+                <i class="bi bi-sun-fill ms-2 me-1"></i>
                 <span>{{
                   Browser.I18n.getMessage('input_label_ui_light')
                 }}</span>

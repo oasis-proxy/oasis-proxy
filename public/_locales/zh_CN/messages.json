@@ -31,12 +31,20 @@
     "message": "清 空",
     "description": ""
   },
+  "btn_label_more": {
+    "message": "更多操作",
+    "description": ""
+  },
   "btn_label_delete_config": {
     "message": "删除配置",
     "description": ""
   },
   "btn_label_update_name_config": {
     "message": "修改名称",
+    "description": ""
+  },
+  "btn_label_copy_new_config": {
+    "message": "复制配置",
     "description": ""
   },
   "btn_label_export_pac": {
@@ -49,6 +57,10 @@
   },
   "btn_label_modify_config": {
     "message": "修 改",
+    "description": ""
+  },
+  "btn_label_copy_config": {
+    "message": "复 制",
     "description": ""
   },
   "btn_label_set_sync_config": {
@@ -127,6 +139,14 @@
   },
   "form_label_reject": {
     "message": "拒绝地址",
+    "description": ""
+  },
+  "form_label_rule": {
+    "message": "规则",
+    "description": ""
+  },
+  "form_label_merge_conflict": {
+    "message": "合并冲突",
     "description": ""
   },
   "form_label_max_rows": {
@@ -209,6 +229,10 @@
     "message": "新名称",
     "description": ""
   },
+  "form_label_origin_name": {
+    "message": "原名称",
+    "description": ""
+  },
   "form_label_iptags": {
     "message": "IP标签",
     "description": ""
@@ -258,19 +282,19 @@
     "description": ""
   },
   "section_label_internal": {
-    "message": "本地规则设置",
+    "message": "本地规则",
     "description": ""
   },
   "section_label_external": {
-    "message": "外部规则集设置",
+    "message": "外部规则集",
     "description": ""
   },
   "section_label_reject": {
-    "message": "拒绝规则设置",
+    "message": "拒绝规则",
     "description": ""
   },
   "section_label_reject_set": {
-    "message": "拒绝规则集设置",
+    "message": "拒绝规则集",
     "description": ""
   },
   "section_label_local_data": {
@@ -299,6 +323,18 @@
   },
   "page_title_fixed": {
     "message": "代理节点：",
+    "description": ""
+  },
+  "input_label_auto": {
+    "message": "自动策略",
+    "description": ""
+  },
+  "input_label_keep": {
+    "message": "保留",
+    "description": ""
+  },
+  "input_label_ignore": {
+    "message": "忽略",
     "description": ""
   },
   "input_label_ui_light": {
@@ -360,6 +396,9 @@
   "input_label_reject": {
     "message": "拒 绝",
     "description": ""
+  },
+  "modal_title_merge_autopolicy": {
+    "message": "合并自动策略规则"
   },
   "modal_title_delete": {
     "message": "确认删除代理："
@@ -511,11 +550,11 @@
   "feedback_invalid": {
     "message": "输入错误"
   },
-  "feedback_update_name_invalid": {
-    "message": "新名称不能为空、direct、system、reject，或新名称与旧名称一致，或新名称已存在"
-  },
   "feedback_name_invalid": {
     "message": "新名称不能为空、direct、system、reject，或新名称已存在"
+  },
+  "feedback_select_null_invalid": {
+    "message": "选项不能为空"
   },
   "popover_auth": {
     "message": "非必要，根据代理需求填写"

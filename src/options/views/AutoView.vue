@@ -6,6 +6,7 @@ import LinkTextItem from '../components/LinkTextItem.vue'
 import ProxySelect from '@/components/ProxySelect.vue'
 import RuleItem from '../components/InternalRuleGroup.vue'
 import PopoverTips from '@/components/PopoverTips.vue'
+import MergeAutoRulesModal from './dialog/MergeAutoRulesModal.vue'
 
 import Browser from '@/Browser/main'
 import { useStatusStore } from '@/options/stores/status'
@@ -26,6 +27,16 @@ const instance = getCurrentInstance()
 const confirmModal = instance?.appContext.config.globalProperties.$confirm
 const toast = instance?.appContext.config.globalProperties.$toast
 
+const mergeAutoRulesModal = ref(null)
+const mergeForm = ref({
+  proxyKey: null,
+  part: {
+    local: true,
+    reject: true
+  },
+  mergeMethod: 'ignore'
+})
+const autoPolicy = ref([])
 const localRuleList = ref([])
 const rejectRuleList = ref([])
 const defaultProxy = ref('direct')
@@ -92,7 +103,7 @@ watch(
 )
 async function load(proxyKey) {
   resetData()
-  const result = await Browser.Storage.getLocal([proxyKey])
+  const result = await Browser.Storage.getLocalAll()
 
   tagColor.value = result[proxyKey].tagColor
   defaultProxy.value = result[proxyKey].config.rules.defaultProxy
@@ -133,6 +144,17 @@ async function load(proxyKey) {
     JSON.stringify(result[proxyKey].config.rules.reject.ruleList)
   )
   rejectRuleList.value = tmpRejectRuleList
+
+  autoPolicy.value = []
+  Object.keys(result).forEach((key) => {
+    if (
+      key.startsWith('proxy_') &&
+      result[key].mode == 'auto' &&
+      'proxy_' + encodeURIComponent(route.params.name) != key
+    ) {
+      autoPolicy.value.push(result[key].name)
+    }
+  })
 }
 
 async function handleExportPAC() {
@@ -144,6 +166,13 @@ async function handleExportPAC() {
   )
   const outBlock = codeBlock.replace(/^\s*[\r?\n]/gm, '')
   Browser.saveFile(outBlock, `${route.params.name}.pac`)
+}
+
+async function openMergeRulesDialog() {
+  if (mergeAutoRulesModal.value) {
+    // bCMOperationType.value = 'updateName'
+    mergeAutoRulesModal.value.show()
+  }
 }
 
 function resetData() {
@@ -261,6 +290,43 @@ function handleCancel() {
   )
 }
 
+async function handleMerge() {
+  const result = await Browser.Storage.getLocal(mergeForm.value.proxyKey)
+  if (mergeForm.value.part.local) {
+    let localRules =
+      result[mergeForm.value.proxyKey].config.rules.local.ruleList
+    if (mergeForm.value.mergeMethod != 'keep') {
+      localRules = localRules.filter((item) => {
+        let isContained = false
+        for (const i of localRuleList.value) {
+          if (i.mode == item.mode && i.data == item.data) {
+            isContained = true
+          }
+        }
+        return !isContained
+      })
+    }
+    localRuleList.value.unshift(...localRules)
+  }
+  if (mergeForm.value.part.reject) {
+    let rejectRules =
+      result[mergeForm.value.proxyKey].config.rules.reject.ruleList
+    if (mergeForm.value.mergeMethod != 'keep') {
+      rejectRules = rejectRules.filter((item) => {
+        let isContained = false
+        for (const i of rejectRuleList.value) {
+          if (i.data == item.data) {
+            isContained = true
+          }
+        }
+        return !isContained
+      })
+    }
+    rejectRuleList.value.unshift(...rejectRules)
+  }
+  storeStatus.setUnsaved()
+}
+
 function setUnsaved() {
   storeStatus.setUnsaved()
 }
@@ -348,6 +414,10 @@ function setUnsaved() {
           {{ Browser.I18n.getMessage('tab_label_advance') }}
         </button>
         <div class="ms-auto d-flex align-items-center">
+          <i
+            class="bi bi-cart-plus-fill icon-btn me-2"
+            @click="openMergeRulesDialog"
+          ></i>
           <PopoverTips
             className="bi bi-question-circle-fill icon-btn"
             :content="Browser.I18n.getMessage('popover_priority')"
@@ -575,4 +645,10 @@ function setUnsaved() {
       </div>
     </div>
   </div>
+  <MergeAutoRulesModal
+    ref="mergeAutoRulesModal"
+    :auto-policy="autoPolicy"
+    v-model="mergeForm"
+    @handleMerge="handleMerge"
+  ></MergeAutoRulesModal>
 </template>

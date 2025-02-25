@@ -7,6 +7,7 @@ import ProxySelect from '@/components/ProxySelect.vue'
 import RuleItem from '../components/InternalRuleGroup.vue'
 import PopoverTips from '@/components/PopoverTips.vue'
 import MergeAutoRulesModal from './dialog/MergeAutoRulesModal.vue'
+import BatchUpdateServerModal from './dialog/BatchUpdateServerModal.vue'
 
 import Browser from '@/Browser/main'
 import { useStatusStore } from '@/options/stores/status'
@@ -28,6 +29,7 @@ const confirmModal = instance?.appContext.config.globalProperties.$confirm
 const toast = instance?.appContext.config.globalProperties.$toast
 
 const mergeAutoRulesModal = ref(null)
+const batchUpdateServerModal = ref(null)
 const mergeForm = ref({
   proxyKey: null,
   part: {
@@ -35,6 +37,10 @@ const mergeForm = ref({
     reject: true
   },
   mergeMethod: 'ignore'
+})
+const updateServerForm = ref({
+  originServer: null,
+  targetServer: null
 })
 const autoPolicy = ref([])
 const localRuleList = ref([])
@@ -172,6 +178,13 @@ async function openMergeRulesDialog() {
   if (mergeAutoRulesModal.value) {
     // bCMOperationType.value = 'updateName'
     mergeAutoRulesModal.value.show()
+  }
+}
+
+async function openBatchUpdateServerDialog() {
+  if (batchUpdateServerModal.value) {
+    // bCMOperationType.value = 'updateName'
+    batchUpdateServerModal.value.show()
   }
 }
 
@@ -327,6 +340,15 @@ async function handleMerge() {
   storeStatus.setUnsaved()
 }
 
+function batchUpdateServer() {
+  localRuleList.value.forEach((item) => {
+    if (item.proxy == updateServerForm.value.originServer) {
+      item.proxy = updateServerForm.value.targetServer
+    }
+  })
+  storeStatus.setUnsaved()
+}
+
 function setUnsaved() {
   storeStatus.setUnsaved()
 }
@@ -435,6 +457,10 @@ function setUnsaved() {
                 <i
                   class="bi bi-plus-circle-fill icon-btn ms-2"
                   @click="insertRule(-1, localRuleList)"
+                ></i>
+                <i
+                  class="bi bi-ui-checks icon-btn ms-2"
+                  @click="openBatchUpdateServerDialog"
                 ></i>
               </div>
             </div>
@@ -651,4 +677,10 @@ function setUnsaved() {
     v-model="mergeForm"
     @handleMerge="handleMerge"
   ></MergeAutoRulesModal>
+
+  <BatchUpdateServerModal
+    ref="batchUpdateServerModal"
+    v-model="updateServerForm"
+    @batchUpdateServer="batchUpdateServer"
+  ></BatchUpdateServerModal>
 </template>

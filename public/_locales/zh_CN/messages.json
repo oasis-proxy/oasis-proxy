@@ -133,6 +133,14 @@
     "message": "使用中",
     "description": ""
   },
+  "form_label_origin_server": {
+    "message": "原代理节点",
+    "description": ""
+  },
+  "form_label_target_config": {
+    "message": "新代理节点",
+    "description": ""
+  },
   "form_label_ui_config": {
     "message": "界面样式",
     "description": ""
@@ -399,6 +407,9 @@
   },
   "modal_title_merge_autopolicy": {
     "message": "合并自动策略规则"
+  },
+  "modal_title_batch_update_server": {
+    "message": "批量更新本地规则代理节点"
   },
   "modal_title_delete": {
     "message": "确认删除代理："

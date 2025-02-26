@@ -1,5 +1,18 @@
 # ChangeLogs
 
+## v1.0.15
+
+Features:
+
+- When request monitor is not enabled, the badge displays the current policy/proxy-server name.
+- Added copy functionality for policy/proxy-server.
+- Added the ability to batch update local rules for proxy-server in auto-policy mode.
+
+Optimizations:
+
+- Modified some UI elements.
+- Optimized backup restoration.
+
 ## v1.0.14
 
 Features:

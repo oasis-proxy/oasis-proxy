@@ -31,12 +31,20 @@
     "message": "Clear Requests",
     "description": ""
   },
+  "btn_label_more": {
+    "message": "More ...",
+    "description": ""
+  },
   "btn_label_delete_config": {
     "message": "Delete Config",
     "description": ""
   },
   "btn_label_update_name_config": {
     "message": "Modify Name",
+    "description": ""
+  },
+  "btn_label_copy_new_config": {
+    "message": "Copy Config",
     "description": ""
   },
   "btn_label_export_pac": {
@@ -49,6 +57,10 @@
   },
   "btn_label_modify_config": {
     "message": "Modify",
+    "description": ""
+  },
+  "btn_label_copy_config": {
+    "message": "Copy",
     "description": ""
   },
   "btn_label_set_sync_config": {
@@ -121,12 +133,28 @@
     "message": "Using",
     "description": ""
   },
+  "form_label_origin_server": {
+    "message": "Current",
+    "description": ""
+  },
+  "form_label_target_config": {
+    "message": "Update",
+    "description": ""
+  },
   "form_label_ui_config": {
     "message": "UI Style",
     "description": ""
   },
   "form_label_reject": {
     "message": "Reject Addr",
+    "description": ""
+  },
+  "form_label_rule": {
+    "message": "Rule List",
+    "description": ""
+  },
+  "form_label_merge_conflict": {
+    "message": "Merge",
     "description": ""
   },
   "form_label_max_rows": {
@@ -209,6 +237,10 @@
     "message": "New Name",
     "description": ""
   },
+  "form_label_origin_name": {
+    "message": "Curr. Name",
+    "description": ""
+  },
   "form_label_iptags": {
     "message": "IP Tags",
     "description": ""
@@ -258,19 +290,19 @@
     "description": ""
   },
   "section_label_internal": {
-    "message": "Local Rules Settings",
+    "message": "Local Rules",
     "description": ""
   },
   "section_label_external": {
-    "message": "External Rule Settings",
+    "message": "External Rules Set",
     "description": ""
   },
   "section_label_reject": {
-    "message": "Reject Rule Settings",
+    "message": "Reject Rules",
     "description": ""
   },
   "section_label_reject_set": {
-    "message": "Reject Rules Set Settings",
+    "message": "Reject Rules Set",
     "description": ""
   },
   "section_label_local_data": {
@@ -299,6 +331,18 @@
   },
   "page_title_fixed": {
     "message": "Proxy Server:",
+    "description": ""
+  },
+  "input_label_auto": {
+    "message": "Auto Policy",
+    "description": ""
+  },
+  "input_label_keep": {
+    "message": "Keep",
+    "description": ""
+  },
+  "input_label_ignore": {
+    "message": "Ignore",
     "description": ""
   },
   "input_label_ui_light": {
@@ -360,6 +404,12 @@
   "input_label_reject": {
     "message": "Reject",
     "description": ""
+  },
+  "modal_title_merge_autopolicy": {
+    "message": "Merge auto-policy local rules"
+  },
+  "modal_title_batch_update_server": {
+    "message": "Batch update proxy-server for local rules"
   },
   "modal_title_delete": {
     "message": "Delete the configuration:"
@@ -511,11 +561,11 @@
   "feedback_invalid": {
     "message": "Input Error"
   },
-  "feedback_update_name_invalid": {
-    "message": "The new name cannot be empty, direct, system, or reject. The new name cannot be the same as the old name, or the new name already exists"
-  },
   "feedback_name_invalid": {
     "message": "The new name cannot be empty, direct, system, or reject. Or the new name already exists"
+  },
+  "feedback_select_null_invalid": {
+    "message": "Option is empty"
   },
   "popover_auth": {
     "message": "Unnecessary, if proxy server authentication do not required"

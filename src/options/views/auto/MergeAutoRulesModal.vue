@@ -1,24 +1,21 @@
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, inject } from 'vue'
+import { useRoute } from 'vue-router'
 import ModalBase from '@/components/modal/ModalBase.vue'
+
 import Browser from '@/Browser/main'
+import { useStatusStore } from '@/options/stores/status'
 
-const mergeForm = defineModel()
+const route = useRoute()
+const storeStatus = useStatusStore()
 
-const emit = defineEmits(['handleMerge'])
+const { localRuleList, rejectRuleList } = inject('autoConfig')
 
-const props = defineProps({
-  autoPolicy: Array
-})
-
-const form = ref({
-  proxyKey: null,
-  part: {
-    local: true,
-    reject: true
-  },
-  mergeMethod: 'ignore'
-})
+const autoPolicyNames = ref([])
+const selectedProxyKey = ref(null)
+const isLocalChecked = ref(true)
+const isRejectChecked = ref(true)
+const mergeMethod = ref('ignore')
 const isNameValid = ref(true)
 
 const nameClass = computed(() => {
@@ -29,7 +26,7 @@ const nameClass = computed(() => {
 
 let mergeAutoRulesModalInstance = null
 
-onMounted(() => {
+onMounted(async () => {
   const modalElement = document.getElementById('mergeAutoRulesModal')
   // eslint-disable-next-line no-undef
   mergeAutoRulesModalInstance = new bootstrap.Modal(modalElement)
@@ -42,17 +39,27 @@ defineExpose({
 
 function hide() {
   setTimeout(() => {
-    form.value.proxyKey = null
-    form.value.part.local = true
-    form.value.part.reject = true
-    form.value.mergeMethod = 'ignore'
+    selectedProxyKey.value = null
+    isLocalChecked.value = true
+    isRejectChecked.value = true
+    mergeMethod.value = 'ignore'
     isNameValid.value = true
   }, 300)
   mergeAutoRulesModalInstance.hide()
 }
-function show() {
+async function show() {
+  const result = await Browser.Storage.getLocalAll()
+  autoPolicyNames.value = []
+  Object.keys(result).forEach((key) => {
+    if (
+      key.startsWith('proxy_') &&
+      result[key].mode == 'auto' &&
+      'proxy_' + encodeURIComponent(route.params.name) != key
+    ) {
+      autoPolicyNames.value.push(result[key].name)
+    }
+  })
   mergeAutoRulesModalInstance.show()
-  setTimeout(() => {}, 300)
 }
 
 function handleCancel() {
@@ -61,15 +68,43 @@ function handleCancel() {
 
 async function handleSubmit() {
   isNameValid.value = true
-  if (form.value.proxyKey == null) {
+  if (selectedProxyKey.value == null) {
     isNameValid.value = false
     return
   }
-  mergeForm.value.proxyKey = form.value.proxyKey
-  mergeForm.value.part.local = form.value.part.local
-  mergeForm.value.part.reject = form.value.part.reject
-  mergeForm.value.mergeMethod = form.value.mergeMethod
-  emit('handleMerge')
+  const result = await Browser.Storage.getLocal(selectedProxyKey.value)
+  if (isLocalChecked.value) {
+    let localRules = result[selectedProxyKey.value].config.rules.local.ruleList
+    if (mergeMethod.value != 'keep') {
+      localRules = localRules.filter((item) => {
+        let isContained = false
+        for (const i of localRuleList.value) {
+          if (i.mode == item.mode && i.data == item.data) {
+            isContained = true
+          }
+        }
+        return !isContained
+      })
+    }
+    localRuleList.value.unshift(...localRules)
+  }
+  if (isRejectChecked.value) {
+    let rejectRules =
+      result[selectedProxyKey.value].config.rules.reject.ruleList
+    if (mergeMethod.value != 'keep') {
+      rejectRules = rejectRules.filter((item) => {
+        let isContained = false
+        for (const i of rejectRuleList.value) {
+          if (i.data == item.data) {
+            isContained = true
+          }
+        }
+        return !isContained
+      })
+    }
+    rejectRuleList.value.unshift(...rejectRules)
+  }
+  storeStatus.setUnsaved()
   hide()
 }
 </script>
@@ -85,10 +120,10 @@ async function handleSubmit() {
             {{ Browser.I18n.getMessage('input_label_auto') }}
           </label>
           <div class="col-10">
-            <select :class="nameClass" v-model="form.proxyKey">
+            <select :class="nameClass" v-model="selectedProxyKey">
               <option
                 :value="'proxy_' + item"
-                v-for="(item, index) in props.autoPolicy"
+                v-for="(item, index) in autoPolicyNames"
                 :key="index"
               >
                 {{ decodeURIComponent(item) }}
@@ -110,7 +145,7 @@ async function handleSubmit() {
                 type="radio"
                 value="ignore"
                 id="ignore"
-                v-model="form.mergeMethod"
+                v-model="mergeMethod"
               />
               <label class="form-check-label ms-2" for="ignore">
                 <span>
@@ -124,7 +159,7 @@ async function handleSubmit() {
                 type="radio"
                 value="keep"
                 id="keep"
-                v-model="form.mergeMethod"
+                v-model="mergeMethod"
               />
               <label class="form-check-label ms-2" for="keep">
                 <span>
@@ -142,7 +177,7 @@ async function handleSubmit() {
             <input
               class="form-check-input"
               type="checkbox"
-              v-model="form.part.local"
+              v-model="isLocalChecked"
               id="mergeLocal"
             />
             <label class="form-check-label ms-2 me-4" for="mergeLocal">
@@ -153,7 +188,7 @@ async function handleSubmit() {
             <input
               class="form-check-input"
               type="checkbox"
-              v-model="form.part.reject"
+              v-model="isRejectChecked"
               id="mergeReject"
             />
             <label class="form-check-label ms-2" for="mergeReject">

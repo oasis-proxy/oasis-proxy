@@ -24,7 +24,7 @@ const router = createRouter({
       name: 'auto',
       path: '/auto/:name',
       props: true,
-      component: () => import('../views/AutoView.vue')
+      component: () => import('../views/auto/AutoView.vue')
     },
     {
       name: 'fixed',

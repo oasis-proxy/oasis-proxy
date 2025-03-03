@@ -1,17 +1,17 @@
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, inject } from 'vue'
 import ModalBase from '@/components/modal/ModalBase.vue'
 import ProxySelect from '@/components/ProxySelect.vue'
+
 import Browser from '@/Browser/main'
+import { useStatusStore } from '@/options/stores/status'
 
-const serverForm = defineModel()
+const storeStatus = useStatusStore()
+const { localRuleList } = inject('autoConfig')
 
-const emit = defineEmits(['batchUpdateServer'])
+const originServer = ref(null)
+const targetServer = ref(null)
 
-const form = ref({
-  originServer: null,
-  targetServer: null
-})
 const isOriginServerValid = ref(true)
 const isTargetServerValid = ref(true)
 
@@ -41,8 +41,8 @@ defineExpose({
 
 function hide() {
   setTimeout(() => {
-    form.value.originServer = null
-    form.value.targetServer = null
+    originServer.value = null
+    targetServer.value = null
     isOriginServerValid.value = true
     isTargetServerValid.value = true
   }, 300)
@@ -59,17 +59,21 @@ function handleCancel() {
 async function handleSubmit() {
   isOriginServerValid.value = true
   isTargetServerValid.value = true
-  if (form.value.originServer == null) {
+  if (originServer.value == null) {
     isOriginServerValid.value = false
     return
   }
-  if (form.value.targetServer == null) {
+  if (targetServer.value == null) {
     isTargetServerValid.value = false
     return
   }
-  serverForm.value.originServer = form.value.originServer
-  serverForm.value.targetServer = form.value.targetServer
-  emit('batchUpdateServer')
+
+  localRuleList.value.forEach((item) => {
+    if (item.proxy == originServer.value) {
+      item.proxy = targetServer.value
+    }
+  })
+  storeStatus.setUnsaved()
   hide()
 }
 </script>
@@ -87,7 +91,7 @@ async function handleSubmit() {
           <div class="col-10">
             <ProxySelect
               :class="originClass"
-              v-model="form.originServer"
+              v-model="originServer"
             ></ProxySelect>
             <div class="invalid-feedback">
               {{ Browser.I18n.getMessage('feedback_select_null_invalid') }}
@@ -101,7 +105,7 @@ async function handleSubmit() {
           <div class="col-10">
             <ProxySelect
               :class="targetClass"
-              v-model="form.targetServer"
+              v-model="targetServer"
             ></ProxySelect>
             <div class="invalid-feedback">
               {{ Browser.I18n.getMessage('feedback_select_null_invalid') }}

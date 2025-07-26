@@ -4,8 +4,13 @@ import {
   parseRuleItem,
   parseBypassRule
 } from './rules_parser.js'
+import { formatCode } from '@/core/utils'
 
-export const generatePacfile = function (proxyConfigs, key) {
+export const generatePacfile = async function (
+  proxyConfigs,
+  key,
+  tempRulesList = []
+) {
   const nameList = proxyUses(proxyConfigs[key])
   const activeName = key.substring(6)
   nameList.push(activeName)
@@ -18,7 +23,8 @@ export const generatePacfile = function (proxyConfigs, key) {
           codeBlock + createFixedServerCodeBlock(proxyConfigs[proxyKey])
         break
       case 'auto':
-        codeBlock = codeBlock + createAutoCodeBlock(proxyConfigs[proxyKey])
+        codeBlock =
+          codeBlock + createAutoCodeBlock(proxyConfigs[proxyKey], tempRulesList)
         break
       default:
         if (name == 'reject') {
@@ -27,7 +33,7 @@ export const generatePacfile = function (proxyConfigs, key) {
         break
     }
   }
-  return `var FindProxyForURL = function(init, profiles) {
+  codeBlock = `var FindProxyForURL = function(init, profiles) {
   return function(url, host) {
     "use strict";
     var result = init, scheme = url.substr(0, url.indexOf(":"));
@@ -43,6 +49,8 @@ export const generatePacfile = function (proxyConfigs, key) {
 }("+${activeName}", {
   ${codeBlock}
 });`
+  // const formatCodeBlock = await formatCode(codeBlock)
+  return codeBlock
 }
 
 const createRejectCodeBlock = function (proxyConfig) {
@@ -53,7 +61,7 @@ const createRejectCodeBlock = function (proxyConfig) {
   return code
 }
 
-const createAutoCodeBlock = function (proxyConfig) {
+const createAutoCodeBlock = function (proxyConfig, tempRulesList) {
   const config = proxyConfig.config
   const localRulesSetStr =
     config.rules.local.rulesSet.valid == false
@@ -63,14 +71,17 @@ const createAutoCodeBlock = function (proxyConfig) {
     config.rules.reject.rulesSet.valid == false
       ? ''
       : createRulesSet(config.rules.reject.rulesSet)
+
+  const tempRulesListStr = createRuleList(tempRulesList)
   const localRuleListStr = createRuleList(config.rules.local.ruleList)
   const rejectRuleListStr = createRuleList(config.rules.reject.ruleList)
   const tmpl = `"+${proxyConfig.name}": function(url, host, scheme) {
     "use strict";
-${localRuleListStr}
-${rejectRuleListStr}
-${rejectRulesSetStr}
-${localRulesSetStr}
+    ${tempRulesListStr}
+    ${localRuleListStr}
+    ${rejectRuleListStr}
+    ${rejectRulesSetStr}
+    ${localRulesSetStr}
     return "${config.rules.defaultProxy}";
   }, `
   return tmpl
@@ -133,15 +144,14 @@ const createFixedServerCodeBlock = function (proxyConfig) {
           return code
         })
         .join('\n') + '\n'
-
-    if (Object.prototype.hasOwnProperty.call(config.rules, 'singleProxy')) {
-      if (config.rules.singleProxy.scheme == 'direct') {
+    if (Object.keys(config.rules).length == 1 && config.rules.fallbackProxy) {
+      if (config.rules.fallbackProxy.scheme == 'direct') {
         proxyStr = proxyStr + `  return "direct";`
       } else {
-        scheme = config.rules.singleProxy.scheme
-        host = config.rules.singleProxy.host
-        port = config.rules.singleProxy.port
-        if (port == null || port == '') port = CONST_DEFAULT_PORT[scheme]
+        scheme = config.rules.fallbackProxy.scheme
+        host = config.rules.fallbackProxy.host
+        port = config.rules.fallbackProxy.port
+        if (!port) port = CONST_DEFAULT_PORT[scheme]
         proxyStr = proxyStr + `  return "${scheme} ${host}:${port}";`
       }
     } else {
@@ -153,7 +163,7 @@ const createFixedServerCodeBlock = function (proxyConfig) {
         scheme = config.rules.proxyForHttp.scheme
         host = config.rules.proxyForHttp.host
         port = config.rules.proxyForHttp.port
-        if (port == null || port == '') port = CONST_DEFAULT_PORT[scheme]
+        if (!port) port = CONST_DEFAULT_PORT[scheme]
 
         proxyStr =
           proxyStr +
@@ -169,7 +179,7 @@ const createFixedServerCodeBlock = function (proxyConfig) {
         scheme = config.rules.proxyForHttps.scheme
         host = config.rules.proxyForHttps.host
         port = config.rules.proxyForHttps.port
-        if (port == null || port == '') port = CONST_DEFAULT_PORT[scheme]
+        if (!port) port = CONST_DEFAULT_PORT[scheme]
 
         proxyStr =
           proxyStr +
@@ -185,7 +195,7 @@ const createFixedServerCodeBlock = function (proxyConfig) {
         scheme = config.rules.proxyForFtp.scheme
         host = config.rules.proxyForFtp.host
         port = config.rules.proxyForFtp.port
-        if (port == null || port == '') port = CONST_DEFAULT_PORT[scheme]
+        if (!port) port = CONST_DEFAULT_PORT[scheme]
 
         proxyStr =
           proxyStr +
@@ -201,7 +211,7 @@ const createFixedServerCodeBlock = function (proxyConfig) {
         scheme = config.rules.fallbackProxy.scheme
         host = config.rules.fallbackProxy.host
         port = config.rules.fallbackProxy.port
-        if (port == null || port == '') port = CONST_DEFAULT_PORT[scheme]
+        if (!port) port = CONST_DEFAULT_PORT[scheme]
         proxyStr =
           proxyStr +
           `

@@ -7,6 +7,7 @@ import router from './router'
 import toastPlugin from '@/components/toast/Toast.js'
 import ConfirmModal from '@/components/modal/ConfirmModal.vue'
 import { useStatusStore } from '@/options/stores/status'
+import '@fortawesome/fontawesome-free/css/all.min.css'
 
 const pinia = createPinia()
 const app = createApp(App)
@@ -26,7 +27,10 @@ document.addEventListener('input', function (event) {
   if (event.target.form?.id.lastIndexOf('Modal') > -1) {
     return
   }
-  if (window.location.hash.startsWith('#/home')) {
+  if (
+    window.location.hash.startsWith('#/home') ||
+    window.location.hash.startsWith('#/temp')
+  ) {
     return
   }
   storeStatus.setUnsaved()

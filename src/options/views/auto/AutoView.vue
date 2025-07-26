@@ -1,6 +1,6 @@
 <script setup>
 import { ref, inject, getCurrentInstance, onMounted, watch, provide } from 'vue'
-import { useRoute } from 'vue-router'
+
 import PopoverTips from '@/components/PopoverTips.vue'
 import AutoRejectGroup from './AutoRejectGroup.vue'
 import AutoRulesGroup from './AutoRulesGroup.vue'
@@ -8,17 +8,22 @@ import MergeAutoRulesModal from './MergeAutoRulesModal.vue'
 
 import Browser from '@/Browser/main'
 import { useStatusStore } from '@/options/stores/status'
+import { useConfigStore } from '@/options/stores/config'
 import { saveForAuto } from '@/core/proxy_config.js'
 import { generatePacfile } from '@/core/pacfile_generator.js'
 import { getNextLocalVersion } from '@/core/version_control.js'
+import { formatCode } from '@/core/utils'
+import AutoSiteRulesGroup from './AutoSiteRulesGroup.vue'
+
+const props = defineProps(['name'])
 
 const handleUpdate = inject('handleUpdate')
 const handleCopy = inject('handleCopy')
 const handleDelete = inject('handleDelete')
 const showUploadConflictModal = inject('showUploadConflictModal')
 
-const route = useRoute()
 const storeStatus = useStatusStore()
+const storeConfig = useConfigStore()
 
 const instance = getCurrentInstance()
 const confirmModal = instance?.appContext.config.globalProperties.$confirm
@@ -26,77 +31,66 @@ const toast = instance?.appContext.config.globalProperties.$toast
 
 const mergeAutoRulesModal = ref(null)
 
+const tagColor = ref('#3498db')
 const localRuleList = ref([])
 const rejectRuleList = ref([])
+const siteRuleList = ref([])
 const defaultProxy = ref('direct')
 const localRulesSet = ref({
   format: 'base64',
   url: '',
   urlUpdatedAt: '',
+  updateInterval: 'default',
   data: '',
   proxy: 'direct',
   valid: true
 })
-
-const tagColor = ref('#3498db')
 const rejectRulesSet = ref({
   format: 'base64',
   url: '',
   urlUpdatedAt: '',
+  updateInterval: 'default',
   data: '',
   valid: true
 })
-const occurrences = ref([])
-const occurrencesReject = ref([])
+const siteRulesSet = ref({
+  format: 'base64',
+  url: '',
+  urlUpdatedAt: '',
+  updateInterval: 'default',
+  data: '',
+  proxy: 'direct',
+  valid: true
+})
 
 provide('autoConfig', {
   localRuleList,
   localRulesSet,
   rejectRuleList,
   rejectRulesSet,
-  defaultProxy,
-  occurrences,
-  occurrencesReject
+  siteRuleList,
+  siteRulesSet,
+  defaultProxy
 })
 
+const siteRuleChanged = ref(false)
+provide('status', {
+  siteRuleChanged
+})
+
+const defaultTabInstance = ref(null)
 onMounted(() => {
-  load('proxy_' + encodeURIComponent(route.params.name))
+  load('proxy_' + encodeURIComponent(props.name))
+  const defaultTab = document.getElementById('v-pills-default-tab')
+  defaultTabInstance.value = new bootstrap.Tab(defaultTab)
 })
 
 watch(
-  () => route.params.name,
+  () => props.name,
   (newValue) => {
     load('proxy_' + encodeURIComponent(newValue))
+    defaultTabInstance.value.show()
   }
-)
-watch(
-  () => localRuleList,
-  (newValue) => {
-    const countOccurrences = (array) => {
-      return array.reduce((accumulator, currentValue) => {
-        accumulator[currentValue.data] =
-          (accumulator[currentValue.data] || 0) + 1
-        return accumulator
-      }, {})
-    }
-    occurrences.value = countOccurrences(newValue.value)
-  },
-  { deep: true }
-)
-
-watch(
-  () => rejectRuleList,
-  (newValue) => {
-    const countOccurrences = (array) => {
-      return array.reduce((accumulator, currentValue) => {
-        accumulator[currentValue.data] =
-          (accumulator[currentValue.data] || 0) + 1
-        return accumulator
-      }, {})
-    }
-    occurrencesReject.value = countOccurrences(newValue.value)
-  },
-  { deep: true }
 )
 
 async function load(proxyKey) {
@@ -109,6 +103,8 @@ async function load(proxyKey) {
   localRulesSet.value.url = result[proxyKey].config.rules.local.rulesSet.url
   localRulesSet.value.urlUpdatedAt =
     result[proxyKey].config.rules.local.rulesSet.urlUpdatedAt
+  localRulesSet.value.updateInterval =
+    result[proxyKey].config.rules.local.rulesSet.updateInterval
   localRulesSet.value.data = result[proxyKey].config.rules.local.rulesSet.data
   localRulesSet.value.proxy = result[proxyKey].config.rules.local.rulesSet.proxy
   localRulesSet.value.valid = result[proxyKey].config.rules.local.rulesSet.valid
@@ -121,6 +117,8 @@ async function load(proxyKey) {
   rejectRulesSet.value.url = result[proxyKey].config.rules.reject.rulesSet.url
   rejectRulesSet.value.urlUpdatedAt =
     result[proxyKey].config.rules.reject.rulesSet.urlUpdatedAt
+  rejectRulesSet.value.updateInterval =
+    result[proxyKey].config.rules.reject.rulesSet.updateInterval
   rejectRulesSet.value.data = result[proxyKey].config.rules.reject.rulesSet.data
   rejectRulesSet.value.valid =
     result[proxyKey].config.rules.reject.rulesSet.valid
@@ -130,28 +128,42 @@ async function load(proxyKey) {
   rejectRulesSet.value.format =
     result[proxyKey].config.rules.reject.rulesSet.format
 
+  siteRulesSet.value.url = result[proxyKey].config.rules.site.rulesSet.url
+  siteRulesSet.value.urlUpdatedAt =
+    result[proxyKey].config.rules.site.rulesSet.urlUpdatedAt
+  siteRulesSet.value.updateInterval =
+    result[proxyKey].config.rules.site.rulesSet.updateInterval
+  siteRulesSet.value.data = result[proxyKey].config.rules.site.rulesSet.data
+  siteRulesSet.value.proxy = result[proxyKey].config.rules.site.rulesSet.proxy
+  siteRulesSet.value.valid = result[proxyKey].config.rules.site.rulesSet.valid
+  if (siteRulesSet.value.valid == null) {
+    siteRulesSet.value.valid = true
+  }
+  siteRulesSet.value.format = result[proxyKey].config.rules.site.rulesSet.format
+
   const tmpRuleList = JSON.parse(
     JSON.stringify(result[proxyKey].config.rules.local.ruleList)
   )
-  for (const e of tmpRuleList) {
-    if (e.valid == undefined) e.valid = true
-    localRuleList.value.push(e)
-  }
+  localRuleList.value = tmpRuleList
 
   const tmpRejectRuleList = JSON.parse(
     JSON.stringify(result[proxyKey].config.rules.reject.ruleList)
   )
   rejectRuleList.value = tmpRejectRuleList
+
+  const tmpSiteRuleList = JSON.parse(
+    JSON.stringify(result[proxyKey].config.rules.site.ruleList)
+  )
+  siteRuleList.value = tmpSiteRuleList
 }
 
 async function handleExportPAC() {
   const res = await Browser.Storage.getLocalAll()
-  const codeBlock = generatePacfile(
+  const codeBlock = await generatePacfile(
     res,
-    'proxy_' + encodeURIComponent(route.params.name)
+    'proxy_' + encodeURIComponent(props.name)
   )
-  const outBlock = codeBlock.replace(/^\s*[\r?\n]/gm, '')
-  Browser.saveFile(outBlock, `${route.params.name}.pac`)
+  await Browser.saveFile(codeBlock, `${props.name}.pac`)
 }
 
 async function openMergeRulesDialog() {
@@ -169,6 +181,7 @@ function resetData() {
     format: 'base64',
     url: '',
     urlUpdatedAt: '',
+    updateInterval: 'default',
     data: '',
     proxy: 'direct',
     valid: true
@@ -177,14 +190,23 @@ function resetData() {
     format: 'base64',
     url: '',
     urlUpdatedAt: '',
+    updateInterval: 'default',
     data: '',
+    valid: true
+  }
+  siteRulesSet.value = {
+    format: 'base64',
+    url: '',
+    urlUpdatedAt: '',
+    updateInterval: 'default',
+    data: '',
+    proxy: 'direct',
     valid: true
   }
 }
 
 async function handleSubmit() {
-  const name = route.params.name
-  const encodeName = encodeURIComponent(name)
+  const encodeName = encodeURIComponent(props.name)
   const key = 'proxy_' + encodeName
   const tmpObj = saveForAuto(
     encodeName,
@@ -192,8 +214,10 @@ async function handleSubmit() {
     defaultProxy.value,
     localRuleList.value,
     rejectRuleList.value,
+    siteRuleList.value,
     localRulesSet.value,
-    rejectRulesSet.value
+    rejectRulesSet.value,
+    siteRulesSet.value
   )
   const version = await getNextLocalVersion()
   await Browser.Storage.setLocal({
@@ -201,15 +225,12 @@ async function handleSubmit() {
     config_version: version,
     config_syncTime: new Date().getTime()
   })
-  toast.info(`${name} ${Browser.I18n.getMessage('desc_save_success')}`)
+  toast.info(`${props.name} ${Browser.I18n.getMessage('desc_save_success')}`)
   storeStatus.resetUnsaved()
-  const result = await Browser.Storage.getLocalAll()
-  if (result.status_proxyKey == key) {
-    Browser.Proxy.set(result, key, async () => {
-      await Browser.Storage.setLocal({ status_proxyKey: key })
-      Browser.Action.setBadgeBackgroundColor(result[key].tagColor)
+  if (storeStatus.activeProxyKey == key) {
+    await Browser.Proxy.reloadOrDirect(async () => {
       toast.info(Browser.I18n.getMessage('desc_proxy_update'))
-    })
+    }, siteRuleChanged)
   }
   showUploadConflictModal()
 }
@@ -219,7 +240,7 @@ function handleCancel() {
     Browser.I18n.getMessage('modal_title_warning'),
     Browser.I18n.getMessage('modal_desc_reset'),
     function () {
-      load('proxy_' + encodeURIComponent(route.params.name))
+      load('proxy_' + encodeURIComponent(props.name))
       storeStatus.resetUnsaved()
     }
   )
@@ -237,7 +258,7 @@ function handleCancel() {
         <input ref="colorPicker" type="color" v-model="tagColor" />
       </div>
       <div class="fs-5 fw-bold text-truncate" id="title">
-        {{ Browser.I18n.getMessage('page_title_auto') + route.params.name }}
+        {{ Browser.I18n.getMessage('page_title_auto') + props.name }}
       </div>
       <button
         class="btn btn-sm btn-outline-danger ms-auto"
@@ -307,9 +328,22 @@ function handleCancel() {
         >
           {{ Browser.I18n.getMessage('tab_label_advance') }}
         </button>
+        <button
+          v-if="storeConfig.configSiteRules"
+          class="nav-link"
+          id="v-pills-site-tab"
+          data-bs-toggle="pill"
+          data-bs-target="#v-pills-site"
+          role="tab"
+          aria-controls="v-pills-site"
+          aria-selected="false"
+        >
+          <i class="fa-solid fa-flask me-1"></i>
+          {{ Browser.I18n.getMessage('tab_label_site') }}
+        </button>
         <div class="ms-auto d-flex align-items-center">
           <i
-            class="bi bi-cart-plus-fill icon-btn me-2"
+            class="fa-solid fa-code-merge icon-btn me-2"
             @click="openMergeRulesDialog"
           ></i>
           <PopoverTips
@@ -322,13 +356,15 @@ function handleCancel() {
         <div class="tab-pane fade show active" id="v-pills-default">
           <AutoRulesGroup @load="load"></AutoRulesGroup>
         </div>
+        <div class="tab-pane fade" id="v-pills-advance">
+          <AutoRejectGroup @load="load"></AutoRejectGroup>
+        </div>
         <div
           class="tab-pane fade"
-          id="v-pills-advance"
-          role="tabpanel"
-          aria-labelledby="v-pills-advance-tab"
+          id="v-pills-site"
+          v-if="storeConfig.configSiteRules"
         >
-          <AutoRejectGroup @load="load"></AutoRejectGroup>
+          <AutoSiteRulesGroup @load="load"></AutoSiteRulesGroup>
         </div>
       </div>
     </div>

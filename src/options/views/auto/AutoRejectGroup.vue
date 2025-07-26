@@ -1,5 +1,5 @@
 <script setup>
-import { ref, inject, getCurrentInstance } from 'vue'
+import { ref, inject, getCurrentInstance, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import draggable from 'vuedraggable'
 import PopoverTips from '@/components/PopoverTips.vue'
@@ -15,8 +15,7 @@ const storeStatus = useStatusStore()
 const instance = getCurrentInstance()
 const toast = instance?.appContext.config.globalProperties.$toast
 
-const { rejectRuleList, rejectRulesSet, occurrencesReject } =
-  inject('autoConfig')
+const { rejectRuleList, rejectRulesSet } = inject('autoConfig')
 const emit = defineEmits(['load'])
 
 const focusText = ref('')
@@ -27,6 +26,23 @@ const ruleItemTmpl = {
   proxy: '+reject',
   valid: true
 }
+
+const occurrences = ref([])
+
+watch(
+  () => rejectRuleList,
+  (newValue) => {
+    const countOccurrences = (array) => {
+      return array.reduce((accumulator, currentValue) => {
+        accumulator[currentValue.data] =
+          (accumulator[currentValue.data] || 0) + 1
+        return accumulator
+      }, {})
+    }
+    occurrences.value = countOccurrences(newValue.value)
+  },
+  { deep: true }
+)
 
 function setFocusText(text) {
   focusText.value = text
@@ -56,7 +72,7 @@ function removeRule(index) {
 function inputClassName(item) {
   if (item.data == '') return
   let name = []
-  if (occurrencesReject.value[item.data] > 1) {
+  if (occurrences.value[item.data] > 1) {
     name.push('border-warning')
     if (focusText.value == item.data) {
       name.push('background-info')
@@ -68,11 +84,13 @@ function inputClassName(item) {
 async function handleUpdateUrl() {
   const key = 'proxy_' + encodeURIComponent(route.params.name)
   const allConfig = await Browser.Storage.getLocalAll()
-  const updateProxyConfig = await updateRulesSetData(allConfig[key], ['reject'])
+  const updateProxyConfig = await updateRulesSetData(allConfig[key], {
+    subjectList: ['reject']
+  })
   if (JSON.stringify(updateProxyConfig) != '{}') {
     await Browser.Storage.setLocal({ [key]: updateProxyConfig })
-    if (allConfig.status_proxyKey == key) {
-      Browser.Proxy.set(allConfig, key, async () => {
+    if (storeStatus.activeProxyKey == key) {
+      await Browser.Proxy.reloadOrDirect(async () => {
         toast.info(Browser.I18n.getMessage('desc_proxy_update'))
       })
     }
@@ -108,12 +126,27 @@ function setUnsaved() {
               :key="index"
               v-model="rejectRuleList[index]"
               :class="inputClassName(element)"
+              :isProxySelectable="false"
               @getFocusText="setFocusText(element.data)"
               @clearFousText="setFocusText(null)"
-              @deleteItem="removeRule(index)"
-              @addItem="insertRule(index)"
-              @hrItem="insertDivider(index)"
-            ></RuleItem>
+            >
+              <template #operation>
+                <i
+                  class="bi bi-layer-backward icon-btn me-2 mt-1"
+                  @click="insertRule(index)"
+                ></i>
+                <i
+                  class="bi bi-inboxes-fill icon-btn me-2 mt-1"
+                  @click="insertDivider(index)"
+                ></i>
+              </template>
+              <template #delete>
+                <i
+                  class="bi bi-trash-fill icon-btn mt-1"
+                  @click="removeRule(index)"
+                ></i>
+              </template>
+            </RuleItem>
           </template>
         </draggable>
       </div>
@@ -132,7 +165,7 @@ function setUnsaved() {
     <div class="card-body">
       <LinkTextItem
         :urlTitle="Browser.I18n.getMessage('form_label_rule_url')"
-        :urlUpdatedAtTitle="Browser.I18n.getMessage('form_label_update_date')"
+        :urlUpdatedAtTitle="Browser.I18n.getMessage('form_label_rule_update')"
         :validTitle="Browser.I18n.getMessage('form_label_rule_valid')"
         :dataTitle="Browser.I18n.getMessage('form_label_rule_data')"
         @updateRulesSetData="handleUpdateUrl('reject')"

@@ -1,19 +1,28 @@
 <script setup>
-import { ref, getCurrentInstance, computed, inject, nextTick, watch } from 'vue'
+import {
+  ref,
+  getCurrentInstance,
+  computed,
+  inject,
+  nextTick,
+  watch,
+  onMounted
+} from 'vue'
 import PopoverTips from '@/components/PopoverTips.vue'
-import ConfigDisplay from '@/options/components/ConfigDisplay.vue'
 import { useConfigStore } from '@/options/stores/config'
 import { useStatusStore } from '@/options/stores/status'
 
 import Browser from '@/Browser/main'
+import TagsTable from '@/options/components/TagsTable.vue'
 
 const storeConfig = useConfigStore()
 const storeStatus = useStatusStore()
-const showSyncConflictModal = inject('showSyncConflictModal')
 const instance = getCurrentInstance()
 const toast = instance?.appContext.config.globalProperties.$toast
+const confirmModal = instance?.appContext.config.globalProperties.$confirm
 
 const isRejectValid = ref(true)
+const contextMenusChecked = ref(false)
 
 const rejectInputClass = computed(() => {
   return isRejectValid.value
@@ -21,9 +30,9 @@ const rejectInputClass = computed(() => {
     : 'form-control form-control-sm is-invalid'
 })
 
-const configAutoSync = computed(() => {
-  return storeConfig.configAutoSync
-})
+// onMounted(() => {
+//   contextMenusChecked.value = storeConfig.configContextMenus
+// })
 
 watch(
   () => storeConfig.configMonitor,
@@ -32,23 +41,44 @@ watch(
   }
 )
 
-async function handleAutoSyncChange(event) {
-  if (event.target.checked) {
-    storeConfig.configAutoSync = event.target.checked
-    await nextTick()
-    showSyncConflictModal(Browser.I18n.getMessage('modal_desc_sync'))
-  } else {
-    storeConfig.configAutoSync = false
-    Browser.Storage.setLocal({ config_autoSync: false })
-  }
-}
-
 function openMonitor() {
   if (!storeConfig.configMonitor) {
     toast.warning(Browser.I18n.getMessage('desc_monitor_disabled'))
     return
   }
   window.open('/monitor.html', '_blank')
+}
+
+async function handleContextPermission() {
+  const contextMenusAllowed = await chrome.permissions.contains({
+    permissions: ['contextMenus']
+  })
+  if (contextMenusAllowed) return
+  const granted = await chrome.permissions.request({
+    permissions: ['contextMenus']
+  })
+  if (granted) {
+    toast.warning(`授权成功`)
+  } else {
+    toast.warning(`授权失败`)
+  }
+}
+
+async function handleContextMenusChanged() {
+  const contextMenusAllowed = await chrome.permissions.contains({
+    permissions: ['contextMenus']
+  })
+  if (!contextMenusAllowed) {
+    const configContextMenus = await Browser.Storage.getLocal(
+      'config_contextMenus'
+    )
+    storeConfig.configContextMenus = configContextMenus.config_contextMenus
+    confirmModal.createConfirm('授权', '是否授权', handleContextPermission)
+  } else {
+    await Browser.Storage.setLocal({
+      config_contextMenus: storeConfig.configContextMenus
+    })
+  }
 }
 
 async function handleBlur(event) {
@@ -88,37 +118,6 @@ async function handleBlur(event) {
       <div class="card-body">
         <div class="row mb-3 d-flex align-items-center">
           <label class="col-2 col-form-label">
-            <span>{{ Browser.I18n.getMessage('form_label_monitor') }}</span>
-            <PopoverTips
-              className="bi bi-question-circle-fill icon-btn ms-2"
-              :content="Browser.I18n.getMessage('popover_monitor')"
-            ></PopoverTips>
-          </label>
-          <div class="col-10">
-            <div class="form-check-sm d-flex align-items-center">
-              <div class="form-check form-switch ms-2 mt-1">
-                <input
-                  class="form-check-input form-check-input"
-                  type="checkbox"
-                  role="switch"
-                  v-model="storeConfig.configMonitor"
-                />
-                <span>{{
-                  storeConfig.configMonitor == false
-                    ? Browser.I18n.getMessage('input_label_off')
-                    : Browser.I18n.getMessage('input_label_on')
-                }}</span>
-              </div>
-              <PopoverTips
-                className="bi bi-bug-fill icon-btn ms-2 mt-1"
-                :content="Browser.I18n.getMessage('btn_label_monitor')"
-                @click="openMonitor"
-              ></PopoverTips>
-            </div>
-          </div>
-        </div>
-        <div class="row mb-3 d-flex align-items-center">
-          <label class="col-2 col-form-label">
             <span>{{ Browser.I18n.getMessage('form_label_reject') }}</span>
             <PopoverTips
               className="bi bi-question-circle-fill icon-btn ms-2"
@@ -139,41 +138,70 @@ async function handleBlur(event) {
         </div>
         <div class="row mb-3 d-flex align-items-center">
           <label class="col-2 col-form-label">
-            <span>{{ Browser.I18n.getMessage('form_label_autosync') }}</span>
-            <PopoverTips
-              className="bi bi-question-circle-fill icon-btn ms-2"
-              :content="Browser.I18n.getMessage('popover_autosync')"
-            ></PopoverTips>
+            <span>{{ Browser.I18n.getMessage('section_label_menus') }}</span>
           </label>
           <div class="col-10">
             <div class="form-check-sm d-flex align-items-center">
-              <div class="form-check form-switch ms-2 mt-1">
+              <div class="form-check form-switch mt-1">
                 <input
                   class="form-check-input form-check-input"
                   type="checkbox"
                   role="switch"
-                  :checked="configAutoSync"
-                  @change="handleAutoSyncChange"
+                  v-model="storeConfig.configContextMenus"
+                  @click="handleContextMenusChanged"
                 />
                 <span>{{
-                  configAutoSync == false
-                    ? Browser.I18n.getMessage('input_label_off')
-                    : Browser.I18n.getMessage('input_label_on')
+                  storeConfig.configContextMenus
+                    ? Browser.I18n.getMessage('input_label_on')
+                    : Browser.I18n.getMessage('input_label_off')
                 }}</span>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-header">
-        <span class="fw-bold">{{
-          Browser.I18n.getMessage('section_label_sync')
-        }}</span>
-      </div>
-      <div class="card-body">
-        <ConfigDisplay :isModal="false"></ConfigDisplay>
+        <div class="row mb-3 d-flex align-items-center">
+          <label class="col-2 col-form-label">
+            <span>{{ Browser.I18n.getMessage('form_label_monitor') }}</span>
+            <PopoverTips
+              className="bi bi-question-circle-fill icon-btn ms-2"
+              :content="Browser.I18n.getMessage('popover_monitor')"
+            ></PopoverTips>
+          </label>
+          <div class="col-10">
+            <div class="form-check-sm d-flex align-items-center">
+              <div class="form-check form-switch mt-1">
+                <input
+                  class="form-check-input form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  v-model="storeConfig.configMonitor"
+                />
+                <span>{{
+                  storeConfig.configMonitor
+                    ? Browser.I18n.getMessage('input_label_on')
+                    : Browser.I18n.getMessage('input_label_off')
+                }}</span>
+              </div>
+              <PopoverTips
+                className="bi bi-bug-fill icon-btn ms-2 mt-1"
+                :content="Browser.I18n.getMessage('btn_label_monitor')"
+                @click="openMonitor"
+              ></PopoverTips>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3 d-flex align-items-top">
+          <label class="col-2 col-form-label">
+            <span>{{ Browser.I18n.getMessage('form_label_iptags') }}</span>
+            <PopoverTips
+              className="bi bi-question-circle-fill icon-btn ms-2"
+              :content="Browser.I18n.getMessage('popover_iptags')"
+            ></PopoverTips>
+          </label>
+          <div class="col-10">
+            <TagsTable></TagsTable>
+          </div>
+        </div>
       </div>
     </div>
   </div>

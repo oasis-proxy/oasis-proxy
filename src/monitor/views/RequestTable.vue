@@ -1,12 +1,10 @@
 <script setup>
 import Browser from '@/Browser/main'
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import PopoverTips from '@/components/PopoverTips.vue'
 
 const props = defineProps({
-  tableList: Array,
-  contentFilter: String,
-  tabIdFilter: String
+  list: Array
 })
 
 const iptags = ref({})
@@ -54,23 +52,10 @@ const title = [
 ]
 
 onMounted(async () => {
-  getIptags()
+  loadIptags()
 })
 
-function tableFilter(item) {
-  return (
-    (props.tabIdFilter == '' || item.tabId == props.tabIdFilter) &&
-    (item.url.indexOf(props.contentFilter) > -1 ||
-      item.policy.indexOf(props.contentFilter) > -1 ||
-      item.rule.indexOf(props.contentFilter) > -1 ||
-      item.ip.indexOf(props.contentFilter) > -1)
-  )
-}
-const list = computed(() => {
-  return props.tableList.filter(tableFilter)
-})
-
-async function getIptags() {
+async function loadIptags() {
   const res = await Browser.Storage.getLocal('config_iptags')
   if (res.config_iptags != null) {
     iptags.value = res.config_iptags
@@ -89,7 +74,6 @@ async function getIptags() {
             :style="{ width: item.width }"
           >
             {{ item.name }}
-
             <PopoverTips
               v-if="item.clickable"
               className="bi bi-copy icon-btn ms-2"
@@ -99,7 +83,11 @@ async function getIptags() {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, index) in list" class="text-nowrap" :key="index">
+        <tr
+          v-for="(item, index) in props.list"
+          class="text-nowrap"
+          :key="index"
+        >
           <td style="width: 20px" class="ps-2">
             <i
               class="bi bi-check-circle-fill text-success"

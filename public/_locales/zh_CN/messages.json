@@ -11,6 +11,10 @@
     "message": "保 存",
     "description": ""
   },
+  "btn_label_merge": {
+    "message": "合 并",
+    "description": ""
+  },
   "btn_label_reset": {
     "message": "恢 复",
     "description": ""
@@ -94,8 +98,16 @@
     "message": "高级配置",
     "description": ""
   },
+  "tab_label_site": {
+    "message": "站点配置",
+    "description": ""
+  },
   "tab_label_others": {
     "message": "其他配置"
+  },
+  "tab_label_beta": {
+    "message": "试验配置",
+    "description": ""
   },
   "tab_label_debug": {
     "message": "调试配置",
@@ -103,6 +115,10 @@
   },
   "aside_label_setting": {
     "message": "通用设置",
+    "description": ""
+  },
+  "aside_label_temp_rules": {
+    "message": "临时规则",
     "description": ""
   },
   "aside_label_alltabs": {
@@ -137,6 +153,10 @@
     "message": "原代理节点",
     "description": ""
   },
+  "form_label_merge": {
+    "message": "合并",
+    "description": ""
+  },
   "form_label_target_config": {
     "message": "新代理节点",
     "description": ""
@@ -165,6 +185,10 @@
     "message": "筛 选",
     "description": ""
   },
+  "form_label_auto_refresh": {
+    "message": "自动刷新",
+    "description": ""
+  },
   "form_label_rule_update": {
     "message": "规则更新",
     "description": ""
@@ -183,6 +207,10 @@
   },
   "form_label_autosync": {
     "message": "自动同步",
+    "description": ""
+  },
+  "form_label_manualsync": {
+    "message": "手动同步",
     "description": ""
   },
   "form_label_host": {
@@ -262,7 +290,7 @@
     "description": ""
   },
   "section_label_sync": {
-    "message": "手动同步",
+    "message": "同步配置",
     "description": ""
   },
   "section_label_request": {
@@ -291,6 +319,14 @@
   },
   "section_label_internal": {
     "message": "本地规则",
+    "description": ""
+  },
+  "section_label_site": {
+    "message": "站点规则",
+    "description": ""
+  },
+  "section_label_menus": {
+    "message": "右键菜单",
     "description": ""
   },
   "section_label_external": {
@@ -408,6 +444,9 @@
   "modal_title_merge_autopolicy": {
     "message": "合并自动策略规则"
   },
+  "modal_title_merge_temprules": {
+    "message": "合并临时规则"
+  },
   "modal_title_batch_update_server": {
     "message": "批量更新本地规则代理节点"
   },
@@ -455,6 +494,12 @@
   },
   "modal_desc_resetall": {
     "message": "配置删除后无法恢复，建议先下载备份。确认删除?"
+  },
+  "desc_proxy_success": {
+    "message": "设置代理成功"
+  },
+  "desc_proxy_failed": {
+    "message": "设置代理失败"
   },
   "desc_unsaved_info": {
     "message": "配置未保存，请保存或刷新页面后修改名称"
@@ -543,6 +588,15 @@
   "desc_monitor_disabled": {
     "message": "链接监控未开启"
   },
+  "desc_auto_refresh_by_switch_proxy": {
+    "message": "切换代理时自动刷新当前标签页"
+  },
+  "desc_auto_refresh_by_site_rule": {
+    "message": "基于站点规则的临时规则更新时自动刷新当前标签页"
+  },
+  "desc_set_proxy_direct": {
+    "message": "代理切换为直连"
+  },
   "feedback_request_failed": {
     "message": "地址获取内容失败, 请检查URL地址和数据格式"
   },
@@ -586,7 +640,7 @@
     "message": "请确保填入地址无法访问，否则拒绝规则可能失效。"
   },
   "popover_update_url": {
-    "message": "每日自动更新策略模式中设置的“外部规则地址”、“拒绝规则地址”内容。"
+    "message": "自动更新策略模式中设置的“外部规则地址”、“拒绝规则地址”内容根据配置频率进行更新。"
   },
   "popover_fromCache": {
     "message": "命中缓存"
@@ -650,5 +704,35 @@
   },
   "placeholder_regex": {
     "message": "请输入域名的正则表达式"
+  },
+  "input_selection_by_system": {
+    "message": "跟随系统"
+  },
+  "input_selection_manual": {
+    "message": "手动"
+  },
+  "input_selection_24h": {
+    "message": "24小时"
+  },
+  "input_selection_12h": {
+    "message": "12小时"
+  },
+  "input_selection_6h": {
+    "message": "6小时"
+  },
+  "input_selection_3h": {
+    "message": "3小时"
+  },
+  "input_selection_1h": {
+    "message": "1小时"
+  },
+  "input_selection_15m": {
+    "message": "15分"
+  },
+  "input_selection_1m": {
+    "message": "1分"
+  },
+  "input_selection_disabled": {
+    "message": "禁用"
   }
 }

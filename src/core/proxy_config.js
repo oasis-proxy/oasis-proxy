@@ -1,4 +1,4 @@
-import { downloadUrl, objIsEqual } from './utils.js'
+import { downloadUrl, objIsEqual, enumInterval } from './utils.js'
 
 export const CONST_DEFAULT_PORT = {
   http: 80,
@@ -8,7 +8,7 @@ export const CONST_DEFAULT_PORT = {
 }
 
 export const createProxy = function (name, tagColor, mode) {
-  if (name == null || name == '' || mode == null || mode == '') {
+  if (!name || !mode) {
     return -1
   }
   let proxy = { name, tagColor, mode, config: { mode: mode } }
@@ -22,6 +22,7 @@ export const createProxy = function (name, tagColor, mode) {
             rulesSet: {
               format: 'base64',
               url: '',
+              updateInterval: 'default',
               urlUpdatedAt: '',
               data: '',
               proxy: 'direct',
@@ -35,8 +36,22 @@ export const createProxy = function (name, tagColor, mode) {
               format: 'base64',
               url: '',
               urlUpdatedAt: '',
+              updateInterval: 'default',
               data: '',
               proxy: '+reject',
+              mode: 'autoProxy',
+              valid: true
+            },
+            ruleList: []
+          },
+          site: {
+            rulesSet: {
+              format: 'base64',
+              url: '',
+              updateInterval: 'default',
+              urlUpdatedAt: '',
+              data: '',
+              proxy: 'direct',
               mode: 'autoProxy',
               valid: true
             },
@@ -50,6 +65,7 @@ export const createProxy = function (name, tagColor, mode) {
         mode: 'pac_script',
         rules: {
           url: '',
+          updateInterval: 'default',
           urlUpdatedAt: '',
           data: ''
         }
@@ -87,6 +103,16 @@ export const proxyUses = function (proxyConfig) {
 
   // local rulesSet
   tmpName = proxyConfig.config.rules.local.rulesSet?.proxy
+  proxyNames.push(tmpName.startsWith('+') ? tmpName.substring(1) : tmpName)
+
+  // site ruleList
+  proxyConfig.config.rules.site.ruleList.forEach((item) => {
+    tmpName = item.proxy
+    proxyNames.push(tmpName.startsWith('+') ? tmpName.substring(1) : tmpName)
+  })
+
+  // site rulesSet
+  tmpName = proxyConfig.config.rules.site.rulesSet?.proxy
   proxyNames.push(tmpName.startsWith('+') ? tmpName.substring(1) : tmpName)
 
   const uniqNames = [...new Set(proxyNames)]
@@ -142,14 +168,16 @@ export const replaceProxyNameForSingleProxy = function (
     tmp.config.rules.defaultProxy = proxyNewName
   }
 
-  for (const [i, e] of proxyConfig.config.rules.local.ruleList.entries()) {
-    if (e.proxy == proxyOldName) {
-      tmp.config.rules.local.ruleList[i].proxy = proxyNewName
+  for (const s of ['local', 'site']) {
+    for (const [i, e] of proxyConfig.config.rules[s].ruleList.entries()) {
+      if (e.proxy == proxyOldName) {
+        tmp.config.rules[s].ruleList[i].proxy = proxyNewName
+      }
     }
-  }
 
-  if (proxyConfig.config.rules.local.rulesSet?.proxy == proxyOldName) {
-    tmp.config.rules.local.rulesSet.proxy = proxyNewName
+    if (proxyConfig.config.rules[s].rulesSet?.proxy == proxyOldName) {
+      tmp.config.rules[s].rulesSet.proxy = proxyNewName
+    }
   }
 
   return tmp
@@ -160,16 +188,20 @@ export const saveForPac = function (
   tagColor,
   data,
   url = '',
-  urlUpdatedAt = ''
+  urlUpdatedAt = '',
+  updateInterval = 'default'
 ) {
-  if (name == null || name == '') {
+  if (!name) {
     return -1
   }
   return {
     name,
     tagColor,
     mode: 'pac_script',
-    config: { mode: 'pac_script', rules: { url, urlUpdatedAt, data } }
+    config: {
+      mode: 'pac_script',
+      rules: { url, urlUpdatedAt, updateInterval, data }
+    }
   }
 }
 
@@ -182,7 +214,7 @@ export const saveForFixed = function (
   proxyForFtp,
   bypassList = ''
 ) {
-  if (name == null || name == '') {
+  if (!name) {
     return -1
   }
   let tmp = {
@@ -196,27 +228,17 @@ export const saveForFixed = function (
       }
     }
   }
-  if (
-    proxyForHttp.scheme == 'default' &&
-    proxyForHttps.scheme == 'default' &&
-    proxyForFtp.scheme == 'default'
-  ) {
-    if (fallbackProxy.scheme != 'direct') {
-      tmp.config.rules.singleProxy = JSON.parse(JSON.stringify(fallbackProxy))
-    }
-  } else {
-    if (proxyForHttp.scheme != 'default') {
-      tmp.config.rules.proxyForHttp = JSON.parse(JSON.stringify(proxyForHttp))
-    }
-    if (proxyForHttps.scheme != 'default') {
-      tmp.config.rules.proxyForHttps = JSON.parse(JSON.stringify(proxyForHttps))
-    }
-    if (proxyForFtp.scheme != 'default') {
-      tmp.config.rules.proxyForFtp = JSON.parse(JSON.stringify(proxyForFtp))
-    }
-    if (fallbackProxy.scheme != 'direct') {
-      tmp.config.rules.fallbackProxy = JSON.parse(JSON.stringify(fallbackProxy))
-    }
+  if (proxyForHttp.scheme != 'default') {
+    tmp.config.rules.proxyForHttp = JSON.parse(JSON.stringify(proxyForHttp))
+  }
+  if (proxyForHttps.scheme != 'default') {
+    tmp.config.rules.proxyForHttps = JSON.parse(JSON.stringify(proxyForHttps))
+  }
+  if (proxyForFtp.scheme != 'default') {
+    tmp.config.rules.proxyForFtp = JSON.parse(JSON.stringify(proxyForFtp))
+  }
+  if (fallbackProxy.scheme != 'direct') {
+    tmp.config.rules.fallbackProxy = JSON.parse(JSON.stringify(fallbackProxy))
   }
   return tmp
 }
@@ -227,8 +249,10 @@ export const saveForAuto = function (
   defaultProxy,
   localRuleList,
   rejectRuleList,
+  siteRuleList,
   localRulesSet,
-  rejectRulesSet
+  rejectRulesSet,
+  siteRulesSet
 ) {
   let tmp = {
     name,
@@ -243,6 +267,7 @@ export const saveForAuto = function (
             format: localRulesSet.format,
             url: localRulesSet.url,
             urlUpdatedAt: localRulesSet.urlUpdatedAt,
+            updateInterval: localRulesSet.updateInterval,
             data: localRulesSet.data,
             proxy: localRulesSet.proxy,
             mode: 'autoProxy',
@@ -255,10 +280,24 @@ export const saveForAuto = function (
             format: rejectRulesSet.format,
             url: rejectRulesSet.url,
             urlUpdatedAt: rejectRulesSet.urlUpdatedAt,
+            updateInterval: rejectRulesSet.updateInterval,
             data: rejectRulesSet.data,
             proxy: '+reject',
             mode: 'autoProxy',
             valid: rejectRulesSet.valid
+          },
+          ruleList: []
+        },
+        site: {
+          rulesSet: {
+            format: siteRulesSet.format,
+            url: siteRulesSet.url,
+            urlUpdatedAt: siteRulesSet.urlUpdatedAt,
+            updateInterval: siteRulesSet.updateInterval,
+            data: siteRulesSet.data,
+            proxy: siteRulesSet.proxy,
+            mode: 'autoProxy',
+            valid: siteRulesSet.valid
           },
           ruleList: []
         }
@@ -267,6 +306,7 @@ export const saveForAuto = function (
   }
   tmp.config.rules.local.ruleList = JSON.parse(JSON.stringify(localRuleList))
   tmp.config.rules.reject.ruleList = JSON.parse(JSON.stringify(rejectRuleList))
+  tmp.config.rules.site.ruleList = JSON.parse(JSON.stringify(siteRuleList))
   return tmp
 }
 
@@ -333,101 +373,162 @@ function getAuthListInAuto(proxyConfigs, key) {
 function getAuthListInFixed(proxyConfig) {
   const config = proxyConfig.config
   let port = null
-  if (
-    config.rules.singleProxy?.username != null &&
-    config.rules.singleProxy?.username != ''
-  ) {
-    port = config.rules.singleProxy.port
-    if (port == null) {
-      port = CONST_DEFAULT_PORT[config.rules.singleProxy.scheme]
+  const authList = []
+  if (config.rules.proxyForHttp?.username) {
+    port = config.rules.proxyForHttp.port
+    if (!port) {
+      port = CONST_DEFAULT_PORT[config.rules.proxyForHttp.scheme]
     }
-    return [
-      {
-        host: config.rules.singleProxy.host,
-        port: port,
-        username: config.rules.singleProxy.username,
-        password: config.rules.singleProxy.password
-      }
-    ]
-  } else {
-    const authList = []
-    if (
-      config.rules.proxyForHttp?.username != null &&
-      config.rules.proxyForHttp?.username != ''
-    ) {
-      port = config.rules.proxyForHttp.port
-      if (port == null) {
-        port = CONST_DEFAULT_PORT[config.rules.proxyForHttp.scheme]
-      }
-      authList.push({
-        host: config.rules.proxyForHttp.host,
-        port: port,
-        username: config.rules.proxyForHttp.username,
-        password: config.rules.proxyForHttp.password
-      })
+    authList.push({
+      host: config.rules.proxyForHttp.host,
+      port: port,
+      username: config.rules.proxyForHttp.username,
+      password: config.rules.proxyForHttp.password
+    })
+  }
+  if (config.rules.proxyForHttps?.username) {
+    port = config.rules.proxyForHttps.port
+    if (!port) {
+      port = CONST_DEFAULT_PORT[config.rules.proxyForHttps.scheme]
     }
-    if (
-      config.rules.proxyForHttps?.username != null &&
-      config.rules.proxyForHttps?.username != ''
-    ) {
-      port = config.rules.proxyForHttps.port
-      if (port == null) {
-        port = CONST_DEFAULT_PORT[config.rules.proxyForHttps.scheme]
-      }
-      authList.push({
-        host: config.rules.proxyForHttps.host,
-        port: port,
-        username: config.rules.proxyForHttps.username,
-        password: config.rules.proxyForHttps.password
-      })
+    authList.push({
+      host: config.rules.proxyForHttps.host,
+      port: port,
+      username: config.rules.proxyForHttps.username,
+      password: config.rules.proxyForHttps.password
+    })
+  }
+  if (config.rules.proxyForFtp?.username) {
+    port = config.rules.proxyForFtp.port
+    if (!port) {
+      port = CONST_DEFAULT_PORT[config.rules.proxyForFtp.scheme]
     }
-    if (
-      config.rules.proxyForFtp?.username != null &&
-      config.rules.proxyForFtp?.username != ''
-    ) {
-      port = config.rules.proxyForFtp.port
-      if (port == null) {
-        port = CONST_DEFAULT_PORT[config.rules.proxyForFtp.scheme]
-      }
-      authList.push({
-        host: config.rules.proxyForFtp.host,
-        port: port,
-        username: config.rules.proxyForFtp.username,
-        password: config.rules.proxyForFtp.password
-      })
+    authList.push({
+      host: config.rules.proxyForFtp.host,
+      port: port,
+      username: config.rules.proxyForFtp.username,
+      password: config.rules.proxyForFtp.password
+    })
+  }
+  if (config.rules.fallbackProxy?.username) {
+    port = config.rules.fallbackProxy.port
+    if (!port) {
+      port = CONST_DEFAULT_PORT[config.rules.fallbackProxy.scheme]
     }
-    if (
-      config.rules.fallbackProxy?.username != null &&
-      config.rules.fallbackProxy?.username != ''
-    ) {
-      port = config.rules.fallbackProxy.port
-      if (port == null) {
-        port = CONST_DEFAULT_PORT[config.rules.fallbackProxy.scheme]
+    authList.push({
+      host: config.rules.fallbackProxy.host,
+      port: port,
+      username: config.rules.fallbackProxy.username,
+      password: config.rules.fallbackProxy.password
+    })
+  }
+  return authList
+}
+
+export const updatePacData = async function (proxyConfig, { interval = 0 }) {
+  let updateFlag = false
+  let response
+  try {
+    // Check if update inmediately(interval = 0)
+    if (interval != 0) {
+      const currTime = Date.now()
+      const lastTime = new Date(proxyConfig.config.rules.urlUpdatedAt).getTime()
+
+      // Check if updateInterval is disabled by proxy
+      if (proxyConfig.config.rules.updateInterval == 'disabled') {
+        return {}
       }
-      authList.push({
-        host: config.rules.fallbackProxy.host,
-        port: port,
-        username: config.rules.fallbackProxy.username,
-        password: config.rules.fallbackProxy.password
-      })
+
+      // Check if updateInterval is default and system is manual
+      if (
+        interval == null &&
+        proxyConfig.config.rules.updateInterval == 'default'
+      ) {
+        return {}
+      }
+
+      if (proxyConfig.config.rules.updateInterval != 'default') {
+        interval =
+          enumInterval[proxyConfig.config.rules.updateInterval] * 60 * 1000
+      }
+
+      if (currTime - lastTime < interval) {
+        return {}
+      }
     }
-    return authList
+    if (proxyConfig.config.rules.url) {
+      response = await downloadUrl(proxyConfig.config.rules.url)
+
+      if (JSON.stringify(response) != '{}') {
+        proxyConfig.config.rules.data = response.data
+        proxyConfig.config.rules.urlUpdatedAt = response.updated
+        updateFlag = true
+      }
+    }
+
+    if (updateFlag) {
+      return proxyConfig
+    } else {
+      return {}
+    }
+  } catch (err) {
+    console.error(err)
+    return {}
   }
 }
 
 export const updateRulesSetData = async function (
   proxyConfig,
-  subjectList = ['reject', 'local']
+  { subjectList = ['reject', 'local', 'site'], interval = 0 }
 ) {
   let updateFlag = false
   let response
   try {
     for (const element of subjectList) {
-      if (proxyConfig.config.rules[element]?.rulesSet.url != '') {
+      // Check if update inmediately(interval = 0)
+      if (interval != 0) {
+        const currTime = Date.now()
+        const lastTime = new Date(
+          proxyConfig.config.rules[element].rulesSet.urlUpdatedAt
+        ).getTime()
+
+        // Check if updateInterval is disabled by proxy
+        if (
+          proxyConfig.config.rules[element].rulesSet.updateInterval ==
+          'disabled'
+        ) {
+          continue
+        }
+
+        // Check if updateInterval is default and system is manual
+        if (
+          interval == null &&
+          proxyConfig.config.rules[element].rulesSet.updateInterval == 'default'
+        ) {
+          continue
+        }
+
+        if (
+          proxyConfig.config.rules[element].rulesSet.updateInterval != 'default'
+        ) {
+          interval =
+            enumInterval[
+              proxyConfig.config.rules[element].rulesSet.updateInterval
+            ] *
+            60 *
+            1000
+        }
+
+        if (currTime - lastTime < interval) {
+          continue
+        }
+      }
+      if (proxyConfig.config.rules[element]?.rulesSet.url) {
         response = await downloadUrl(
           proxyConfig.config.rules[element]?.rulesSet.url,
           proxyConfig.config.rules[element]?.rulesSet.format
         )
+
         if (JSON.stringify(response) != '{}') {
           proxyConfig.config.rules[element].rulesSet.data = response.data
           proxyConfig.config.rules[element].rulesSet.urlUpdatedAt =
@@ -450,7 +551,10 @@ export const updateRulesSetData = async function (
 const SYNC_CONFIG_KEY_LIST = [
   'config_app_version',
   'config_iptags',
-  'config_syncTime'
+  'config_syncTime',
+  'config_updateUrl',
+  'config_siteRules',
+  'config_siteRules_autoRefresh'
 ]
 
 export const simplify = function (config) {
@@ -460,11 +564,10 @@ export const simplify = function (config) {
       switch (config[key].mode) {
         case 'auto':
           simplifyConfig[key] = config[key]
-          if (config[key].config.rules.local.rulesSet.url != '') {
-            simplifyConfig[key].config.rules.local.rulesSet.data = ''
-          }
-          if (config[key].config.rules.reject.rulesSet.url != '') {
-            simplifyConfig[key].config.rules.reject.rulesSet.data = ''
+          for (const s of ['local', 'reject', 'site']) {
+            if (config[key].config.rules[s].rulesSet.url != '') {
+              simplifyConfig[key].config.rules[s].rulesSet.data = ''
+            }
           }
           break
         case 'pac_script':
@@ -497,27 +600,17 @@ export const enrich = async function (config) {
       switch (config[key].mode) {
         case 'auto':
           enrichConfig[key] = config[key]
-          if (config[key].config.rules.local.rulesSet.url != '') {
-            response = await downloadUrl(
-              config[key].config.rules.local.rulesSet.url,
-              config[key].config.rules.local.rulesSet.format
-            )
-            if (JSON.stringify(response) != '{}') {
-              enrichConfig[key].config.rules.local.rulesSet.data = response.data
-              enrichConfig[key].config.rules.local.rulesSet.urlUpdatedAt =
-                response.updated
-            }
-          }
-          if (config[key].config.rules.reject.rulesSet.url != '') {
-            response = await downloadUrl(
-              config[key].config.rules.reject.rulesSet.url,
-              config[key].config.rules.reject.rulesSet.format
-            )
-            if (JSON.stringify(response) != '{}') {
-              enrichConfig[key].config.rules.reject.rulesSet.data =
-                response.data
-              enrichConfig[key].config.rules.reject.rulesSet.urlUpdatedAt =
-                response.updated
+          for (const s of ['local', 'reject', 'site']) {
+            if (config[key].config.rules[s].rulesSet.url != '') {
+              response = await downloadUrl(
+                config[key].config.rules[s].rulesSet.url,
+                config[key].config.rules[s].rulesSet.format
+              )
+              if (JSON.stringify(response) != '{}') {
+                enrichConfig[key].config.rules[s].rulesSet.data = response.data
+                enrichConfig[key].config.rules[s].rulesSet.urlUpdatedAt =
+                  response.updated
+              }
             }
           }
           break

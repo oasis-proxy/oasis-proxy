@@ -10,19 +10,18 @@ const title = ref('')
 const description = ref('')
 let callback = function () {}
 
-let confirmModalInstance = null
+const confirmModalInstance = ref(null)
 
 onMounted(() => {
   const modalElement = document.getElementById('confirmModal')
-  // eslint-disable-next-line no-undef
-  confirmModalInstance = new bootstrap.Modal(modalElement)
+  confirmModalInstance.value = new bootstrap.Modal(modalElement)
 })
 
 function hide() {
-  confirmModalInstance.hide()
+  confirmModalInstance.value.hide()
 }
 function show() {
-  confirmModalInstance.show()
+  confirmModalInstance.value.show()
 }
 
 function createConfirm(mTitle, mDescription, mCallback) {

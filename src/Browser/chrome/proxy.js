@@ -1,177 +1,215 @@
-import { generatePacfile } from '../../core/pacfile_generator.js'
-import { subStringForName } from '../../core/utils.js'
+import { generatePacfile } from '@/core/pacfile_generator.js'
+import { subStringForName, filterPrefixArray, log } from '@/core/utils.js'
 import Storage from './storage.js'
+import Action from './action.js'
+import I18n from './i18n.js'
 
 const Proxy = {}
-
-Proxy.reloadOrDirect = async function () {
+Proxy.reloadOrDirect = async function (
+  afterSuccess = () => {},
+  isClearSessionStorage = false
+) {
+  if (isClearSessionStorage) {
+    await Storage.clearSession()
+  }
   const proxyConfigs = await Storage.getLocalAll()
   const key = proxyConfigs.status_proxyKey
   if (key == 'direct' || key == 'system') {
+    afterSuccess()
     return
-  } else if (Object.prototype.hasOwnProperty.call(proxyConfigs, key)) {
-    Proxy.set(proxyConfigs, proxyConfigs.status_proxyKey)
+  } else if (Object.keys(proxyConfigs).includes(key)) {
+    let tempRules = []
+    if (proxyConfigs.config_siteRules && proxyConfigs[key].mode == 'auto') {
+      const sessionStorage = await Storage.getSessionAll()
+      tempRules = filterPrefixArray(sessionStorage, 'tempRule_')
+    }
+    const config = await createConfig(proxyConfigs, key, tempRules)
+    set(config, async () => {
+      await Action.setBadgeBackgroundColor(proxyConfigs[key].tagColor)
+      await Action.setBadgeText(subStringForName(proxyConfigs[key].name))
+      afterSuccess()
+    })
   } else {
     Proxy.setDirect(async () => {
-      Storage.setLocal({ status_proxyKey: 'direct' })
+      afterSuccess()
     })
   }
 }
 
-Proxy.set = async function (proxyConfigs, key, afterSuccess = function () {}) {
-  const config = Proxy._createConfig(proxyConfigs, key)
-  Proxy._set(config, async () => {
-    await chrome.action.setBadgeBackgroundColor({
-      color: proxyConfigs[key].tagColor
-    })
-    await chrome.action.setBadgeText({
-      text: subStringForName(proxyConfigs[key].name)
-    })
+Proxy.set = async function (proxyConfigs, key, afterSuccess = () => {}) {
+  await Storage.clearSession()
+  const config = await createConfig(proxyConfigs, key)
+  set(config, async () => {
+    await Action.setBadgeBackgroundColor(proxyConfigs[key].tagColor)
+    await Action.setBadgeText(subStringForName(proxyConfigs[key].name))
     afterSuccess()
   })
 }
 
 Proxy.setDirect = async function (afterSuccess = () => {}) {
-  const config = Proxy._directConfig()
-  Proxy._set(config, async () => {
-    await chrome.action.setBadgeBackgroundColor({
-      color: '#fff'
-    })
-    await chrome.action.setBadgeText({ text: 'Dir' })
+  await Storage.clearSession()
+  const config = directConfig()
+  set(config, async () => {
+    await Storage.setLocal({ status_proxyKey: 'direct' })
+    await Action.setBadgeBackgroundColor('#fff')
+    await Action.setBadgeText('Dir')
     afterSuccess()
   })
 }
 
 Proxy.setSystem = async function (afterSuccess = () => {}) {
-  const config = Proxy._systemConfig()
-  Proxy._set(config, async () => {
-    await chrome.action.setBadgeBackgroundColor({
-      color: '#000'
-    })
-    await chrome.action.setBadgeText({ text: 'Sys' })
+  await Storage.clearSession()
+  const config = systemConfig()
+  set(config, async () => {
+    await Storage.setLocal({ status_proxyKey: 'system' })
+    await Action.setBadgeBackgroundColor('#000')
+    await Action.setBadgeText('Sys')
     afterSuccess()
   })
 }
 
-Proxy._set = async function (config, afterSuccess, scope = 'regular') {
+const set = async function (
+  config,
+  afterSuccess = () => {},
+  scope = 'regular'
+) {
   const context = await chrome.runtime.getContexts({})
   if (context[0]?.incognito) {
     scope = 'incognito_persistent'
   }
   chrome.proxy.settings.set({ value: config, scope: scope }, () => {
     if (chrome.runtime.lastError) {
-      console.error('设置代理失败: ', chrome.runtime.lastError)
+      // todo 换中文
+      console.error(
+        I18n.getMessage('desc_proxy_failed'),
+        chrome.runtime.lastError
+      )
     } else {
-      console.info('代理设置成功！', config, scope)
+      log.info(I18n.getMessage('desc_proxy_success'), config, scope)
       afterSuccess()
     }
   })
 }
 
-Proxy._createConfig = function (proxyConfigs, key) {
+const createConfig = async function (proxyConfigs, key, tempRules = []) {
+  let config = null
   switch (proxyConfigs[key].mode) {
     case 'direct':
-      return Proxy._directConfig()
+      config = directConfig()
+      break
     case 'system':
-      return Proxy._systemConfig()
+      config = systemConfig()
+      break
     case 'fixed_servers':
-      return Proxy._fixedConfig(proxyConfigs[key].config)
+      config = fixedConfig(proxyConfigs[key].config)
+      break
     case 'pac_script':
-      return Proxy._pacConfig(proxyConfigs[key].config)
+      config = pacConfig(proxyConfigs[key].config)
+      break
     case 'auto':
-      return Proxy._autoConfig(proxyConfigs, key)
+      config = await autoConfig(proxyConfigs, key, tempRules)
+      break
     default:
-      return {}
+      config = {}
   }
+  return config
 }
 
-Proxy._directConfig = function () {
+const directConfig = function () {
   return { mode: 'direct' }
 }
 
-Proxy._systemConfig = function () {
+const systemConfig = function () {
   return { mode: 'system' }
 }
 
-Proxy._fixedConfig = function (proxyConfig) {
+/**
+ *
+ * @param {*} proxyConfig
+ * @returns config
+ *
+ * config = {
+ *  mode: "fixed_servers",
+ *  rules: {
+ *    proxyForHttp: {
+ *      scheme: "socks5",
+ *      host: "1.2.3.4"
+ *    },
+ *    bypassList: ["foobar.com"]
+ *  }
+ * }
+ *
+ */
+const fixedConfig = function (proxyConfig) {
   const config = { mode: 'fixed_servers', rules: {} }
   if (
-    Object.prototype.hasOwnProperty.call(proxyConfig.rules, 'singleProxy') &&
-    proxyConfig.rules.singleProxy.scheme != 'direct' &&
-    proxyConfig.rules.singleProxy.host != null &&
-    proxyConfig.rules.singleProxy.host != ''
+    Object.keys(proxyConfig.rules).includes('proxyForHttp') &&
+    proxyConfig.rules.proxyForHttp.host
   ) {
-    config.rules.singleProxy = Proxy._getFixedServer(
-      proxyConfig.rules.singleProxy
-    )
-  } else {
-    config.rules = {}
-    if (
-      Object.prototype.hasOwnProperty.call(proxyConfig.rules, 'proxyForHttp') &&
-      proxyConfig.rules.proxyForHttp.host != null &&
-      proxyConfig.rules.proxyForHttp.host != ''
-    ) {
-      config.rules.proxyForHttp = Proxy._getFixedServer(
-        proxyConfig.rules.proxyForHttp
-      )
-    }
-    if (
-      Object.prototype.hasOwnProperty.call(
-        proxyConfig.rules,
-        'proxyForHttps'
-      ) &&
-      proxyConfig.rules.proxyForHttps.host != null &&
-      proxyConfig.rules.proxyForHttps.host != ''
-    ) {
-      config.rules.proxyForHttps = Proxy._getFixedServer(
-        proxyConfig.rules.proxyForHttps
-      )
-    }
-    if (
-      Object.prototype.hasOwnProperty.call(proxyConfig.rules, 'proxyForFtp') &&
-      proxyConfig.rules.proxyForFtp.host != null &&
-      proxyConfig.rules.proxyForFtp.host != ''
-    ) {
-      config.rules.proxyForFtp = Proxy._getFixedServer(
-        proxyConfig.rules.proxyForFtp
-      )
-    }
-    if (
-      Object.prototype.hasOwnProperty.call(
-        proxyConfig.rules,
-        'fallbackProxy'
-      ) &&
-      proxyConfig.rules.fallbackProxy.host != null &&
-      proxyConfig.rules.fallbackProxy.host != '' &&
-      proxyConfig.rules.fallbackProxy.scheme != 'direct'
-    ) {
-      config.rules.fallbackProxy = Proxy._getFixedServer(
-        proxyConfig.rules.fallbackProxy
-      )
-    }
+    config.rules.proxyForHttp = getProxyServer(proxyConfig.rules.proxyForHttp)
   }
-  if (JSON.stringify(config.rules) == '{}') return { mode: 'direct' }
-  if (Object.prototype.hasOwnProperty.call(proxyConfig.rules, 'bypassList'))
+  if (
+    Object.keys(proxyConfig.rules).includes('proxyForHttps') &&
+    proxyConfig.rules.proxyForHttps.host
+  ) {
+    config.rules.proxyForHttps = getProxyServer(proxyConfig.rules.proxyForHttps)
+  }
+  if (
+    Object.keys(proxyConfig.rules).includes('proxyForFtp') &&
+    proxyConfig.rules.proxyForFtp.host
+  ) {
+    config.rules.proxyForFtp = getProxyServer(proxyConfig.rules.proxyForFtp)
+  }
+
+  const key =
+    Object.keys(config.rules).length == 0 ? 'singleProxy' : 'fallbackProxy'
+  if (proxyConfig.rules.fallbackProxy.host) {
+    config.rules[key] = getProxyServer(proxyConfig.rules.fallbackProxy)
+  }
+  if (Object.keys(config.rules).length == 0) return { mode: 'direct' }
+  if (Object.keys(proxyConfig.rules).includes('bypassList'))
     config.rules.bypassList = JSON.parse(
       JSON.stringify(proxyConfig.rules.bypassList)
     )
   return config
 }
 
-Proxy._autoConfig = function (proxyConfigs, key) {
-  const config = { mode: 'pac_script', pacScript: {} }
-  const codeBlock = generatePacfile(proxyConfigs, key)
-  config.pacScript = {
-    data: codeBlock
+/*
+{
+  mode: "pac_script",
+  pacScript: {
+    data: "{code}"
   }
+}
+*/
+const autoConfig = async function (proxyConfigs, key, tempRules) {
+  const config = { mode: 'pac_script', pacScript: {} }
+  config.pacScript.data = await generatePacfile(proxyConfigs, key, tempRules)
+
   return config
 }
 
-Proxy._pacConfig = function (proxyConfig) {
+/*
+{
+  mode: "pac_script",
+  pacScript: {
+    data: "function FindProxyForURL(url, host) {\n" +
+          "  if (host == 'foobar.com')\n" +
+          "    return 'PROXY blackhole:80';\n" +
+          "  return 'DIRECT';\n" +
+          "}"
+  }
+}
+*/
+
+/**
+ *
+ * @param {*} proxyConfig
+ * @returns
+ */
+const pacConfig = (proxyConfig) => {
   const config = { mode: 'pac_script', pacScript: {} }
-  if (proxyConfig.rules.url != null && proxyConfig.rules.url !== '') {
-    config.pacScript.url = proxyConfig.rules.url
-  } else if (proxyConfig.rules.data != null && proxyConfig.rules.data !== '') {
+  if (proxyConfig.rules.data) {
     config.pacScript.data = proxyConfig.rules.data
   } else {
     return { mode: 'direct' }
@@ -179,13 +217,17 @@ Proxy._pacConfig = function (proxyConfig) {
   return config
 }
 
-// proxyRules = {host, port, scheme, username, password}
-Proxy._getFixedServer = function (proxyRules) {
-  const config = { scheme: proxyRules.scheme, host: proxyRules.host }
-  if (proxyRules.port != null && proxyRules.port != '') {
-    config.port = proxyRules.port
+/**
+ *
+ * @param {*} server = {host, port, scheme, username, password}
+ * @returns
+ */
+const getProxyServer = function (server) {
+  const proxyServer = { scheme: server.scheme, host: server.host }
+  if (server.port) {
+    proxyServer.port = server.port
   }
-  return config
+  return proxyServer
 }
 
 export default Proxy

@@ -1,19 +1,53 @@
 import Browser from '@/Browser/main'
 
-export const convertToNewVersionConfig = async function (toVersion) {
-  switch (toVersion) {
-    case '2':
-      await newVersionConfigTo2()
-      break
-    case '2.1':
-      await newVersionConfigTo2_1()
-      break
-    case '2.2':
-      await newVersionConfigTo2_2()
-      break
-    default:
-      break
+const LASTEST_VERSION_NUMBER = 2.3
+
+export const convertToNewVersionConfig = async function () {
+  await newVersionConfigTo1()
+  await newVersionConfigTo2()
+  await newVersionConfigTo2_1()
+  await newVersionConfigTo2_2()
+  await newVersionConfigTo2_3()
+}
+
+const newVersionConfigTo1 = async function () {
+  const result = await Browser.Storage.getLocalAll()
+  const add = {}
+  const removeList = []
+  if (result.config_version == null) {
+    add.config_version = 1
   }
+  if (result.config_autoSync == null) {
+    add.config_autoSync = false
+  }
+  if (result.direct == null) {
+    add.direct = {
+      mode: 'direct',
+      name: 'direct',
+      tagColor: '#fff',
+      config: { mode: 'direct' }
+    }
+  }
+  if (result.system == null) {
+    add.system = {
+      mode: 'system',
+      name: 'system',
+      tagColor: '#000',
+      config: { mode: 'system' }
+    }
+  }
+  if (result.reject == null || result.reject?.config.rules == '') {
+    add.reject = {
+      mode: 'reject',
+      name: 'reject',
+      config: { mode: 'reject', rules: 'HTTPS 127.0.0.1:65432' }
+    }
+  }
+  await Browser.Storage.setLocal(add)
+  if (result.config_reject != null) {
+    removeList.push('config_reject')
+  }
+  await Browser.Storage.removeLocal(removeList)
 }
 
 const newVersionConfigTo2 = async function () {
@@ -76,15 +110,54 @@ const newVersionConfigTo2_2 = async function () {
   }
 }
 
+const newVersionConfigTo2_3 = async function () {
+  const oldAppConfig = await Browser.Storage.getLocalAll()
+  if (oldAppConfig['config_app_version'] == 2.2) {
+    const updatedProxyConfigList = transformAddSiteRuleConfig(oldAppConfig)
+    console.log(updatedProxyConfigList)
+    updatedProxyConfigList.forEach(async (item) => {
+      await Browser.Storage.setLocal(item)
+    })
+    await Browser.Storage.setLocal({
+      config_app_version: LASTEST_VERSION_NUMBER,
+      config_updateUrl: '24h',
+      config_autoRefresh: true,
+      config_siteRules: false,
+      config_contextMenus: false,
+      config_siteRules_autoRefresh: true
+    })
+  }
+
+  const oldSyncAppConfig = await Browser.Storage.getSyncAll()
+  if (oldSyncAppConfig['config_app_version'] == 2.2) {
+    const updatedProxyConfigList = transformAddSiteRuleConfig(oldSyncAppConfig)
+    updatedProxyConfigList.forEach(async (item) => {
+      await Browser.Storage.setSync(item)
+    })
+    await Browser.Storage.setSync({
+      config_app_version: LASTEST_VERSION_NUMBER,
+      config_updateUrl: '24h',
+      config_autoRefresh: true,
+      config_siteRules: false,
+      config_contextMenus: false,
+      config_siteRules_autoRefresh: true
+    })
+  }
+}
+
 export const resetAppConfig = function () {
   const obj = {
-    config_app_version: 2,
+    config_app_version: LASTEST_VERSION_NUMBER,
     config_ui: 'dark',
-    config_updateUrl: true,
+    config_updateUrl: '24h',
     config_monitor: false,
+    config_autoRefresh: true,
     config_autoSync: false,
+    config_contextMenus: false,
     config_version: 1,
     config_iptags: [],
+    config_siteRules: false,
+    config_siteRules_autoRefresh: true,
     direct: {
       mode: 'direct',
       name: 'direct',
@@ -101,7 +174,8 @@ export const resetAppConfig = function () {
       mode: 'reject',
       name: 'reject',
       config: { mode: 'reject', rules: 'HTTPS 127.0.0.1:65432' }
-    }
+    },
+    status_proxyKey: 'direct'
   }
   return obj
 }
@@ -184,6 +258,40 @@ function transformRulesSetFormat(appConfig) {
     if (resObj.mode == 'auto') {
       resObj.config.rules.local.rulesSet.format = 'base64'
       resObj.config.rules.reject.rulesSet.format = 'base64'
+      updatedProxyConfigList.push({ [key]: resObj })
+    }
+  })
+  return updatedProxyConfigList
+}
+
+function transformAddSiteRuleConfig(appConfig) {
+  const updatedProxyConfigList = []
+  Object.keys(appConfig).forEach((key) => {
+    if (!key.startsWith('proxy_')) {
+      return
+    }
+    const resObj = JSON.parse(JSON.stringify(appConfig[key]))
+    if (resObj.mode == 'auto') {
+      resObj.config.rules.site = {
+        rulesSet: {
+          format: 'base64',
+          url: '',
+          urlUpdatedAt: '',
+          data: '',
+          proxy: 'direct',
+          mode: 'autoProxy',
+          valid: true
+        },
+        ruleList: []
+      }
+      updatedProxyConfigList.push({ [key]: resObj })
+    } else if (resObj.mode == 'fixed_servers') {
+      if (resObj.config.rules.singleProxy) {
+        resObj.config.rules.fallbackProxy = JSON.parse(
+          JSON.stringify(resObj.config.rules.singleProxy)
+        )
+        delete resObj.config.rules.singleProxy
+      }
       updatedProxyConfigList.push({ [key]: resObj })
     }
   })

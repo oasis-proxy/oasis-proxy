@@ -3,6 +3,7 @@ import {
   getSyncDownloadStatus
 } from '@/core/version_control.js'
 import Browser from '@/Browser/main'
+import { log } from '@/core/utils.js'
 
 export const startAutoSync = async () => {
   let per = 1
@@ -11,22 +12,23 @@ export const startAutoSync = async () => {
   }
 
   await chrome.alarms.create('autoSync', { periodInMinutes: per })
-  console.info('create autoSync', per)
-}
-export const endAutoSync = async () => {
-  await chrome.alarms.clear('autoSync')
-  console.info('clear autoSync')
+  log.info('create autoSync', per)
 }
 
-export const handleAutoSync = async function () {
-  console.info('handleAutoSync', new Date().toLocaleTimeString())
+export const endAutoSync = async () => {
+  await chrome.alarms.clear('autoSync')
+  log.info('clear autoSync')
+}
+
+export const handleAutoSync = async () => {
+  log.info('handleAutoSync', new Date().toLocaleTimeString())
   switch (await getSyncDownloadStatus()) {
     case 'download':
       await overWriteToLocal()
       await Browser.Proxy.reloadOrDirect()
       break
     case 'conflict':
-      chrome.runtime.openOptionsPage()
+      await chrome.runtime.openOptionsPage()
       break
     default:
   }

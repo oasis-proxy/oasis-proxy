@@ -1,15 +1,14 @@
 <script setup>
-import { watch, getCurrentInstance } from 'vue'
+import { watch } from 'vue'
 import PopoverTips from '@/components/PopoverTips.vue'
+import HomeDefaultProfile from './HomeDefaultProfile.vue'
+import HomeDefaultSync from './HomeDefaultSync.vue'
 import { useConfigStore } from '@/options/stores/config'
-import { resetAppConfig } from '@/core/app_config.js'
 import Browser from '@/Browser/main'
 
 const storeConfig = useConfigStore()
-const instance = getCurrentInstance()
-const toast = instance?.appContext.config.globalProperties.$toast
-const confirmModal = instance?.appContext.config.globalProperties.$confirm
 
+const isDebug = import.meta.env.VITE_APP_DEBUG == 'debug'
 watch(
   () => storeConfig.configUI,
   async (newValue) => {
@@ -24,57 +23,12 @@ watch(
   }
 )
 
-async function exportConfig() {
-  const result = await Browser.Storage.getLocalAll()
-  Browser.saveFile(result, 'backup.oas')
-}
-
-function handleImportConfig(event) {
-  const file = event.target.files[0]
-  const reader = new FileReader()
-  reader.onload = async function (event) {
-    try {
-      const tmpObj = JSON.parse(event.target.result)
-      tmpObj.config_autoSync = false
-      tmpObj.status_proxyKey = 'direct'
-      const result = await Browser.Storage.getLocalAll()
-      console.log(Object.keys(result))
-      await Browser.Storage.removeLocal(Object.keys(result))
-      await Browser.Storage.setLocal(tmpObj)
-      toast.info(Browser.I18n.getMessage('desc_import_config_success'))
-      setTimeout(() => {
-        location.reload()
-      }, 2000)
-    } catch (err) {
-      toast.warning(Browser.I18n.getMessage('desc_import_config_failed'))
-      console.log('Error: ', err)
-    }
+watch(
+  () => storeConfig.configAutoRefresh,
+  async (newValue) => {
+    await Browser.Storage.setLocal({ config_autoRefresh: newValue })
   }
-  reader.readAsText(file)
-}
-
-function clearConfig() {
-  confirmModal.createConfirm(
-    Browser.I18n.getMessage('modal_title_resetall'),
-    Browser.I18n.getMessage('modal_desc_resetall'),
-    async function () {
-      await Browser.Storage.clearLocal()
-      const obj = resetAppConfig()
-      await Browser.Storage.setLocal(obj)
-      await Browser.Proxy.setDirect(async () => {
-        await Browser.Storage.setLocal({ status_proxyKey: 'direct' })
-        toast.info(`代理切换为直连`)
-      })
-      toast.info(Browser.I18n.getMessage('desc_init_config'))
-      setTimeout(() => {
-        location.reload()
-      }, 2000)
-    }
-  )
-}
-function toGithub() {
-  window.open('https://github.com/oasis-proxy/oasis-proxy', '_blank')
-}
+)
 </script>
 
 <template>
@@ -147,89 +101,75 @@ function toGithub() {
             ></PopoverTips>
           </label>
           <div class="col-10">
-            <div class="form-check-sm">
-              <input
-                class="form-check-input"
-                type="checkbox"
+            <div class="form-check-sm col-2">
+              <select
+                class="form-select form-select-sm"
                 v-model="storeConfig.configUpdateUrl"
-                id="updateUrlCheck"
-              />
-              <label class="form-check-label ms-2" for="updateUrlCheck">
-                <span>{{
-                  Browser.I18n.getMessage('input_label_rule_update')
-                }}</span>
-              </label>
+              >
+                <option value="manual">
+                  {{ Browser.I18n.getMessage('input_selection_manual') }}
+                </option>
+                <option value="24h">
+                  {{ Browser.I18n.getMessage('input_selection_24h') }}
+                </option>
+                <option value="12h">
+                  {{ Browser.I18n.getMessage('input_selection_12h') }}
+                </option>
+                <option value="6h">
+                  {{ Browser.I18n.getMessage('input_selection_6h') }}
+                </option>
+                <option value="3h">
+                  {{ Browser.I18n.getMessage('input_selection_3h') }}
+                </option>
+                <option value="1h">
+                  {{ Browser.I18n.getMessage('input_selection_1h') }}
+                </option>
+                <option value="15m">
+                  {{ Browser.I18n.getMessage('input_selection_15m') }}
+                </option>
+                <option value="1m" v-if="isDebug">
+                  {{ Browser.I18n.getMessage('input_selection_1m') }}
+                </option>
+                <option value="disabled">
+                  {{ Browser.I18n.getMessage('input_selection_disabled') }}
+                </option>
+              </select>
             </div>
           </div>
         </div>
-        <div class="row mb-1 d-flex align-items-center">
-          <label class="col-2 col-form-label">{{
-            Browser.I18n.getMessage('form_label_version')
-          }}</label>
-          <div class="col-10 col-form-label">
-            <i class="bi bi-github me-2 cursor-point" @click="toGithub()"></i>
-            <span>{{ Browser.Runtime.getManifest().version }}</span>
+        <div class="row mb-3 d-flex align-items-center">
+          <label class="col-2 col-form-label">
+            <span>{{
+              Browser.I18n.getMessage('form_label_auto_refresh')
+            }}</span>
+            <PopoverTips
+              className="bi bi-question-circle-fill icon-btn ms-2"
+              :content="
+                Browser.I18n.getMessage('desc_auto_refresh_by_switch_proxy')
+              "
+            ></PopoverTips>
+          </label>
+          <div class="col-10">
+            <div class="form-check-sm d-flex align-items-center">
+              <div class="form-check form-switch mt-1">
+                <input
+                  class="form-check-input form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  v-model="storeConfig.configAutoRefresh"
+                />
+                <span>{{
+                  storeConfig.configAutoRefresh == false
+                    ? Browser.I18n.getMessage('input_label_off')
+                    : Browser.I18n.getMessage('input_label_on')
+                }}</span>
+              </div>
+            </div>
           </div>
         </div>
+        <HomeDefaultSync></HomeDefaultSync>
       </div>
     </div>
-    <div class="card">
-      <div class="card-header">
-        <div>
-          <span class="fw-bold">{{
-            Browser.I18n.getMessage('section_label_import_export')
-          }}</span>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="hstack gap-3 mb-3">
-          <div>
-            <button class="btn btn-primary btn-sm" @click="exportConfig">
-              <i class="bi bi-download me-2"></i>
-              <span>{{
-                Browser.I18n.getMessage('btn_label_export_config')
-              }}</span>
-            </button>
-          </div>
-          <div>{{ Browser.I18n.getMessage('desc_export') }}</div>
-        </div>
-        <div class="hstack gap-3 mb-3">
-          <div>
-            <label for="fileInput" class="btn btn-primary btn-sm">
-              <i class="bi bi-upload me-2"></i>
-              <span>
-                <span>{{
-                  Browser.I18n.getMessage('btn_label_import_config')
-                }}</span>
-              </span>
-              <input
-                type="file"
-                id="fileInput"
-                class="d-none"
-                @change="handleImportConfig"
-              />
-            </label>
-          </div>
-          <div>{{ Browser.I18n.getMessage('desc_import') }}</div>
-        </div>
-        <div class="hstack gap-3 mb-3">
-          <div>
-            <button
-              @click="clearConfig"
-              class="btn btn-danger btn-sm"
-              id="clear"
-            >
-              <i class="bi bi-trash-fill me-2"></i>
-              <span>
-                <span>{{
-                  Browser.I18n.getMessage('btn_label_clear_config')
-                }}</span>
-              </span>
-            </button>
-          </div>
-          <div>{{ Browser.I18n.getMessage('desc_clear') }}</div>
-        </div>
-      </div>
-    </div>
+    <HomeDefaultProfile></HomeDefaultProfile>
   </div>
 </template>

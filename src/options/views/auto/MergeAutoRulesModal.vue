@@ -9,12 +9,13 @@ import { useStatusStore } from '@/options/stores/status'
 const route = useRoute()
 const storeStatus = useStatusStore()
 
-const { localRuleList, rejectRuleList } = inject('autoConfig')
+const { localRuleList, rejectRuleList, siteRuleList } = inject('autoConfig')
 
 const autoPolicyNames = ref([])
 const selectedProxyKey = ref(null)
 const isLocalChecked = ref(true)
 const isRejectChecked = ref(true)
+const isSiteChecked = ref(true)
 const mergeMethod = ref('ignore')
 const isNameValid = ref(true)
 
@@ -28,7 +29,6 @@ let mergeAutoRulesModalInstance = null
 
 onMounted(async () => {
   const modalElement = document.getElementById('mergeAutoRulesModal')
-  // eslint-disable-next-line no-undef
   mergeAutoRulesModalInstance = new bootstrap.Modal(modalElement)
 })
 
@@ -42,6 +42,7 @@ function hide() {
     selectedProxyKey.value = null
     isLocalChecked.value = true
     isRejectChecked.value = true
+    isSiteChecked.value = true
     mergeMethod.value = 'ignore'
     isNameValid.value = true
   }, 300)
@@ -103,6 +104,21 @@ async function handleSubmit() {
       })
     }
     rejectRuleList.value.unshift(...rejectRules)
+  }
+  if (isSiteChecked.value) {
+    let siteRules = result[selectedProxyKey.value].config.rules.site.ruleList
+    if (mergeMethod.value != 'keep') {
+      siteRules = siteRules.filter((item) => {
+        let isContained = false
+        for (const i of siteRuleList.value) {
+          if (i.data == item.data) {
+            isContained = true
+          }
+        }
+        return !isContained
+      })
+    }
+    siteRuleList.value.unshift(...siteRules)
   }
   storeStatus.setUnsaved()
   hide()
@@ -191,9 +207,19 @@ async function handleSubmit() {
               v-model="isRejectChecked"
               id="mergeReject"
             />
-            <label class="form-check-label ms-2" for="mergeReject">
+            <label class="form-check-label ms-2 me-4" for="mergeReject">
               <span>
                 {{ Browser.I18n.getMessage('section_label_reject') }}
+              </span> </label
+            ><input
+              class="form-check-input"
+              type="checkbox"
+              v-model="isSiteChecked"
+              id="mergeSite"
+            />
+            <label class="form-check-label ms-2" for="mergeSite">
+              <span>
+                {{ Browser.I18n.getMessage('section_label_site') }}
               </span>
             </label>
           </div>

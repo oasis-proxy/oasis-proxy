@@ -1,16 +1,39 @@
 <script setup>
-import { computed, defineModel, onMounted, ref, watch } from 'vue'
+import {
+  computed,
+  defineModel,
+  onMounted,
+  ref,
+  watch,
+  getCurrentInstance
+} from 'vue'
 import Browser from '@/Browser/main'
+import ProxySelect from '@/components/ProxySelect.vue'
 import { getRegConst } from '@/core/rules_parser.js'
 import * as ipaddr from 'ipaddr.js'
 const rule = defineModel()
-const emit = defineEmits(['clearFousText'])
+const emit = defineEmits([
+  'clearFousText',
+  'addItem',
+  'hrItem',
+  'deleteItem',
+  'getFocusText'
+])
+const props = defineProps({
+  isDraggable: { type: Boolean, default: true },
+  isProxySelectable: { type: Boolean, default: true },
+  isValidable: { type: Boolean, default: true },
+  readonly: { type: Boolean, default: false }
+})
+const instance = getCurrentInstance()
+
+instance?.vnode?.props?.['onCustomEvent']
 
 const isDataValid = ref(true)
 const dataClassName = computed(() => {
   return isDataValid.value
     ? 'form-control form-control-sm'
-    : 'form-control form-control-sm is-invalid'
+    : 'form-control is-invalid form-control-sm'
 })
 
 const placeholder = computed(() => {
@@ -83,9 +106,11 @@ function handleBlur() {
     class="hstack gap-2 mb-2 d-flex align-items-start"
     v-if="rule.mode != 'divider'"
   >
-    <i class="bi bi-arrows-move icon-btn drag-handle mt-1"></i>
-
-    <div class="form-check form-switch ms-2 mt-1">
+    <i
+      v-if="props.isDraggable"
+      class="bi bi-arrows-move icon-btn drag-handle mt-1"
+    ></i>
+    <div class="form-check form-switch mt-1" v-if="props.isValidable">
       <input
         class="form-check-input form-check-input"
         type="checkbox"
@@ -96,8 +121,9 @@ function handleBlur() {
     </div>
     <select
       class="form-select form-select-sm"
-      style="width: 210px"
       v-model="rule.mode"
+      style="width: 210px"
+      :disabled="props.readonly"
     >
       <option value="domain">
         {{ Browser.I18n.getMessage('input_label_domain_wildcard') }}
@@ -113,20 +139,26 @@ function handleBlur() {
         :class="dataClassName"
         :placeholder="placeholder"
         v-model="rule.data"
-        @input="$emit('getFocusText')"
+        @input="emit('getFocusText')"
         @blur="handleBlur"
-        @focus="$emit('getFocusText')"
+        @focus="emit('getFocusText')"
+        :disabled="props.readonly"
       />
       <div class="invalid-feedback">
         {{ feedback }}
       </div>
     </div>
-    <div>
-      <slot></slot>
+    <div v-if="props.isProxySelectable">
+      <ProxySelect
+        v-model="rule.proxy"
+        style="width: 150px"
+        :readonly="props.readonly"
+      ></ProxySelect>
     </div>
-    <i class="bi bi-layer-backward icon-btn mt-1" @click="$emit('addItem')"></i>
-    <i class="bi bi-inboxes-fill icon-btn mt-1" @click="$emit('hrItem')"></i>
-    <i class="bi bi-trash-fill icon-btn mt-1" @click="$emit('deleteItem')"></i>
+    <div class="hstack mb-2 d-flex align-items-baseline">
+      <slot name="operation"></slot>
+      <slot name="delete"></slot>
+    </div>
   </div>
   <div class="hstack gap-4 mb-2 d-flex align-items-center" v-else>
     <span><i class="bi bi-arrows-move icon-btn drag-handle"></i></span>
@@ -139,7 +171,7 @@ function handleBlur() {
     ></span>
     <hr class="w-100" />
     <div class="hstack gap-1">
-      <i class="bi bi-trash-fill icon-btn" @click="$emit('deleteItem')"></i>
+      <slot name="delete"></slot>
     </div>
   </div>
 </template>

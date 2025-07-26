@@ -16,6 +16,7 @@ const storeStatus = useStatusStore()
 const instance = getCurrentInstance()
 const toast = instance?.appContext.config.globalProperties.$toast
 
+const isDebug = import.meta.env.VITE_APP_DEBUG == 'debug'
 const proxyNamesObj = computed(() => {
   const fixed = []
   const pac = []
@@ -83,7 +84,9 @@ function toPath(path) {
       <ul class="nav nav-pills flex-column">
         <li class="nav-item">
           <a
-            :class="route.path == '/home' ? 'nav-link active' : 'nav-link'"
+            :class="
+              route.path.startsWith('/home/') ? 'nav-link active' : 'nav-link'
+            "
             @click="toPath('/home')"
           >
             <span
@@ -92,6 +95,25 @@ function toPath(path) {
                 {{ Browser.I18n.getMessage('aside_label_setting') }}</span
               ></span
             >
+          </a>
+        </li>
+        <li
+          class="nav-item"
+          v-if="
+            isDebug ||
+            (storeStatus.isTempRuleValid && storeConfig.configSiteRules)
+          "
+        >
+          <a
+            :class="route.path == '/temp' ? 'nav-link active' : 'nav-link'"
+            @click="toPath('/temp')"
+          >
+            <span>
+              <i class="bi bi-clock-fill me-3"></i>
+              <span>
+                {{ Browser.I18n.getMessage('aside_label_temp_rules') }}
+              </span>
+            </span>
           </a>
         </li>
       </ul>

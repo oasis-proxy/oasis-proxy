@@ -1,56 +1,62 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import RequestTable from './RequestTable.vue'
 import RequestTab from './RequestTab.vue'
 import { getRules, checkRules } from '@/core/rules_pretest.js'
 import Browser from '@/Browser/main'
 
-const tableList = ref([])
-const tabsList = ref([])
+const requestList = ref([])
+const tabList = ref([])
 const activeRules = ref({})
 const maxRows = ref(1000)
 const contentFilter = ref('')
 const selectedTabsId = ref('')
-
 const copyShow = ref(false)
+
+const list = computed(() => {
+  return requestList.value.filter(
+    (element) =>
+      (!selectedTabsId.value || element.tabId == selectedTabsId.value) &&
+      (element.url.indexOf(contentFilter.value) > -1 ||
+        element.policy.indexOf(contentFilter.value) > -1 ||
+        element.rule.indexOf(contentFilter.value) > -1 ||
+        element.ip.indexOf(contentFilter.value) > -1)
+  )
+})
 
 onMounted(async () => {
   await getPolicyRules()
   Browser.Runtime.addMessageListener(function (request) {
     if (request.instruction == 'sendRequestItem')
-      handleOne(request.data.mode, request.data.details)
+      handleRequest(request.data.mode, request.data.details)
   })
   Browser.Tabs.addRemovedListener((tabId) => {
-    const index = tabsList.value.findIndex((e) => e.tabId == tabId)
-    tabsList.value[index].valid = false
+    const index = tabList.value.findIndex((e) => e.tabId == tabId)
+    tabList.value[index].valid = false
   })
   Browser.Tabs.addUpdatedListener((tabId, changeInfo) => {
     if (changeInfo.title != null) {
-      const index = tabsList.value.findIndex((e) => e.tabId == tabId)
-      tabsList.value[index].title = changeInfo.title
+      const index = tabList.value.findIndex((e) => e.tabId == tabId)
+      tabList.value[index].title = changeInfo.title
     }
   })
   Browser.Storage.changed(function (changes, areaName) {
-    if (areaName === 'local' && changes.status_proxyKey != null) {
+    if (areaName === 'local' && changes.status_proxyKey) {
       getPolicyRules()
     }
   })
 })
 
-function filterTabsId(tabId) {
-  selectedTabsId.value = tabId
-}
-
-async function changeTabName(tabId) {
-  const index = tabsList.value.findIndex((e) => e.tabId == tabId)
-  if (tabId == Browser.Tabs.TAB_ID_NONE) {
-    tabsList.value[index].title = Browser.I18n.getMessage(
-      'aside_label_nonetabs'
-    )
+async function getPolicyRules() {
+  const result = await Browser.Storage.getLocalAll()
+  if (!result[result.status_proxyKey]) {
     return
   }
-  const tab = await Browser.Tabs.get(tabId)
-  tabsList.value[index].title = tab.title
+  activeRules.value = getRules(result[result.status_proxyKey])
+}
+
+function filterTabsId(tabId) {
+  selectedTabsId.value = tabId
 }
 
 async function copyToClipboard(text) {
@@ -66,117 +72,131 @@ function handleSearch(event) {
 }
 
 function handleEmpty() {
-  tableList.value = []
-  tabsList.value = []
+  requestList.value = []
+  tabList.value = []
 }
 
-function handleOne(mode, details) {
-  let index = tableList.value.findIndex((e) => e.requestId == details.requestId)
-  if (details.url.startsWith('chrome')) return
-  if (index == -1) {
-    if (mode != 'beforeRequest') return
-    tableList.value.push({
+async function handleRequest(mode, details) {
+  if (!details.url.startsWith('http')) return
+
+  let requestIdx = requestList.value.findIndex(
+    (e) => e.requestId == details.requestId
+  )
+
+  if (requestIdx == -1) {
+    // the first request in a tab
+    if (mode != 'beforeRequest') return // record in beforeRequest, or discard
+    requestList.value.push({
       tabId: details.tabId,
       requestId: details.requestId,
       timeStamp: details.timeStamp,
       data: {}
     })
-    index = tableList.value.findIndex((e) => e.requestId == details.requestId)
-    if (tabsList.value.findIndex((e) => e.tabId == details.tabId) == -1) {
-      tabsList.value.push({
+    requestIdx = requestList.value.findIndex(
+      (e) => e.requestId == details.requestId
+    )
+
+    if (tabList.value.findIndex((e) => e.tabId == details.tabId) == -1) {
+      tabList.value.push({
         tabId: details.tabId,
         title: '',
         valid: true
       })
-      changeTabName(details.tabId)
+      // set Tab title
+      const index = tabList.value.findIndex((e) => e.tabId == details.tabId)
+      if (details.tabId == Browser.Tabs.TAB_ID_NONE) {
+        tabList.value[index].title = Browser.I18n.getMessage(
+          'aside_label_nonetabs'
+        )
+        return
+      }
+      const tab = await Browser.Tabs.get(details.tabId)
+      tabList.value[index].title = tab.title
     }
   }
-  let tmp
+  let policyRule
   switch (mode) {
     case 'beforeRequest':
-      tmp = converBeforeRequest(details)
-      Object.keys(tmp).forEach((key) => {
-        tableList.value[index][key] = tmp[key]
-      })
-      tableList.value[index].data.beforeRequest = { timeStamp: tmp.timeStamp }
+      policyRule = checkRules(details.url, activeRules.value)
+      requestList.value[requestIdx].requestId = details.requestId
+      requestList.value[requestIdx].date = new Date(
+        details.timeStamp
+      ).toLocaleTimeString()
+      requestList.value[requestIdx].timeStamp = Math.round(details.timeStamp)
+      requestList.value[requestIdx].status = 'active'
+      requestList.value[requestIdx].host = new URL(details.url).hostname
+      requestList.value[requestIdx].fromCache = details.fromCache
+      requestList.value[requestIdx].policy = policyRule.policy
+      requestList.value[requestIdx].group = policyRule.group
+      requestList.value[requestIdx].rule = policyRule.rule
+        ? policyRule.rule
+        : '-'
+      requestList.value[requestIdx].ip = '-'
+      requestList.value[requestIdx].duration = '-'
+      requestList.value[requestIdx].method = details.method
+      requestList.value[requestIdx].url = details.url
+      requestList.value[requestIdx].initiator = details.initiator
+      requestList.value[requestIdx].tabId = details.tabId
+      requestList.value[requestIdx].type = details.type
+      requestList.value[requestIdx].data.beforeRequest = {
+        timeStamp: details.timeStamp
+      }
       break
     case 'beforeRedirect':
-      tableList.value[index].requestId = 'r_' + tableList.value[index].requestId
-      tableList.value[index].status = 'redirect'
-      tableList.value[index].redirectUrl = details.redirectUrl
-      tableList.value[index].fromCache = details.fromCache
-      tableList.value[index].ip = details.ip == null ? '-' : details.ip
-      tableList.value[index].duration = Math.round(
-        details.timeStamp - tableList.value[index].data.beforeRequest.timeStamp
+      requestList.value[requestIdx].requestId =
+        'r_' + requestList.value[requestIdx].requestId
+      requestList.value[requestIdx].status = 'redirect'
+      requestList.value[requestIdx].redirectUrl = details.redirectUrl
+      requestList.value[requestIdx].fromCache = details.fromCache
+      requestList.value[requestIdx].ip = details.ip ? details.ip : '-'
+      requestList.value[requestIdx].duration = Math.round(
+        details.timeStamp -
+          requestList.value[requestIdx].data.beforeRequest.timeStamp
       )
       break
     case 'responseStart':
-      tableList.value[index].status = 'active'
-      tableList.value[index].ip = details.ip == null ? '-' : details.ip
-      tableList.value[index].fromCache = details.fromCache
+      requestList.value[requestIdx].status = 'active'
+      requestList.value[requestIdx].ip = details.ip ? details.ip : '-'
+      requestList.value[requestIdx].fromCache = details.fromCache
       break
     case 'completed':
-      tableList.value[index].status = 'complete'
-      tableList.value[index].fromCache = details.fromCache
-      tableList.value[index].ip = details.ip == null ? '-' : details.ip
-      tableList.value[index].duration = Math.round(
-        details.timeStamp - tableList.value[index].data.beforeRequest.timeStamp
+      requestList.value[requestIdx].status = 'complete'
+      requestList.value[requestIdx].fromCache = details.fromCache
+      requestList.value[requestIdx].ip = details.ip ? details.ip : '-'
+      requestList.value[requestIdx].duration = Math.round(
+        details.timeStamp -
+          requestList.value[requestIdx].data.beforeRequest.timeStamp
       )
       break
     case 'errorOccurred':
-      tableList.value[index].status = 'error'
-      tableList.value[index].error = details.error
-      tableList.value[index].fromCache = details.fromCache
-      tableList.value[index].duration = Math.round(
-        details.timeStamp - tableList.value[index].data.beforeRequest.timeStamp
+      requestList.value[requestIdx].status = 'error'
+      requestList.value[requestIdx].error = details.error
+      requestList.value[requestIdx].fromCache = details.fromCache
+      requestList.value[requestIdx].duration = Math.round(
+        details.timeStamp -
+          requestList.value[requestIdx].data.beforeRequest.timeStamp
       )
       break
   }
-  if (index >= maxRows.value) {
-    const shiftItem = tableList.value.shift()
-    if (!tableList.value.find((e) => e.tabId == shiftItem.tabId)) {
-      tabsList.value.splice(
-        tabsList.value.findIndex((e) => e.tabId == shiftItem.tabId),
+
+  console.log(mode, details, requestList.value)
+  if (requestIdx >= maxRows.value) {
+    const shiftItem = requestList.value.shift()
+
+    // remove the tabA from tabList if no tabA requests exist in requestList
+    if (!requestList.value.find((e) => e.tabId == shiftItem.tabId)) {
+      tabList.value.splice(
+        tabList.value.findIndex((e) => e.tabId == shiftItem.tabId),
         1
       )
     }
   }
 }
-
-async function getPolicyRules() {
-  const result = await Browser.Storage.getLocalAll()
-  if (result[result.status_proxyKey] == null) {
-    return
-  }
-  activeRules.value = getRules(result[result.status_proxyKey])
-}
-
-function converBeforeRequest(details) {
-  const res = {}
-  const policyRule = checkRules(details.url, activeRules.value)
-  res.requestId = details.requestId
-  res.date = new Date(details.timeStamp).toLocaleTimeString()
-  res.timeStamp = Math.round(details.timeStamp)
-  res.status = 'active'
-  res.host = new URL(details.url).hostname
-  res.fromCache = details.fromCache
-  res.policy = policyRule.policy
-  res.group = policyRule.group
-  res.rule = policyRule.rule == '' ? '-' : policyRule.rule
-  res.ip = '-'
-  res.duration = '-'
-  res.method = details.method
-  res.url = details.url
-  res.initiator = details.initiator
-  res.tabId = details.tabId
-  res.type = details.type
-  return res
-}
 </script>
 <template>
   <RequestTab
     class="col-2 sidebar vstack"
-    :tabsList="tabsList"
+    :tabList="tabList"
     @filterTabsId="filterTabsId"
   ></RequestTab>
   <div class="col-10 h-100 vstack">
@@ -223,9 +243,7 @@ function converBeforeRequest(details) {
     <hr />
     <div class="overflow-auto" style="min-height: 60%">
       <RequestTable
-        :contentFilter="contentFilter"
-        :tabIdFilter="selectedTabsId"
-        :tableList="tableList"
+        :list="list"
         @copyToClipboard="copyToClipboard"
       ></RequestTable>
     </div>

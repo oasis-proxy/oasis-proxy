@@ -1,34 +1,47 @@
 import Browser from '../Browser/main'
-import { updateRulesSetData } from '@/core/proxy_config.js'
+import { log } from '@/core/utils.js'
+import { updateRulesSetData, updatePacData } from '@/core/proxy_config.js'
+import { enumInterval } from '../core/utils.js'
 
-export const startUpdateUrl = async () => {
-  let per = 3
-  if (import.meta.env.VITE_APP_DEBUG != 'debug') {
-    per = 1440
-  }
-  await chrome.alarms.create('updateUrl', { periodInMinutes: per })
-  console.info('create updateUrl', per)
-}
-export const endUpdateUrl = async () => {
+export const startUpdateUrl = async (interval) => {
+  log.info('startUpdateUrl', interval)
   await chrome.alarms.clear('updateUrl')
-  console.info('clear updateUrl')
+  await chrome.alarms.create('updateUrl', {
+    periodInMinutes: 1
+  })
+}
+
+export const endUpdateUrl = async () => {
+  log.info('clear updateUrl')
+  await chrome.alarms.clear('updateUrl')
 }
 
 export const handleUpdateUrl = async function () {
-  console.info('handleUpdateUrl', new Date().toLocaleTimeString())
+  log.info('handleUpdateUrl', new Date().toLocaleTimeString())
   const result = await Browser.Storage.getLocalAll()
   for (let key of Object.keys(result)) {
-    if (!key.startsWith('proxy_') || result[key].mode != 'auto') continue
-    const proxyConfig = await updateRulesSetData(result[key])
+    if (!key.startsWith('proxy_') || result[key].mode == 'fixed_servers')
+      continue
+
+    let proxyConfig = {}
+    if (result[key].mode == 'pac_script') {
+      proxyConfig = await updatePacData(result[key], {
+        interval: enumInterval[result.config_updateUrl]
+      })
+    } else if (result[key].mode == 'auto') {
+      proxyConfig = await updateRulesSetData(result[key], {
+        interval: enumInterval[result.config_updateUrl]
+      })
+    }
     if (JSON.stringify(proxyConfig) != '{}') {
-      Browser.Storage.setLocal({ [key]: proxyConfig })
+      await Browser.Storage.setLocal({ [key]: proxyConfig })
       if (key == result.status_proxyKey) {
         const afterUpdateResult = await Browser.Storage.getLocalAll()
         Browser.Proxy.set(
           afterUpdateResult,
           afterUpdateResult.status_proxyKey,
           async () => {
-            console.info(
+            log.info(
               'Proxy updated after url updated',
               afterUpdateResult,
               afterUpdateResult.status_proxyKey

@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import ProxyView from '../views/ProxyView.vue'
 import MonitorView from '../views/MonitorView.vue'
 import QuickView from '../views/QuickView.vue'
+import InfoView from '../views/InfoView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -20,6 +21,11 @@ const router = createRouter({
       path: '/quick',
       name: 'quick',
       component: QuickView
+    },
+    {
+      path: '/info',
+      name: 'info',
+      component: InfoView
     }
   ]
 })

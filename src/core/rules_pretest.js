@@ -1,94 +1,46 @@
+import Browser from '@/Browser/main.js'
 import {
   parseAutoProxyFile,
   parseRuleItem,
   parseBypassRule
 } from './rules_parser.js'
+import { filterPrefixArray } from './utils.js'
 import * as ipaddr from 'ipaddr.js'
 
 export const getRules = function (proxyConfig) {
-  if (proxyConfig.mode == 'auto') return getAutoRules(proxyConfig)
-  if (proxyConfig.mode == 'fixed_servers') return getFixedRules(proxyConfig)
-  return getDefaultRules(proxyConfig.mode)
-}
-const getDefaultRules = function (defaultProxy) {
-  return {
-    localRuleList: [],
-    localRulesSet: [],
-    rejectRulesSet: [],
-    rejectRuleList: [],
-    default: defaultProxy,
-    bypass: []
+  if (proxyConfig?.mode) {
+    switch (proxyConfig.mode) {
+      case 'auto':
+        return getAutoRules(proxyConfig)
+      case 'fixed_servers':
+        return getFixedRules(proxyConfig)
+      case 'pac_script':
+        return getPacScriptRules(proxyConfig)
+      default: // system direct
+        return getDefaultRules(proxyConfig.mode)
+    }
   }
-}
-const getFixedRules = function (proxyConfig) {
-  const config = proxyConfig.config
-  const bypass = getBypassRulesList(config.rules.bypassList)
-  return {
-    localRuleList: [],
-    localRulesSet: [],
-    rejectRulesSet: [],
-    rejectRuleList: [],
-    default: proxyConfig.name,
-    bypass
-  }
-}
-const getAutoRules = function (proxyConfig) {
-  const config = proxyConfig.config
-  const localRulesSet = getRulesSet(config.rules.local.rulesSet)
-  const rejectRulesSet = getRulesSet(config.rules.reject.rulesSet)
-  const localRuleList = getRulesList(config.rules.local.ruleList)
-  const rejectRuleList = getRulesList(config.rules.reject.ruleList)
-  return {
-    localRuleList,
-    localRulesSet,
-    rejectRulesSet,
-    rejectRuleList,
-    default: proxyConfig.config.rules.defaultProxy,
-    bypass: []
-  }
+  return null
 }
 
-export const getRulesList = function (ruleList) {
-  const filteredRules = ruleList.filter(function (element) {
-    return (
-      element.data !== '' && element.valid != false && element.mode != 'divider'
-    )
-  })
-  const formattedRules = filteredRules.map((rule) => {
-    return parseRuleItem(rule)
-  })
-
-  return formattedRules
-}
-
-export const getRulesSet = function (rulesSet) {
-  return parseAutoProxyFile(rulesSet.data, rulesSet.proxy)
-}
-
-const getBypassRulesList = function (bypassList) {
-  const res = []
-  if (bypassList.includes('<local>')) {
-    res.push(...parseBypassRule('<local>'))
-  }
-  res.push(
-    ...bypassList
-      .filter((item) => item != '<local>' && item != '')
-      .map((item) => {
-        return parseBypassRule(item)
-      })
-  )
-  return res
-}
-
-export const checkRules = function (url, formattedRulesList) {
-  let res = {}
-  for (const group of [
+// todo 调整temprules位置和开关
+export const checkRules = function (
+  url,
+  formattedRulesList,
+  groupList = [
+    'tempRulesSet',
     'localRuleList',
     'rejectRuleList',
     'rejectRulesSet',
     'localRulesSet',
     'bypass'
-  ]) {
+  ]
+) {
+  let res = {}
+  for (const group of groupList) {
+    if (!formattedRulesList[group]) {
+      continue
+    }
     for (const item of formattedRulesList[group]) {
       if (testRule(url, item)) {
         res.rule = item.orgin.data
@@ -96,6 +48,7 @@ export const checkRules = function (url, formattedRulesList) {
         res.policy = item.proxy.startsWith('+')
           ? `${item.proxy.substring(1)} (${group})`
           : `${item.proxy} (${group})`
+        res.proxy = item.proxy
         return res
       }
     }
@@ -103,7 +56,7 @@ export const checkRules = function (url, formattedRulesList) {
   return { policy: `${formattedRulesList.default} (default)`, rule: '' }
 }
 
-export const testRule = function (url, formattedRule) {
+const testRule = function (url, formattedRule) {
   let host = new URL(url).hostname
   let pattern
   let addr
@@ -144,4 +97,102 @@ export const testRule = function (url, formattedRule) {
     case 'plain':
       return host.lastIndexOf('.') == -1 && host.lastIndexOf(':') == -1
   }
+}
+
+const getTempRulesSet = async function () {
+  const sessionObj = await Browser.Storage.getSession()
+  const tempRules = filterPrefixArray(sessionObj, 'tempRule_')
+  return tempRules
+}
+
+const getDefaultRules = function (defaultProxy) {
+  return {
+    localRuleList: [],
+    localRulesSet: [],
+    rejectRulesSet: [],
+    rejectRuleList: [],
+    default: defaultProxy,
+    bypass: []
+  }
+}
+
+const getFixedRules = function (proxyConfig) {
+  const config = proxyConfig.config
+  const bypass = getBypassRulesList(config.rules.bypassList)
+  return {
+    localRuleList: [],
+    localRulesSet: [],
+    rejectRulesSet: [],
+    rejectRuleList: [],
+    default: proxyConfig.name,
+    bypass
+  }
+}
+
+const getPacScriptRules = function (proxyConfig) {
+  return {
+    localRuleList: [],
+    localRulesSet: [],
+    rejectRulesSet: [],
+    rejectRuleList: [],
+    default: proxyConfig.name,
+    bypass: []
+  }
+}
+
+const getAutoRules = function (proxyConfig) {
+  const config = proxyConfig.config
+  const localRulesSet = getRulesSet(config.rules.local.rulesSet)
+  const rejectRulesSet = getRulesSet(config.rules.reject.rulesSet)
+  const siteRulesSet = getRulesSet(config.rules.site.rulesSet)
+  const localRuleList = getRulesList(config.rules.local.ruleList)
+  const rejectRuleList = getRulesList(config.rules.reject.ruleList)
+  const siteRuleList = getRulesList(config.rules.site.ruleList)
+  const tempRuleSet = getTempRulesSet()
+  return {
+    localRuleList,
+    localRulesSet,
+    rejectRulesSet,
+    rejectRuleList,
+    siteRulesSet,
+    siteRuleList,
+    tempRuleSet,
+    default: proxyConfig.config.rules.defaultProxy,
+    bypass: []
+  }
+}
+
+const getRulesList = function (ruleList) {
+  const filteredRules = ruleList.filter(function (element) {
+    return (
+      element.data !== '' && element.valid != false && element.mode != 'divider'
+    )
+  })
+  const formattedRules = filteredRules.map((rule) => {
+    return parseRuleItem(rule)
+  })
+
+  return formattedRules
+}
+
+const getRulesSet = function (rulesSet) {
+  if (!rulesSet.valid) {
+    return []
+  }
+  return parseAutoProxyFile(rulesSet.data, rulesSet.proxy)
+}
+
+const getBypassRulesList = function (bypassList) {
+  const res = []
+  if (bypassList.includes('<local>')) {
+    res.push(...parseBypassRule('<local>'))
+  }
+  res.push(
+    ...bypassList
+      .filter((item) => item != '<local>' && item != '')
+      .map((item) => {
+        return parseBypassRule(item)
+      })
+  )
+  return res
 }

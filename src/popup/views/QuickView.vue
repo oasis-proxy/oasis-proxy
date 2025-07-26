@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import ProxySelect from '../../components/ProxySelect.vue'
 import { addLocalRuleItemForAuto } from '@/core/proxy_config.js'
+import { getSuffix } from '@/core/utils'
 import Browser from '@/Browser/main'
 import {
   getNextLocalVersion,
@@ -16,33 +17,33 @@ const selectedProxy = ref('direct')
 const domains = ref([])
 const activeProxyLabel = ref('')
 const checkedDomains = ref([])
+const autoRefresh = ref(false)
 
 onMounted(async () => {
-  const result = await Browser.Storage.getLocal(['status_proxyKey'])
+  const result = await Browser.Storage.getLocal([
+    'status_proxyKey',
+    'config_autoRefresh'
+  ])
+  autoRefresh.value = result.config_autoRefresh
   if (result.status_proxyKey != null && result.status_proxyKey != '') {
     activeProxyLabel.value =
       Browser.I18n.getMessage('desc_active_policy') +
       decodeURIComponent(result.status_proxyKey.substring(6))
   }
 
-  const tabs = await Browser.Tabs.query({ active: true, currentWindow: true })
+  const tabs = await Browser.Tabs.getActiveTab()
 
-  const activeTabId = tabs[0].id.toString()
+  const activeTabId = 'tabId_' + tabs[0].id.toString()
 
   const requestSession = await Browser.Storage.getSession(activeTabId)
 
   Object.keys(requestSession[activeTabId]).forEach((hostname) => {
     if (requestSession[activeTabId][hostname].status == 'Error') {
-      const parts = hostname.split('.')
-      if (parts.length >= 3) {
-        parts[0] = '*'
-      } else {
-        parts.unshift('*')
-      }
-      const root = parts.join('.')
-      if (!domains.value.includes(root)) {
-        domains.value.push(root)
-        checkedDomains.value.push(root)
+      const suffix = getSuffix(hostname)
+
+      if (!domains.value.includes(suffix)) {
+        domains.value.push(suffix)
+        checkedDomains.value.push(suffix)
       }
     }
   })
@@ -85,6 +86,20 @@ async function quickAddLocalRuleList() {
       default:
     }
   }
+  if (autoRefresh.value) {
+    const tabs = await Browser.Tabs.getActiveTab()
+    if (
+      tabs != null &&
+      tabs.length > 0 &&
+      tabs[0].id != chrome.tabs.TAB_ID_NONE
+    ) {
+      const tab = await Browser.Tabs.get(tabs[0].id)
+      if (tab.url?.startsWith('http')) {
+        Browser.Tabs.reload(tabs[0].id)
+      }
+    }
+  }
+
   if (import.meta.env.VITE_APP_DEBUG != 'debug') {
     window.close()
   }
@@ -92,20 +107,21 @@ async function quickAddLocalRuleList() {
 </script>
 
 <template>
-  <div class="hstack px-3 py-2 mt-1">
-    <div
-      class="d-flex align-items-center cursor-point"
-      @click="router.push('/monitor')"
-    >
-      <i class="bi bi-speedometer me-2"></i>
-      <span>{{ Browser.I18n.getMessage('desc_monitor') }}</span>
-    </div>
-    <div class="ms-auto text-truncate" style="max-width: 50%">
-      {{ activeProxyLabel }}
+  <div class="position-fixed w-100 bg-body shadow-sm">
+    <div class="hstack px-3 py-2 mt-1">
+      <div
+        class="d-flex align-items-center cursor-point"
+        @click="router.push('/monitor')"
+      >
+        <i class="bi bi-speedometer me-2"></i>
+        <span>{{ Browser.I18n.getMessage('desc_monitor') }}</span>
+      </div>
+      <div class="ms-auto text-truncate" style="max-width: 50%">
+        {{ activeProxyLabel }}
+      </div>
     </div>
   </div>
-  <hr class="my-1" />
-  <div class="px-3 py-2 vstack gap-2 mb-1">
+  <div class="px-3 py-2 vstack gap-2 mb-1 mt-5">
     <div>{{ Browser.I18n.getMessage('desc_add_rules') }}</div>
     <div id="domainList" class="vstack gap-2">
       <div

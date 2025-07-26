@@ -20,6 +20,10 @@ Storage.removeLocal = function (key) {
   return chrome.storage.local.remove(key)
 }
 
+Storage.clearLocal = function () {
+  return chrome.storage.local.clear()
+}
+
 Storage.getSync = function (obj) {
   return chrome.storage.sync.get(obj)
 }
@@ -36,10 +40,6 @@ Storage.removeSync = function (key) {
   return chrome.storage.sync.remove(key)
 }
 
-Storage.clearLocal = function () {
-  return chrome.storage.local.clear()
-}
-
 Storage.clearSync = function () {
   return chrome.storage.sync.clear()
 }
@@ -48,7 +48,19 @@ Storage.getSession = function (keyList) {
   return chrome.storage.session.get(keyList)
 }
 
+Storage.getSessionAll = function () {
+  return chrome.storage.session.get()
+}
+
 Storage.setSession = function (obj) {
   return chrome.storage.session.set(obj)
+}
+
+Storage.removeSession = function (key) {
+  return chrome.storage.session.remove(key)
+}
+
+Storage.clearSession = function () {
+  return chrome.storage.session.clear()
 }
 export default Storage

@@ -1,6 +1,5 @@
 <script setup>
 import { getCurrentInstance, inject, ref, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
 import ServerInfoItem from '../components/ServerInfoItem.vue'
 
 import Browser from '@/Browser/main'
@@ -8,12 +7,13 @@ import { useStatusStore } from '@/options/stores/status'
 import { saveForFixed, proxyUses } from '@/core/proxy_config.js'
 import { getNextLocalVersion } from '@/core/version_control.js'
 
+const props = defineProps(['name'])
+
 const handleUpdate = inject('handleUpdate')
 const handleCopy = inject('handleCopy')
 const handleDelete = inject('handleDelete')
 const showUploadConflictModal = inject('showUploadConflictModal')
 
-const route = useRoute()
 const storeStatus = useStatusStore()
 const instance = getCurrentInstance()
 const confirmModal = instance?.appContext.config.globalProperties.$confirm
@@ -49,15 +49,18 @@ const proxyForFtp = ref({
   password: ''
 })
 const bypassList = ref('')
-
+const defaultTabInstance = ref(null)
 onMounted(() => {
-  load('proxy_' + encodeURIComponent(route.params.name))
+  load('proxy_' + encodeURIComponent(props.name))
+  const defaultTab = document.getElementById('v-pills-default-tab')
+  defaultTabInstance.value = new bootstrap.Tab(defaultTab)
 })
 
 watch(
-  () => route.params.name,
+  () => props.name,
   (newValue) => {
     load('proxy_' + encodeURIComponent(newValue))
+    defaultTabInstance.value.show()
   }
 )
 async function load(proxyKey) {
@@ -65,31 +68,25 @@ async function load(proxyKey) {
   const result = await Browser.Storage.getLocal([proxyKey])
 
   tagColor.value = result[proxyKey].tagColor
-  if (result[proxyKey]?.config.rules.singleProxy != null) {
+  if (result[proxyKey]?.config.rules.fallbackProxy != null) {
     fallbackProxy.value = JSON.parse(
-      JSON.stringify(result[proxyKey]?.config.rules.singleProxy)
+      JSON.stringify(result[proxyKey]?.config.rules.fallbackProxy)
     )
-  } else {
-    if (result[proxyKey]?.config.rules.fallbackProxy != null) {
-      fallbackProxy.value = JSON.parse(
-        JSON.stringify(result[proxyKey]?.config.rules.fallbackProxy)
-      )
-    }
-    if (result[proxyKey]?.config.rules.proxyForHttp != null) {
-      proxyForHttp.value = JSON.parse(
-        JSON.stringify(result[proxyKey]?.config.rules.proxyForHttp)
-      )
-    }
-    if (result[proxyKey]?.config.rules.proxyForHttps != null) {
-      proxyForHttps.value = JSON.parse(
-        JSON.stringify(result[proxyKey]?.config.rules.proxyForHttps)
-      )
-    }
-    if (result[proxyKey]?.config.rules.proxyForFtp != null) {
-      proxyForFtp.value = JSON.parse(
-        JSON.stringify(result[proxyKey]?.config.rules.proxyForFtp)
-      )
-    }
+  }
+  if (result[proxyKey]?.config.rules.proxyForHttp != null) {
+    proxyForHttp.value = JSON.parse(
+      JSON.stringify(result[proxyKey]?.config.rules.proxyForHttp)
+    )
+  }
+  if (result[proxyKey]?.config.rules.proxyForHttps != null) {
+    proxyForHttps.value = JSON.parse(
+      JSON.stringify(result[proxyKey]?.config.rules.proxyForHttps)
+    )
+  }
+  if (result[proxyKey]?.config.rules.proxyForFtp != null) {
+    proxyForFtp.value = JSON.parse(
+      JSON.stringify(result[proxyKey]?.config.rules.proxyForFtp)
+    )
   }
   if (result[proxyKey]?.config.rules.bypassList != null) {
     bypassList.value = result[proxyKey]?.config.rules.bypassList.join('\n')
@@ -130,8 +127,7 @@ function resetData() {
 }
 
 async function handleSubmit() {
-  const name = route.params.name
-  const encodeName = encodeURIComponent(name)
+  const encodeName = encodeURIComponent(props.name)
   const key = 'proxy_' + encodeName
   const tmpObj = saveForFixed(
     encodeName,
@@ -150,19 +146,18 @@ async function handleSubmit() {
     config_syncTime: new Date().getTime()
   })
 
-  toast.info(`${name} ${Browser.I18n.getMessage('desc_save_success')}`)
+  toast.info(`${props.name} ${Browser.I18n.getMessage('desc_save_success')}`)
   storeStatus.resetUnsaved()
-  const result = await Browser.Storage.getLocal(null)
-  if (result.status_proxyKey == key) {
-    Browser.Proxy.set(result, key, async () => {
-      await Browser.Storage.setLocal({ status_proxyKey: key })
-      Browser.Action.setBadgeBackgroundColor(result[key].tagColor)
+  console.log(storeStatus.activeProxyKey)
+  if (storeStatus.activeProxyKey == key) {
+    await Browser.Proxy.reloadOrDirect(() => {
       toast.info(Browser.I18n.getMessage('desc_proxy_update'))
     })
   } else {
-    const uniqNames = proxyUses(result[result.status_proxyKey])
+    const result = await Browser.Storage.getLocalAll()
+    const uniqNames = proxyUses(result[storeStatus.activeProxyKey])
     if (uniqNames.includes(encodeName)) {
-      Browser.Proxy.set(result, result.status_proxyKey, async () => {
+      await Browser.Proxy.reloadOrDirect(async () => {
         toast.info(Browser.I18n.getMessage('desc_proxy_update'))
       })
     }
@@ -175,7 +170,7 @@ function handleCancel() {
     Browser.I18n.getMessage('modal_title_warning'),
     Browser.I18n.getMessage('modal_desc_reset'),
     function () {
-      load('proxy_' + route.params.name)
+      load('proxy_' + encodeURIComponent(props.name))
       storeStatus.resetUnsaved()
     }
   )
@@ -193,7 +188,7 @@ function handleCancel() {
         <input ref="colorPicker" type="color" v-model="tagColor" />
       </div>
       <div class="fs-5 fw-bold text-truncate">
-        {{ Browser.I18n.getMessage('page_title_fixed') + route.params.name }}
+        {{ Browser.I18n.getMessage('page_title_fixed') + props.name }}
       </div>
       <button
         class="btn btn-sm btn-outline-danger ms-auto"

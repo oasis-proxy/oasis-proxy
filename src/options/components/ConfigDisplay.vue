@@ -92,7 +92,7 @@ function handleSetLocal() {
     Browser.I18n.getMessage('modal_desc_override_local'),
     async () => {
       await overWriteToLocal()
-      await Browser.Proxy.reloadOrDirect()
+      await Browser.Proxy.reloadOrDirect(undefined, true)
       toast.info(Browser.I18n.getMessage('desc_override_local'))
       setTimeout(() => {
         location.reload()
@@ -105,8 +105,8 @@ function handleSetSync() {
   confirmModal.createConfirm(
     Browser.I18n.getMessage('modal_title_warning'),
     Browser.I18n.getMessage('modal_desc_override_sync'),
-    () => {
-      overWriteToCloud()
+    async () => {
+      await overWriteToCloud()
       toast.info(Browser.I18n.getMessage('desc_override_sync'))
       reloadSyncData()
     }

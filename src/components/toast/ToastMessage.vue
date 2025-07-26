@@ -5,9 +5,7 @@ import { computed, onMounted, getCurrentInstance } from 'vue'
 const props = defineProps(['message', 'mode'])
 
 const instance = getCurrentInstance()
-// eslint-disable-next-line no-unused-vars
 const show = function () {
-  // eslint-disable-next-line no-undef
   const toast = new bootstrap.Toast(instance.refs.toast)
   toast.show()
 }

@@ -20,7 +20,6 @@ let cbAfterHide = function () {}
 
 onMounted(() => {
   const modalElement = document.getElementById('uploadConflictModal')
-  // eslint-disable-next-line no-undef
   modalInstance = new bootstrap.Modal(modalElement)
 })
 

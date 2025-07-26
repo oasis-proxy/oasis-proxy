@@ -1,5 +1,5 @@
 <script setup>
-import { ref, inject, getCurrentInstance } from 'vue'
+import { ref, inject, getCurrentInstance, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import draggable from 'vuedraggable'
 import BatchUpdateServerModal from './BatchUpdateServerModal.vue'
@@ -18,8 +18,7 @@ const batchUpdateServerModal = ref(null)
 const instance = getCurrentInstance()
 const toast = instance?.appContext.config.globalProperties.$toast
 
-const { localRuleList, localRulesSet, defaultProxy, occurrences } =
-  inject('autoConfig')
+const { localRuleList, localRulesSet, defaultProxy } = inject('autoConfig')
 const emit = defineEmits(['load'])
 
 const focusText = ref('')
@@ -30,6 +29,22 @@ const ruleItemTmpl = {
   proxy: 'direct',
   valid: true
 }
+const occurrences = ref([])
+
+watch(
+  () => localRuleList,
+  (newValue) => {
+    const countOccurrences = (array) => {
+      return array.reduce((accumulator, currentValue) => {
+        accumulator[currentValue.data] =
+          (accumulator[currentValue.data] || 0) + 1
+        return accumulator
+      }, {})
+    }
+    occurrences.value = countOccurrences(newValue.value)
+  },
+  { deep: true }
+)
 
 function setFocusText(text) {
   focusText.value = text
@@ -71,11 +86,13 @@ function inputClassName(item) {
 async function handleUpdateUrl() {
   const key = 'proxy_' + encodeURIComponent(route.params.name)
   const allConfig = await Browser.Storage.getLocalAll()
-  const updateProxyConfig = await updateRulesSetData(allConfig[key], ['local'])
+  const updateProxyConfig = await updateRulesSetData(allConfig[key], {
+    subjectList: ['local']
+  })
   if (JSON.stringify(updateProxyConfig) != '{}') {
     await Browser.Storage.setLocal({ [key]: updateProxyConfig })
-    if (allConfig.status_proxyKey == key) {
-      Browser.Proxy.set(allConfig, key, async () => {
+    if (storeStatus.activeProxyKey == key) {
+      await Browser.Proxy.reloadOrDirect(() => {
         toast.info(Browser.I18n.getMessage('desc_proxy_update'))
       })
     }
@@ -123,15 +140,24 @@ function setUnsaved() {
               :class="inputClassName(element)"
               @getFocusText="setFocusText(element.data)"
               @clearFousText="setFocusText(null)"
-              @deleteItem="removeRule(index)"
-              @addItem="insertRule(index)"
-              @hrItem="insertDivider(index)"
             >
-              <ProxySelect
-                v-model="element.proxy"
-                style="width: 150px"
-              ></ProxySelect
-            ></RuleItem>
+              <template #operation>
+                <i
+                  class="bi bi-layer-backward icon-btn me-2 mt-1"
+                  @click="insertRule(index)"
+                ></i>
+                <i
+                  class="bi bi-inboxes-fill icon-btn me-2 mt-1"
+                  @click="insertDivider(index)"
+                ></i>
+              </template>
+              <template #delete>
+                <i
+                  class="bi bi-trash-fill icon-btn mt-1"
+                  @click="removeRule(index)"
+                ></i>
+              </template>
+            </RuleItem>
           </template>
         </draggable>
       </div>
@@ -182,7 +208,7 @@ function setUnsaved() {
     <div class="card-body">
       <LinkTextItem
         :urlTitle="Browser.I18n.getMessage('form_label_rule_url')"
-        :urlUpdatedAtTitle="Browser.I18n.getMessage('form_label_update_date')"
+        :urlUpdatedAtTitle="Browser.I18n.getMessage('form_label_rule_update')"
         :validTitle="Browser.I18n.getMessage('form_label_rule_valid')"
         :dataTitle="Browser.I18n.getMessage('form_label_rule_data')"
         @updateRulesSetData="handleUpdateUrl('local')"

@@ -5,6 +5,7 @@ import { downloadUrl } from '@/core/utils'
 import Browser from '@/Browser/main'
 import { useStatusStore } from '@/options/stores/status'
 
+const isDebug = import.meta.env.VITE_APP_DEBUG == 'debug'
 const rulesSet = defineModel('rulesSet', {
   type: Object,
   default: () => {
@@ -12,6 +13,7 @@ const rulesSet = defineModel('rulesSet', {
       format: null,
       url: 'default',
       data: '',
+      updateInterval: 'default',
       urlUpdatedAt: null,
       valid: true
     }
@@ -44,6 +46,9 @@ const urlInputClass = computed(() => {
 })
 
 async function updateData() {
+  if (!storeStatus.isUnsaved) {
+    return
+  }
   console.log('updateData', rulesSet.value)
   isUrlValid.value = true
   if (rulesSet.value.url == '') {
@@ -63,10 +68,10 @@ async function updateData() {
 }
 
 async function handleClickUpdate() {
-  if (!storeStatus.isUnsaved) {
-    emit('updateRulesSetData')
-  } else {
+  if (storeStatus.isUnsaved) {
     updateData()
+  } else {
+    emit('updateRulesSetData')
   }
 }
 </script>
@@ -132,8 +137,44 @@ async function handleClickUpdate() {
       v-if="rulesSet.urlUpdatedAt != ''"
     >
       <label class="col-2 col-form-label">{{ urlUpdatedAtTitle }}</label>
-      <div class="col-10">
-        <span>{{ rulesSet.urlUpdatedAt }}</span>
+      <div class="col-2">
+        <select
+          v-model="rulesSet.updateInterval"
+          class="form-select form-select-sm"
+        >
+          <option value="default">
+            {{ Browser.I18n.getMessage('input_selection_by_system') }}
+          </option>
+          <option value="24h">
+            {{ Browser.I18n.getMessage('input_selection_24h') }}
+          </option>
+          <option value="12h">
+            {{ Browser.I18n.getMessage('input_selection_12h') }}
+          </option>
+          <option value="6h">
+            {{ Browser.I18n.getMessage('input_selection_6h') }}
+          </option>
+          <option value="3h">
+            {{ Browser.I18n.getMessage('input_selection_3h') }}
+          </option>
+          <option value="1h">
+            {{ Browser.I18n.getMessage('input_selection_1h') }}
+          </option>
+          <option value="15m">
+            {{ Browser.I18n.getMessage('input_selection_15m') }}
+          </option>
+          <option value="1m" v-if="isDebug">
+            {{ Browser.I18n.getMessage('input_selection_1m') }}
+          </option>
+          <option value="disabled">
+            {{ Browser.I18n.getMessage('input_selection_disabled') }}
+          </option>
+        </select>
+      </div>
+      <div class="col-4">
+        <span>{{
+          '(' + urlUpdatedAtTitle + ' ' + rulesSet.urlUpdatedAt + ')'
+        }}</span>
       </div>
     </div>
     <div class="mb-3 row d-flex align-items-top">

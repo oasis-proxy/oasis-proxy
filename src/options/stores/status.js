@@ -23,6 +23,14 @@ export const useStatusStore = defineStore('status', () => {
     }
   })
   const isUnsaved = ref(false)
+  const isTempRuleValid = ref(false)
+
+  function setTempRuleValid() {
+    isTempRuleValid.value = true
+  }
+  function resetTempRuleValid() {
+    isTempRuleValid.value = false
+  }
   function setUnsaved() {
     isUnsaved.value = true
   }
@@ -34,7 +42,10 @@ export const useStatusStore = defineStore('status', () => {
     activeProxyKey,
     proxyConfigs,
     isUnsaved,
+    isTempRuleValid,
     setUnsaved,
-    resetUnsaved
+    resetUnsaved,
+    setTempRuleValid,
+    resetTempRuleValid
   }
 })

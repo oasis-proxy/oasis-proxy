@@ -1,78 +1,78 @@
 <script setup>
-import { ref } from 'vue'
-import HomeDefault from './HomeDefault.vue'
-import HomeAdvance from './HomeAdvance.vue'
-import HomeDebug from './HomeDebug.vue'
-import HomeOthers from './HomeOthers.vue'
+import { ref, watch, onMounted } from 'vue'
+import { useRoute, useRouter, RouterView } from 'vue-router'
 import Browser from '@/Browser/main'
 
+const router = useRouter()
+const route = useRoute()
 const className = ref('nav-link d-none')
+const activeTab = ref('')
 
 if (import.meta.env.VITE_APP_DEBUG == 'debug') {
   className.value = 'nav-link'
+}
+
+onMounted(() => {
+  activeTab.value = route.path.split('/')[2]
+})
+
+watch(
+  () => route.path,
+  (newQuery) => {
+    activeTab.value = newQuery.split('/')[2]
+  },
+  { deep: true }
+)
+
+function handleTabChange(tabName) {
+  router.push('/home/' + tabName)
 }
 </script>
 
 <template>
   <div id="profileAuto">
-    <div class="hstack gap-2 pb-4 mb-3">
+    <div class="hstack gap-3 pb-4 mb-3">
+      <div>
+        <i class="bi bi-gear-wide-connected fs-4"></i>
+      </div>
       <div class="fs-5 fw-bold text-truncate" id="title">
         {{ Browser.I18n.getMessage('page_title_setting') }}
       </div>
     </div>
     <div>
-      <div class="nav nav-tabs mb-2" id="v-pills-tab" role="tablist">
+      <div class="nav nav-tabs mb-2">
         <button
-          class="nav-link active"
-          id="v-pills-default-tab"
+          :class="activeTab == 'default' ? 'nav-link active' : 'nav-link'"
           data-bs-toggle="pill"
-          data-bs-target="#v-pills-default"
-          role="tab"
-          aria-controls="v-pills-default"
-          aria-selected="true"
+          @click="handleTabChange('default')"
         >
           <span>{{ Browser.I18n.getMessage('tab_label_default') }}</span>
         </button>
         <button
-          class="nav-link"
-          id="v-pills-advance-tab"
+          :class="activeTab == 'advance' ? 'nav-link active' : 'nav-link'"
           data-bs-toggle="pill"
-          data-bs-target="#v-pills-advance"
-          role="tab"
-          aria-controls="v-pills-advance"
-          aria-selected="false"
+          @click="handleTabChange('advance')"
         >
           <span>{{ Browser.I18n.getMessage('tab_label_advance') }}</span>
         </button>
         <button
-          class="nav-link"
-          id="v-pills-others-tab"
+          :class="activeTab == 'beta' ? 'nav-link active' : 'nav-link'"
           data-bs-toggle="pill"
-          data-bs-target="#v-pills-others"
-          role="tab"
-          aria-controls="v-pills-others"
-          aria-selected="false"
+          @click="handleTabChange('beta')"
         >
-          <span>{{ Browser.I18n.getMessage('tab_label_others') }}</span>
+          <span>{{ Browser.I18n.getMessage('tab_label_beta') }}</span>
         </button>
         <button
           :class="className"
-          id="v-pills-debug-tab"
           data-bs-toggle="pill"
-          data-bs-target="#v-pills-debug"
-          role="tab"
-          aria-controls="v-pills-debug"
-          aria-selected="false"
+          @click="handleTabChange('debug')"
         >
           <span>{{ Browser.I18n.getMessage('tab_label_debug') }}</span>
         </button>
       </div>
     </div>
-    <div class="tab-content">
-      <HomeDefault></HomeDefault>
-      <HomeAdvance></HomeAdvance>
-      <HomeDebug></HomeDebug>
-      <HomeOthers></HomeOthers>
+    <div>
+      <RouterView />
     </div>
   </div>
 </template>

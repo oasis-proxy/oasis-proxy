@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import Browser from '@/Browser/main'
 const props = defineProps({
-  tabsList: Array
+  tabList: Array
 })
 
 const emit = defineEmits(['filterTabsId'])
@@ -52,7 +52,7 @@ function handleClick(tabId) {
         <ul class="nav nav-pills flex-column">
           <li
             :class="e.valid ? 'nav-item w-100' : 'nav-item invalid w-100'"
-            v-for="(e, i) in props.tabsList"
+            v-for="(e, i) in props.tabList"
             :key="i"
           >
             <a
@@ -64,7 +64,7 @@ function handleClick(tabId) {
               @click="handleClick(e.tabId)"
             >
               <span>
-                <i class="bi bi-play-fill me-1" v-if="e.valid == true"></i>
+                <i class="bi bi-play-fill me-1" v-if="e.valid"></i>
                 <i class="bi bi-stop-fill me-1" v-else></i>
                 <span> {{ e.title }}</span>
               </span>

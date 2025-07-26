@@ -12,8 +12,8 @@ const copyShow = ref(false)
 const iptags = ref({})
 
 onMounted(async () => {
-  getIptags()
-  getMessage()
+  await getIptags()
+  await getMessage()
   chrome.runtime.onMessage.addListener(function (request) {
     if (request.instruction == 'updateList') getMessage()
     if (request.instruction == 'clearList') clearMessage()
@@ -33,13 +33,20 @@ async function clearMessage() {
 }
 
 async function getMessage() {
-  const tabs = await Browser.Tabs.query({ active: true, currentWindow: true })
-  const activeTabId = tabs[0].id.toString()
+  const tabs = await Browser.Tabs.getActiveTab()
+  const activeTabId = 'tabId_' + tabs[0].id.toString()
 
   const requestSession = await Browser.Storage.getSession(activeTabId)
   Object.keys(requestSession[activeTabId]).forEach((key) => {
-    for (const item of tableList.value) {
-      if (item.host == key) return
+    for (const index in tableList.value) {
+      if (tableList.value[index].host == key) {
+        if (['Loading', 'Redirect'].includes(tableList.value[index].ip)) {
+          tableList.value[index].ip = requestSession[activeTabId][key].ip
+          tableList.value[index].status =
+            requestSession[activeTabId][key].status
+        }
+        return
+      }
     }
     tableList.value.push({
       host: key,
@@ -61,35 +68,36 @@ async function copyToClipboard(text) {
 }
 </script>
 <template>
-  <div class="row justify-content-between px-3 py-2 mt-1">
-    <div
-      class="col-4 d-inline-flex align-items-center cursor-point"
-      @click="router.push('/')"
-    >
-      <i class="bi bi-send-check me-2"></i>
-      <span>{{ Browser.I18n.getMessage('desc_proxy_selection') }}</span>
-    </div>
-    <div class="col-4 d-inline-flex justify-content-center">
-      <Transition>
-        <div v-show="copyShow">
-          <i class="bi bi-check-circle-fill me-2 icon-btn"></i>
-          <span>{{ Browser.I18n.getMessage('desc_copy') }}</span>
-        </div>
-      </Transition>
-    </div>
-    <div class="col-4 d-inline-flex justify-content-end">
+  <div class="position-fixed w-100 bg-body shadow-sm">
+    <div class="row justify-content-between px-3 py-2 mt-1">
       <div
-        class="d-inline-flex align-items-center cursor-point"
-        v-if="quickEnabled"
-        @click="router.push('/quick')"
+        class="col-4 d-inline-flex align-items-center cursor-point"
+        @click="router.push('/')"
       >
-        <span>{{ Browser.I18n.getMessage('desc_quick_add') }}</span>
-        <i class="bi bi-plus-circle ms-2"></i>
+        <i class="bi bi-send-check me-2"></i>
+        <span>{{ Browser.I18n.getMessage('desc_proxy_selection') }}</span>
+      </div>
+      <div class="col-4 d-inline-flex justify-content-center">
+        <Transition>
+          <div v-show="copyShow">
+            <i class="bi bi-check-circle-fill me-2 icon-btn"></i>
+            <span>{{ Browser.I18n.getMessage('desc_copy') }}</span>
+          </div>
+        </Transition>
+      </div>
+      <div class="col-4 d-inline-flex justify-content-end">
+        <div
+          class="d-inline-flex align-items-center cursor-point"
+          v-if="quickEnabled"
+          @click="router.push('/quick')"
+        >
+          <span>{{ Browser.I18n.getMessage('desc_quick_add') }}</span>
+          <i class="bi bi-plus-circle ms-2"></i>
+        </div>
       </div>
     </div>
   </div>
-  <hr class="my-1" />
-  <div class="px-3 pb-1">
+  <div class="px-3 pb-1 mt-5">
     <table class="table table-sm" id="monitorTable">
       <thead>
         <tr>
@@ -114,7 +122,7 @@ async function copyToClipboard(text) {
               style="width: 120px"
               :title="item.ip"
               @click="copyToClipboard(item.ip)"
-              >{{ iptags[item.ip] != null ? iptags[item.ip] : item.ip }}</span
+              >{{ iptags[item.ip] ? iptags[item.ip] : item.ip }}</span
             >
           </td>
         </tr>

@@ -19,7 +19,6 @@ const toast = instance?.appContext.config.globalProperties.$toast
 
 onMounted(() => {
   const modalElement = document.getElementById('syncConflictModal')
-  // eslint-disable-next-line no-undef
   modalInstance = new bootstrap.Modal(modalElement)
 })
 
@@ -54,7 +53,7 @@ async function handleSetSync() {
 }
 async function handleSetLocal() {
   await overWriteToLocal()
-  await Browser.Proxy.reloadOrDirect()
+  await Browser.Proxy.reloadOrDirect(undefined, true)
   storeConfig.configAutoSync = true
   hide()
   toast.info(Browser.I18n.getMessage('desc_override_local'))

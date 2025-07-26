@@ -28,7 +28,6 @@ let basicConfigModalInstance = null
 
 onMounted(() => {
   const modalElement = document.getElementById('basicConfigModal')
-  // eslint-disable-next-line no-undef
   basicConfigModalInstance = new bootstrap.Modal(modalElement)
 })
 

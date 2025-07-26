@@ -11,6 +11,12 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
+  test: {
+    coverage: {
+      provider: 'v8', // 指定使用 v8
+      reporter: ['text', 'html'] // 可以是 'text', 'html', 'json', 'lcov' 等
+    }
+  },
   build: {
     rollupOptions: {
       input: {

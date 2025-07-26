@@ -26,12 +26,11 @@ const targetClass = computed(() => {
     : 'form-select form-select-sm is-invalid'
 })
 
-let batchUpdateServerModal = null
+const batchUpdateServerModal = ref(null)
 
 onMounted(() => {
   const modalElement = document.getElementById('batchUpdateServerModal')
-  // eslint-disable-next-line no-undef
-  batchUpdateServerModal = new bootstrap.Modal(modalElement)
+  batchUpdateServerModal.value = new bootstrap.Modal(modalElement)
 })
 
 defineExpose({
@@ -46,10 +45,10 @@ function hide() {
     isOriginServerValid.value = true
     isTargetServerValid.value = true
   }, 300)
-  batchUpdateServerModal.hide()
+  batchUpdateServerModal.value.hide()
 }
 function show() {
-  batchUpdateServerModal.show()
+  batchUpdateServerModal.value.show()
 }
 
 function handleCancel() {

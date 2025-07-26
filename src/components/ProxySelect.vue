@@ -5,6 +5,10 @@ import Browser from '@/Browser/main'
 
 const proxy = defineModel()
 
+const props = defineProps({
+  readonly: { type: Boolean, default: false }
+})
+
 const proxyNames = ref([])
 
 onMounted(async () => {
@@ -17,7 +21,11 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <select class="form-select form-select-sm" v-model="proxy">
+  <select
+    class="form-select form-select-sm"
+    v-model="proxy"
+    :disabled="props.readonly"
+  >
     <option value="direct">
       {{ Browser.I18n.getMessage('input_label_direct') }}
     </option>

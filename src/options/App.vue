@@ -1,5 +1,6 @@
 <script setup>
 import Browser from '@/Browser/main'
+import { log } from '@/core/utils.js'
 import { provide, ref, getCurrentInstance, onMounted, watch } from 'vue'
 import { useRoute, useRouter, RouterView } from 'vue-router'
 import AsideView from './views/AsideView.vue'
@@ -21,7 +22,6 @@ const route = useRoute()
 const router = useRouter()
 const uploadConflictModal = ref(null)
 const syncConflictModal = ref(null)
-
 const basicConfigModal = ref(null)
 const bCMOperationType = ref('newConfig')
 const bCMConfigMode = ref('servers')
@@ -49,7 +49,7 @@ onMounted(async () => {
     switch (await getSyncDownloadStatus()) {
       case 'download':
         await overWriteToLocal()
-        await Browser.Proxy.reloadOrDirect()
+        await Browser.Proxy.reloadOrDirect(undefined, true)
         break
       case 'conflict':
         showSyncConflictModal(Browser.I18n.getMessage('modal_desc_conflict'))
@@ -60,27 +60,39 @@ onMounted(async () => {
 
   result = await Browser.Storage.getLocalAll()
   storeStatus.activeProxyKey = result.status_proxyKey
+  storeConfig.configAutoRefresh = result.config_autoRefresh
+  storeConfig.configContextMenus = result.config_contextMenus
+
+  // init site rules
+  storeConfig.configSiteRules = result.config_siteRules
+  storeConfig.configSiteRulesAutoRefresh = result.config_siteRules_autoRefresh
+  if (storeConfig.configSiteRules) {
+    storeStatus.setTempRuleValid()
+  }
 
   if (result.reject != null) {
     storeStatus.proxyConfigs.reject = result.reject
   }
+
+  // init proxy config
   Object.keys(result).forEach((key) => {
     if (key.startsWith('proxy_')) {
       storeStatus.proxyConfigs[key] = result[key]
     }
   })
+
   Browser.Storage.changed(function (changes, areaName) {
-    console.info('app changed:', changes)
+    log.info('storage changed:', changes)
     if (areaName === 'local') {
-      if (changes.status_proxyKey != null) {
+      if (changes.status_proxyKey) {
         storeStatus.activeProxyKey = changes.status_proxyKey.newValue
       }
-      if (changes.reject != null) {
+      if (changes.reject) {
         storeStatus.proxyConfigs.reject = changes.reject.newValue
       }
       Object.keys(changes).forEach((key) => {
         if (key.startsWith('proxy_')) {
-          if (changes[key].newValue != null) {
+          if (changes[key].newValue) {
             storeStatus.proxyConfigs[key] = changes[key].newValue
           } else {
             delete storeStatus.proxyConfigs[key]
@@ -101,7 +113,7 @@ function handleDelete() {
       const proxyNameList = proxyUsedBy(encodeURIComponent(name), result)
       if (proxyNameList.length > 0) {
         toast.warning(
-          `（${name}）${Browser.I18n.getMessage('desc_undeleted_info')}${proxyNameList.join(', ')}`
+          `（${name}）${Browser.I18n.getMessage('desc_undeleted_info')}${decodeURIComponent(proxyNameList.join(', '))}`
         )
         return
       }
@@ -116,7 +128,7 @@ function handleDelete() {
       if (result.status_proxyKey == proxyKey) {
         Browser.Proxy.setDirect(async () => {
           await Browser.Storage.setLocal({ status_proxyKey: 'direct' })
-          toast.info(`代理切换为直连`)
+          toast.info(Browser.I18n.getMessage('desc_set_proxy_direct'))
         })
       }
       showUploadConflictModal(() => {
@@ -144,7 +156,6 @@ function handleCopy() {
     return
   }
   if (basicConfigModal.value) {
-    // bCMConfigMode.value = configMode
     bCMOperationType.value = 'copyConfig'
     basicConfigModal.value.show()
   }
@@ -171,6 +182,10 @@ function showSyncConflictModal(desc) {
   if (syncConflictModal.value) syncConflictModal.value.createModal(desc)
 }
 
+function toGithub() {
+  window.open('https://github.com/oasis-proxy/oasis-proxy', '_blank')
+}
+
 provide('handleNewConfig', handleNewConfig)
 provide('handleUpdate', handleUpdate)
 provide('handleCopy', handleCopy)
@@ -193,11 +208,19 @@ provide('showSyncConflictModal', showSyncConflictModal)
       </div>
     </div>
   </div>
+  <div class="opacity-25 d-flex justify-content-center mt-2">
+    <span style="user-select: none">{{
+      Browser.I18n.getMessage('ext_name') +
+      ', Version: ' +
+      Browser.Runtime.getManifest().version
+    }}</span>
+    <i class="bi bi-github ms-2 cursor-point" @click="toGithub()"></i>
+  </div>
   <BasicConfigModal
     ref="basicConfigModal"
     :operation-type="bCMOperationType"
     :config-mode="bCMConfigMode"
-  ></BasicConfigModal>
-  <UploadConflictModal ref="uploadConflictModal"></UploadConflictModal>
-  <SyncConflictModal ref="syncConflictModal"></SyncConflictModal>
+  />
+  <UploadConflictModal ref="uploadConflictModal" />
+  <SyncConflictModal ref="syncConflictModal" />
 </template>

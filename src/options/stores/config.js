@@ -3,9 +3,13 @@ import { defineStore } from 'pinia'
 
 export const useConfigStore = defineStore('config', () => {
   const configUI = ref('dark')
-  const configUpdateUrl = ref(true)
+  const configUpdateUrl = ref('24h')
+  const configAutoRefresh = ref(true)
   const configMonitor = ref(false)
   const configAutoSync = ref(false)
+  const configContextMenus = ref(false)
+  const configSiteRules = ref(false)
+  const configSiteRulesAutoRefresh = ref(true)
   const computedTheme = computed(() => {
     switch (configUI.value) {
       case 'dark':
@@ -27,8 +31,12 @@ export const useConfigStore = defineStore('config', () => {
   return {
     configUI,
     configUpdateUrl,
+    configAutoRefresh,
     configMonitor,
     configAutoSync,
+    configContextMenus,
+    configSiteRules,
+    configSiteRulesAutoRefresh,
     computedTheme
   }
 })

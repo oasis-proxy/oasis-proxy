@@ -8,11 +8,13 @@
     "test": "vitest",
     "build": "vite build",
     "debug": "vite --mode debugging build",
+    "trace": "vite --mode tracing build",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.7.2",
     "ipaddr.js": "^2.2.0",
     "jslint": "^0.12.1",
     "pinia": "^2.1.7",
@@ -22,6 +24,7 @@
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
+    "@types/chrome": "^0.0.312",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vitejs/plugin-vue-jsx": "^3.1.0",
     "@vue/eslint-config-prettier": "^9.0.0",
@@ -29,7 +32,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.23.0",
     "jsdom": "^24.1.0",
-    "prettier": "^3.2.5",
+    "prettier": "^3.5.3",
     "vite": "^5.2.8",
     "vitest": "^1.6.0"
   }

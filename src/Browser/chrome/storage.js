@@ -63,4 +63,26 @@ Storage.removeSession = function (key) {
 Storage.clearSession = function () {
   return chrome.storage.session.clear()
 }
+
+Storage.getKeysSession = async function () {
+  if (typeof chrome.storage.session.getKeys !== 'function') {
+    return Object.keys(await chrome.storage.session.get(null))
+  }
+  return await chrome.storage.session.getKeys()
+}
+
+Storage.getKeysLocal = async function () {
+  if (typeof chrome.storage.local.getKeys !== 'function') {
+    return Object.keys(await chrome.storage.local.get(null))
+  }
+  return await chrome.storage.local.getKeys()
+}
+
+Storage.getKeysSync = async function () {
+  if (typeof chrome.storage.sync.getKeys !== 'function') {
+    return Object.keys(await chrome.storage.sync.get(null))
+  }
+  return await chrome.storage.sync.getKeys()
+}
+
 export default Storage

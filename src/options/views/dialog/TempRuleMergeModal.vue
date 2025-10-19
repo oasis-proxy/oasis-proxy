@@ -7,7 +7,7 @@ import Browser from '@/Browser/main'
 const emit = defineEmits(['submit'])
 
 const ruleList = defineModel()
-const mergeRule = ref({})
+const mergeRule = ref([])
 
 let basicConfigModalInstance = null
 onMounted(() => {
@@ -23,8 +23,15 @@ defineExpose({
 watch(
   ruleList,
   (newValue) => {
-    mergeRule.value = JSON.parse(JSON.stringify(newValue[0]))
-    mergeRule.value.data = mergeRule.value.suffix
+    mergeRule.value = []
+    const filterRes = Array.from(
+      new Map(newValue.map((item) => [item['suffix'], item])).values()
+    )
+    for (const item of filterRes) {
+      const tmpObj = JSON.parse(JSON.stringify(item))
+      tmpObj.data = item.suffix
+      mergeRule.value.push(tmpObj)
+    }
   },
   { deep: true }
 )
@@ -32,7 +39,7 @@ watch(
 function hide() {
   basicConfigModalInstance.hide()
   setTimeout(() => {
-    mergeRule.value = {}
+    mergeRule.value = []
   }, 300)
 }
 function show() {
@@ -44,7 +51,9 @@ function handleCancel() {
 }
 
 function handleSubmit() {
-  emit('submit', mergeRule.value)
+  // submit is async function in parent component,
+  // using deep clone to avoid mergeRule being changed in hide()
+  emit('submit', JSON.parse(JSON.stringify(mergeRule.value)))
   hide()
 }
 </script>
@@ -72,11 +81,11 @@ function handleSubmit() {
         >
         <hr class="w-100" />
       </div>
-      <div class="mb-3">
+      <div class="mb-3" v-for="(element, index) in mergeRule" :key="index">
         <RuleItem
           :is-draggable="false"
           :is-validable="false"
-          v-model="mergeRule"
+          v-model="mergeRule[index]"
         />
       </div>
     </template>

@@ -1,4 +1,4 @@
-import { matchSiteRules } from '@/core/siterules'
+import { matchSiteRules, clearSiteRules } from '@/core/siterules'
 
 const handleErrorForSiteRules = async (details) => {
   console.log('handleTempRules', details)
@@ -12,9 +12,10 @@ export const startSiteRule = () => {
   })
 }
 
-export const endSiteRule = () => {
+export const endSiteRule = async () => {
   console.log('endSiteRule')
   chrome.webRequest.onErrorOccurred.removeListener(handleErrorForSiteRules, {
     urls: ['<all_urls>']
   })
+  await clearSiteRules()
 }

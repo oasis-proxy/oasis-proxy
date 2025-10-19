@@ -85,7 +85,7 @@ export const createProxy = function (name, tagColor, mode) {
   return proxy
 }
 
-// 返回所有使用代理的名称，包含direct和reject
+// get server names of the autoproxy , include direct and reject
 export const proxyUses = function (proxyConfig) {
   const proxyNames = ['reject']
   if (proxyConfig.mode !== 'auto') {
@@ -310,19 +310,23 @@ export const saveForAuto = function (
   return tmp
 }
 
-export const addLocalRuleItemForAuto = function (localRuleList, proxyConfig) {
+export const addRuleItemForAuto = function (
+  ruleList,
+  proxyConfig,
+  subject = 'local'
+) {
   const tmpProxyConfig = JSON.parse(JSON.stringify(proxyConfig))
   if (tmpProxyConfig.mode == 'auto') {
-    for (const item of localRuleList) {
+    for (const item of ruleList) {
       let isExistRule = false
-      for (const e of tmpProxyConfig.config.rules.local.ruleList) {
+      for (const e of tmpProxyConfig.config.rules[subject].ruleList) {
         if (objIsEqual(e, item)) {
           isExistRule = true
           break
         }
       }
       if (!isExistRule) {
-        tmpProxyConfig.config.rules.local.ruleList.unshift(item)
+        tmpProxyConfig.config.rules[subject].ruleList.unshift(item)
       }
     }
     return tmpProxyConfig
@@ -425,34 +429,45 @@ function getAuthListInFixed(proxyConfig) {
   return authList
 }
 
+/**
+ *
+ * @param {*} proxyConfig
+ * @param {*} param1
+ * @returns proxyConfig or {}
+ *
+ * params:
+ *  interval: 0 means update inmediately, otherwise check if need to update by interval
+ *
+ */
 export const updatePacData = async function (proxyConfig, { interval = 0 }) {
   let updateFlag = false
   let response
   try {
+    let interval_ms = 0
     // Check if update inmediately(interval = 0)
     if (interval != 0) {
+      const proxyUpdateInterval = proxyConfig.config.rules.updateInterval
+      // if proxyUpdateInterval is manual, do not update automatically
+      if (proxyUpdateInterval == 'manual') {
+        return {}
+      }
+
+      if (proxyUpdateInterval == 'default' && interval == 'manual') {
+        // if proxyUpdateInterval is default and system is manual,
+        // do not update automatically,
+        return {}
+      } else if (proxyUpdateInterval == 'default' && interval != 'manual') {
+        // interval is set by system
+        interval_ms = interval * 60 * 1000
+      } else {
+        // if proxyUpdateInterval != default and != manual,
+        // interval is set by proxyUpdateInterval
+        interval_ms = enumInterval[proxyUpdateInterval] * 60 * 1000
+      }
+
       const currTime = Date.now()
       const lastTime = new Date(proxyConfig.config.rules.urlUpdatedAt).getTime()
-
-      // Check if updateInterval is disabled by proxy
-      if (proxyConfig.config.rules.updateInterval == 'disabled') {
-        return {}
-      }
-
-      // Check if updateInterval is default and system is manual
-      if (
-        interval == null &&
-        proxyConfig.config.rules.updateInterval == 'default'
-      ) {
-        return {}
-      }
-
-      if (proxyConfig.config.rules.updateInterval != 'default') {
-        interval =
-          enumInterval[proxyConfig.config.rules.updateInterval] * 60 * 1000
-      }
-
-      if (currTime - lastTime < interval) {
+      if (currTime - lastTime < interval_ms) {
         return {}
       }
     }
@@ -485,41 +500,34 @@ export const updateRulesSetData = async function (
   let response
   try {
     for (const element of subjectList) {
+      let interval_ms = 0
       // Check if update inmediately(interval = 0)
       if (interval != 0) {
+        const proxyUpdateInterval =
+          proxyConfig.config.rules[element].rulesSet.updateInterval
+        // if proxyUpdateInterval is manual, do not update automatically
+        if (proxyUpdateInterval == 'manual') {
+          continue
+        }
+
+        if (proxyUpdateInterval == 'default' && interval == 'manual') {
+          // if proxyUpdateInterval is default and system is manual,
+          // do not update automatically,
+          continue
+        } else if (proxyUpdateInterval == 'default' && interval != 'manual') {
+          // interval is set by system
+          interval_ms = interval * 60 * 1000
+        } else {
+          // if proxyUpdateInterval != default and != manual,
+          // interval is set by proxyUpdateInterval
+          interval_ms = enumInterval[proxyUpdateInterval] * 60 * 1000
+        }
+
         const currTime = Date.now()
         const lastTime = new Date(
           proxyConfig.config.rules[element].rulesSet.urlUpdatedAt
         ).getTime()
-
-        // Check if updateInterval is disabled by proxy
-        if (
-          proxyConfig.config.rules[element].rulesSet.updateInterval ==
-          'disabled'
-        ) {
-          continue
-        }
-
-        // Check if updateInterval is default and system is manual
-        if (
-          interval == null &&
-          proxyConfig.config.rules[element].rulesSet.updateInterval == 'default'
-        ) {
-          continue
-        }
-
-        if (
-          proxyConfig.config.rules[element].rulesSet.updateInterval != 'default'
-        ) {
-          interval =
-            enumInterval[
-              proxyConfig.config.rules[element].rulesSet.updateInterval
-            ] *
-            60 *
-            1000
-        }
-
-        if (currTime - lastTime < interval) {
+        if (currTime - lastTime < interval_ms) {
           continue
         }
       }
@@ -553,8 +561,9 @@ const SYNC_CONFIG_KEY_LIST = [
   'config_iptags',
   'config_syncTime',
   'config_updateUrl',
+  'config_autoRefresh',
   'config_siteRules',
-  'config_siteRules_autoRefresh'
+  'config_iconBtnHint'
 ]
 
 export const simplify = function (config) {

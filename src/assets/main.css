@@ -82,7 +82,7 @@ body i.icon-btn:hover {
 }
 
 .fixed-width {
-  width: 200px !important; /* 使用 !important 提高优先级 */
+  width: 200px !important;
 }
 
 .border-warning input {

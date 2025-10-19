@@ -90,6 +90,15 @@
   "btn_label_monitor": {
     "message": "请求查看器"
   },
+  "btn_label_empty_rules": {
+    "message": "清空规则"
+  },
+  "btn_label_accept_all_rules": {
+    "message": "接受所有"
+  },
+  "btn_label_merge_all_rules": {
+    "message": "合并所有"
+  },
   "tab_label_default": {
     "message": "默认配置",
     "description": ""
@@ -111,6 +120,10 @@
   },
   "tab_label_debug": {
     "message": "调试配置",
+    "description": ""
+  },
+  "aside_label_helper": {
+    "message": "使用帮助",
     "description": ""
   },
   "aside_label_setting": {
@@ -190,7 +203,7 @@
     "description": ""
   },
   "form_label_rule_update": {
-    "message": "规则更新",
+    "message": "更新周期",
     "description": ""
   },
   "form_label_rule_valid": {
@@ -297,6 +310,10 @@
     "message": "链接展示配置",
     "description": ""
   },
+  "section_label_iconbtn_hint": {
+    "message": "图标按钮提示",
+    "description": ""
+  },
   "section_label_default_proxy": {
     "message": "默认代理",
     "description": ""
@@ -355,6 +372,10 @@
   },
   "page_title_auto": {
     "message": "自动策略：",
+    "description": ""
+  },
+  "page_title_site_temprules": {
+    "message": "站点临时规则",
     "description": ""
   },
   "page_title_pac": {
@@ -441,6 +462,9 @@
     "message": "拒 绝",
     "description": ""
   },
+  "modal_title_permission": {
+    "message": "授权提示"
+  },
   "modal_title_merge_autopolicy": {
     "message": "合并自动策略规则"
   },
@@ -482,6 +506,9 @@
   },
   "modal_desc_reset": {
     "message": "页面存在未保存的信息，是否取消修改？"
+  },
+  "modal_desc_accept_temprules": {
+    "message": "确认接受所有的临时规则至当前策略？"
   },
   "modal_desc_override_local": {
     "message": "确认使用远程配置覆盖本地配置？"
@@ -552,14 +579,35 @@
   "desc_clear": {
     "message": "删除后无法恢复，请谨慎操作"
   },
+  "desc_show_url_rule": {
+    "message": "查看链接地址规则"
+  },
+  "desc_add_link_rule": {
+    "message": "添加链接规则"
+  },
+  "desc_add_site_rule": {
+    "message": "添加站点规则"
+  },
   "desc_options": {
     "message": "选项设置"
   },
   "desc_monitor": {
     "message": "监 控"
   },
+  "desc_info": {
+    "message": "信 息"
+  },
   "desc_default": {
     "message": "默 认"
+  },
+  "desc_main_page": {
+    "message": "主页面"
+  },
+  "desc_image": {
+    "message": "图 片"
+  },
+  "desc_links": {
+    "message": "链 接"
   },
   "desc_proxy_selection": {
     "message": "代理选择"
@@ -568,7 +616,10 @@
     "message": "快速添加"
   },
   "desc_add_rules": {
-    "message": "在当前策略中快速添加以下规则："
+    "message": "快速添加链接规则："
+  },
+  "desc_add_siterules": {
+    "message": "快速添加站点规则："
   },
   "desc_active_policy": {
     "message": "当前策略："
@@ -591,11 +642,17 @@
   "desc_auto_refresh_by_switch_proxy": {
     "message": "切换代理时自动刷新当前标签页"
   },
-  "desc_auto_refresh_by_site_rule": {
-    "message": "基于站点规则的临时规则更新时自动刷新当前标签页"
-  },
   "desc_set_proxy_direct": {
     "message": "代理切换为直连"
+  },
+  "desc_auth_success": {
+    "message": "授权成功"
+  },
+  "desc_auth_failed": {
+    "message": "授权失败"
+  },
+  "desc_auth_contextmenus": {
+    "message": "请授权右键菜单权限，否则右键菜单功能无法使用"
   },
   "feedback_request_failed": {
     "message": "地址获取内容失败, 请检查URL地址和数据格式"
@@ -631,22 +688,25 @@
     "message": "仅支持autoProxy规则"
   },
   "popover_monitor": {
-    "message": "开启后会，对Tab标签的所有请求链接在popup按钮弹出页展示HOST和IP。"
+    "message": "开启后会，对Tab标签的所有请求链接在PopUp按钮弹出页展示HOST和IP。"
   },
   "popover_autosync": {
-    "message": "自动同步代理节点和策略模式配置，不含通用设置"
+    "message": "自动同步代理节点和策略模式配置"
   },
   "popover_reject": {
     "message": "请确保填入地址无法访问，否则拒绝规则可能失效。"
   },
   "popover_update_url": {
-    "message": "自动更新策略模式中设置的“外部规则地址”、“拒绝规则地址”内容根据配置频率进行更新。"
+    "message": "设置策略模式中通过链接地址获取的规则、PACScript内容的更新频率。"
   },
   "popover_fromCache": {
     "message": "命中缓存"
   },
   "popover_redirect": {
     "message": "重定向到其他地址"
+  },
+  "popover_iconbtn_hint": {
+    "message": "对图标样式的按钮添加鼠标悬停提示"
   },
   "popover_copyable": {
     "message": "本列点击单元格可复制文本内容"
@@ -671,6 +731,9 @@
   },
   "th_col_rule": {
     "message": "命中规则"
+  },
+  "th_col_link_target": {
+    "message": "地址对象"
   },
   "th_col_ip": {
     "message": "请求IP"
@@ -709,7 +772,7 @@
     "message": "跟随系统"
   },
   "input_selection_manual": {
-    "message": "手动"
+    "message": "手动更新"
   },
   "input_selection_24h": {
     "message": "24小时"
@@ -732,7 +795,49 @@
   "input_selection_1m": {
     "message": "1分"
   },
-  "input_selection_disabled": {
-    "message": "禁用"
+  "input_selection_disable_all": {
+    "message": "禁用全部（含策略模式）"
+  },
+  "iconbtn_create_server": {
+    "message": "创建代理节点"
+  },
+  "iconbtn_create_policy": {
+    "message": "创建策略模式"
+  },
+  "iconbtn_add_iptags": {
+    "message": "添加IP标签"
+  },
+  "iconbtn_save_iptag": {
+    "message": "保存IP标签"
+  },
+  "iconbtn_delete_iptag": {
+    "message": "删除IP标签"
+  },
+  "iconbtn_add_rule": {
+    "message": "添加规则"
+  },
+  "iconbtn_delete_rule": {
+    "message": "删除"
+  },
+  "iconbtn_insert_below": {
+    "message": "在下方插入新规则"
+  },
+  "iconbtn_divider_rule": {
+    "message": "插入分隔线"
+  },
+  "iconbtn_batch_update_server": {
+    "message": "批量更新代理节点"
+  },
+  "iconbtn_merge_auto_policy": {
+    "message": "合并规则"
+  },
+  "iconbtn_accept_rule": {
+    "message": "接受规则"
+  },
+  "iconbtn_merge_rule": {
+    "message": "合并规则"
+  },
+  "desc_list_empty": {
+    "message": "暂无数据"
   }
 }

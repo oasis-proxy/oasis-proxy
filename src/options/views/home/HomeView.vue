@@ -61,6 +61,7 @@ function handleTabChange(tabName) {
           @click="handleTabChange('beta')"
         >
           <span>{{ Browser.I18n.getMessage('tab_label_beta') }}</span>
+          <i class="bi bi-flask-fill ms-2"></i>
         </button>
         <button
           :class="className"

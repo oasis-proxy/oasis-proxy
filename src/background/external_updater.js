@@ -19,6 +19,12 @@ export const endUpdateUrl = async () => {
 export const handleUpdateUrl = async function () {
   log.info('handleUpdateUrl', new Date().toLocaleTimeString())
   const result = await Browser.Storage.getLocalAll()
+
+  // disableAll means do not update by url any more, even if proxy is set.
+  if (result.config_updateUrl == 'disableAll') {
+    return
+  }
+
   for (let key of Object.keys(result)) {
     if (!key.startsWith('proxy_') || result[key].mode == 'fixed_servers')
       continue
@@ -37,6 +43,7 @@ export const handleUpdateUrl = async function () {
       await Browser.Storage.setLocal({ [key]: proxyConfig })
       if (key == result.status_proxyKey) {
         const afterUpdateResult = await Browser.Storage.getLocalAll()
+        // todo set proxy with a clean config without tempRules
         Browser.Proxy.set(
           afterUpdateResult,
           afterUpdateResult.status_proxyKey,

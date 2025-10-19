@@ -1,8 +1,14 @@
 <script setup>
 import { onMounted, ref } from 'vue'
+const emit = defineEmits(['click'])
 defineProps({
   className: String,
-  content: String
+  iconStyle: String,
+  content: String,
+  hint: {
+    type: Boolean,
+    default: true
+  }
 })
 const popover = ref(null)
 onMounted(() => {
@@ -11,8 +17,18 @@ onMounted(() => {
 </script>
 <template>
   <i
-    ref="popover"
+    v-show="!hint"
+    @click="emit('click')"
     :class="className"
+    :style="iconStyle"
+  ></i>
+  <i
+    v-show="hint"
+    ref="popover"
+    @click="emit('click')"
+    :class="className"
+    :style="iconStyle"
+    data-bs-placement="top"
     data-bs-container="body"
     data-bs-toggle="popover"
     data-bs-trigger="hover"

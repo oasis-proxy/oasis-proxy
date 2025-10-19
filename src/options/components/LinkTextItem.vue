@@ -1,7 +1,7 @@
 <script setup>
 import { defineModel, computed } from 'vue'
 
-import { downloadUrl } from '@/core/utils'
+import { downloadUrl, log } from '@/core/utils'
 import Browser from '@/Browser/main'
 import { useStatusStore } from '@/options/stores/status'
 
@@ -49,7 +49,7 @@ async function updateData() {
   if (!storeStatus.isUnsaved) {
     return
   }
-  console.log('updateData', rulesSet.value)
+  log.debug('updateData', rulesSet.value)
   isUrlValid.value = true
   if (rulesSet.value.url == '') {
     rulesSet.value.urlUpdatedAt = ''
@@ -166,14 +166,18 @@ async function handleClickUpdate() {
           <option value="1m" v-if="isDebug">
             {{ Browser.I18n.getMessage('input_selection_1m') }}
           </option>
-          <option value="disabled">
-            {{ Browser.I18n.getMessage('input_selection_disabled') }}
+          <option value="manual">
+            {{ Browser.I18n.getMessage('input_selection_manual') }}
           </option>
         </select>
       </div>
       <div class="col-4">
         <span>{{
-          '(' + urlUpdatedAtTitle + ' ' + rulesSet.urlUpdatedAt + ')'
+          '(' +
+          Browser.I18n.getMessage('form_label_update_date') +
+          ' ' +
+          rulesSet.urlUpdatedAt +
+          ')'
         }}</span>
       </div>
     </div>

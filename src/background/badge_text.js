@@ -1,18 +1,13 @@
 import Browser from '@/Browser/main'
 import { subStringForName } from '@/core/utils.js'
 
+// clear monitor requests number
 export const clearTabBadgeText = async () => {
   try {
     let result = await Browser.Storage.getLocalAll()
     const activeProxyKey = result.status_proxyKey
     const mode = result[activeProxyKey]?.mode
     switch (mode) {
-      case 'direct':
-        await chrome.action.setBadgeBackgroundColor({
-          color: '#fff'
-        })
-        await chrome.action.setBadgeText({ text: 'Dir' })
-        break
       case 'system':
         await chrome.action.setBadgeBackgroundColor({
           color: '#000'
@@ -30,11 +25,11 @@ export const clearTabBadgeText = async () => {
         })
         break
       default:
+        // 'direct' or default
         await chrome.action.setBadgeBackgroundColor({
           color: '#fff'
         })
         await chrome.action.setBadgeText({ text: 'Dir' })
-        break
     }
     chrome.action.setPopup({ popup: '/popup.html#/' })
   } catch (err) {
@@ -74,7 +69,7 @@ export const updateTabBadgeText = async () => {
         }
       }
     } else {
-      chrome.action.setPopup({ popup: '/popup.html#/' })
+      await chrome.action.setPopup({ popup: '/popup.html#/' })
     }
   } catch (err) {
     console.error('updateTabBadgeText', err)

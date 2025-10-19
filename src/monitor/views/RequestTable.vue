@@ -146,6 +146,13 @@ async function loadIptags() {
           </td>
         </tr>
       </tbody>
+      <tbody v-show="props.list.length === 0">
+        <tr>
+          <td colspan="8" class="text-center text-muted">
+            {{ Browser.I18n.getMessage('desc_list_empty') }}
+          </td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </template>

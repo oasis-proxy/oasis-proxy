@@ -1,16 +1,11 @@
 <script setup>
-import {
-  ref,
-  getCurrentInstance,
-  computed,
-  inject,
-  nextTick,
-  watch,
-  onMounted
-} from 'vue'
+import { ref, getCurrentInstance, computed, watch, inject } from 'vue'
 import PopoverTips from '@/components/PopoverTips.vue'
 import { useConfigStore } from '@/options/stores/config'
 import { useStatusStore } from '@/options/stores/status'
+import { getNextLocalVersion } from '@/core/version_control.js'
+
+const showUploadConflictModal = inject('showUploadConflictModal')
 
 import Browser from '@/Browser/main'
 import TagsTable from '@/options/components/TagsTable.vue'
@@ -19,20 +14,14 @@ const storeConfig = useConfigStore()
 const storeStatus = useStatusStore()
 const instance = getCurrentInstance()
 const toast = instance?.appContext.config.globalProperties.$toast
-const confirmModal = instance?.appContext.config.globalProperties.$confirm
 
 const isRejectValid = ref(true)
-const contextMenusChecked = ref(false)
 
 const rejectInputClass = computed(() => {
   return isRejectValid.value
     ? 'form-control form-control-sm'
     : 'form-control form-control-sm is-invalid'
 })
-
-// onMounted(() => {
-//   contextMenusChecked.value = storeConfig.configContextMenus
-// })
 
 watch(
   () => storeConfig.configMonitor,
@@ -41,7 +30,7 @@ watch(
   }
 )
 
-function openMonitor() {
+function openMonitorPage() {
   if (!storeConfig.configMonitor) {
     toast.warning(Browser.I18n.getMessage('desc_monitor_disabled'))
     return
@@ -49,36 +38,14 @@ function openMonitor() {
   window.open('/monitor.html', '_blank')
 }
 
-async function handleContextPermission() {
-  const contextMenusAllowed = await chrome.permissions.contains({
-    permissions: ['contextMenus']
+async function handleIconBtnHintChange() {
+  const version = await getNextLocalVersion()
+  await Browser.Storage.setLocal({
+    config_iconBtnHint: storeConfig.configIconBtnHint,
+    config_version: version,
+    config_syncTime: new Date().getTime()
   })
-  if (contextMenusAllowed) return
-  const granted = await chrome.permissions.request({
-    permissions: ['contextMenus']
-  })
-  if (granted) {
-    toast.warning(`授权成功`)
-  } else {
-    toast.warning(`授权失败`)
-  }
-}
-
-async function handleContextMenusChanged() {
-  const contextMenusAllowed = await chrome.permissions.contains({
-    permissions: ['contextMenus']
-  })
-  if (!contextMenusAllowed) {
-    const configContextMenus = await Browser.Storage.getLocal(
-      'config_contextMenus'
-    )
-    storeConfig.configContextMenus = configContextMenus.config_contextMenus
-    confirmModal.createConfirm('授权', '是否授权', handleContextPermission)
-  } else {
-    await Browser.Storage.setLocal({
-      config_contextMenus: storeConfig.configContextMenus
-    })
-  }
+  showUploadConflictModal()
 }
 
 async function handleBlur(event) {
@@ -116,6 +83,7 @@ async function handleBlur(event) {
         }}</span>
       </div>
       <div class="card-body">
+        <!-- section: reject address -->
         <div class="row mb-3 d-flex align-items-center">
           <label class="col-2 col-form-label">
             <span>{{ Browser.I18n.getMessage('form_label_reject') }}</span>
@@ -136,9 +104,12 @@ async function handleBlur(event) {
             </div>
           </div>
         </div>
+        <!-- section: iconbtn hint -->
         <div class="row mb-3 d-flex align-items-center">
           <label class="col-2 col-form-label">
-            <span>{{ Browser.I18n.getMessage('section_label_menus') }}</span>
+            <span>{{
+              Browser.I18n.getMessage('section_label_iconbtn_hint')
+            }}</span>
           </label>
           <div class="col-10">
             <div class="form-check-sm d-flex align-items-center">
@@ -147,11 +118,11 @@ async function handleBlur(event) {
                   class="form-check-input form-check-input"
                   type="checkbox"
                   role="switch"
-                  v-model="storeConfig.configContextMenus"
-                  @click="handleContextMenusChanged"
+                  v-model="storeConfig.configIconBtnHint"
+                  @change="handleIconBtnHintChange"
                 />
                 <span>{{
-                  storeConfig.configContextMenus
+                  storeConfig.configIconBtnHint
                     ? Browser.I18n.getMessage('input_label_on')
                     : Browser.I18n.getMessage('input_label_off')
                 }}</span>
@@ -159,6 +130,7 @@ async function handleBlur(event) {
             </div>
           </div>
         </div>
+        <!-- section: request monitor -->
         <div class="row mb-3 d-flex align-items-center">
           <label class="col-2 col-form-label">
             <span>{{ Browser.I18n.getMessage('form_label_monitor') }}</span>
@@ -185,11 +157,13 @@ async function handleBlur(event) {
               <PopoverTips
                 className="bi bi-bug-fill icon-btn ms-2 mt-1"
                 :content="Browser.I18n.getMessage('btn_label_monitor')"
-                @click="openMonitor"
+                :hint="storeConfig.configIconBtnHint"
+                @click="openMonitorPage()"
               ></PopoverTips>
             </div>
           </div>
         </div>
+        <!-- section: iptags -->
         <div class="row mb-3 d-flex align-items-top">
           <label class="col-2 col-form-label">
             <span>{{ Browser.I18n.getMessage('form_label_iptags') }}</span>

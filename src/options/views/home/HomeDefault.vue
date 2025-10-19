@@ -1,10 +1,13 @@
 <script setup>
-import { watch } from 'vue'
+import { watch, inject } from 'vue'
 import PopoverTips from '@/components/PopoverTips.vue'
 import HomeDefaultProfile from './HomeDefaultProfile.vue'
 import HomeDefaultSync from './HomeDefaultSync.vue'
 import { useConfigStore } from '@/options/stores/config'
 import Browser from '@/Browser/main'
+import { getNextLocalVersion } from '@/core/version_control.js'
+
+const showUploadConflictModal = inject('showUploadConflictModal')
 
 const storeConfig = useConfigStore()
 
@@ -16,19 +19,25 @@ watch(
   }
 )
 
-watch(
-  () => storeConfig.configUpdateUrl,
-  async (newValue) => {
-    await Browser.Storage.setLocal({ config_updateUrl: newValue })
-  }
-)
+async function handleUpdateUrlChange() {
+  const version = await getNextLocalVersion()
+  await Browser.Storage.setLocal({
+    config_updateUrl: storeConfig.configUpdateUrl,
+    config_version: version,
+    config_syncTime: new Date().getTime()
+  })
+  showUploadConflictModal()
+}
 
-watch(
-  () => storeConfig.configAutoRefresh,
-  async (newValue) => {
-    await Browser.Storage.setLocal({ config_autoRefresh: newValue })
-  }
-)
+async function handleAutoRefreshChange() {
+  const version = await getNextLocalVersion()
+  await Browser.Storage.setLocal({
+    config_autoRefresh: storeConfig.configAutoRefresh,
+    config_version: version,
+    config_syncTime: new Date().getTime()
+  })
+  showUploadConflictModal()
+}
 </script>
 
 <template>
@@ -54,7 +63,7 @@ watch(
                 v-model="storeConfig.configUI"
               />
               <label class="form-check-label" for="uiLight">
-                <i class="bi bi-sun-fill ms-2 me-1"></i>
+                <i class="bi bi-sun-fill ms-2 me-2"></i>
                 <span>{{
                   Browser.I18n.getMessage('input_label_ui_light')
                 }}</span>
@@ -69,7 +78,7 @@ watch(
                 v-model="storeConfig.configUI"
               />
               <label class="form-check-label" for="uiDark">
-                <i class="bi bi-moon-stars-fill ms-2 me-1"></i>
+                <i class="bi bi-moon-stars-fill ms-2 me-2"></i>
                 <span>{{
                   Browser.I18n.getMessage('input_label_ui_dark')
                 }}</span>
@@ -84,7 +93,7 @@ watch(
                 v-model="storeConfig.configUI"
               />
               <label class="form-check-label" for="uiSystem">
-                <i class="bi bi-circle-half ms-2 me-1"></i>
+                <i class="bi bi-circle-half ms-2 me-2"></i>
                 <span>{{
                   Browser.I18n.getMessage('input_label_ui_system')
                 }}</span>
@@ -101,10 +110,11 @@ watch(
             ></PopoverTips>
           </label>
           <div class="col-10">
-            <div class="form-check-sm col-2">
+            <div class="form-check-sm col-4">
               <select
                 class="form-select form-select-sm"
                 v-model="storeConfig.configUpdateUrl"
+                @change="handleUpdateUrlChange"
               >
                 <option value="manual">
                   {{ Browser.I18n.getMessage('input_selection_manual') }}
@@ -130,13 +140,14 @@ watch(
                 <option value="1m" v-if="isDebug">
                   {{ Browser.I18n.getMessage('input_selection_1m') }}
                 </option>
-                <option value="disabled">
-                  {{ Browser.I18n.getMessage('input_selection_disabled') }}
+                <option value="disableAll">
+                  {{ Browser.I18n.getMessage('input_selection_disable_all') }}
                 </option>
               </select>
             </div>
           </div>
         </div>
+        <!-- section: auto refresh -->
         <div class="row mb-3 d-flex align-items-center">
           <label class="col-2 col-form-label">
             <span>{{
@@ -157,6 +168,7 @@ watch(
                   type="checkbox"
                   role="switch"
                   v-model="storeConfig.configAutoRefresh"
+                  @change="handleAutoRefreshChange"
                 />
                 <span>{{
                   storeConfig.configAutoRefresh == false

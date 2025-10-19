@@ -4,7 +4,7 @@ import {
   parseRuleItem,
   parseBypassRule
 } from './rules_parser.js'
-import { formatCode } from '@/core/utils'
+// import { formatCode } from '@/core/utils'
 
 export const generatePacfile = async function (
   proxyConfigs,

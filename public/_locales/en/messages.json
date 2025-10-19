@@ -11,6 +11,10 @@
     "message": "Save",
     "description": ""
   },
+  "btn_label_merge": {
+    "message": "Merge",
+    "description": ""
+  },
   "btn_label_reset": {
     "message": "Reset",
     "description": ""
@@ -86,6 +90,15 @@
   "btn_label_monitor": {
     "message": "Requests Monitor"
   },
+  "btn_label_empty_rules": {
+    "message": "Clear All"
+  },
+  "btn_label_accept_all_rules": {
+    "message": "Accept All"
+  },
+  "btn_label_merge_all_rules": {
+    "message": "Merge All"
+  },
   "tab_label_default": {
     "message": "Default Config",
     "description": ""
@@ -94,15 +107,31 @@
     "message": "Advanced Config",
     "description": ""
   },
+  "tab_label_site": {
+    "message": "Site Config",
+    "description": ""
+  },
   "tab_label_others": {
     "message": "Other Config"
+  },
+  "tab_label_beta": {
+    "message": "Expt. Config",
+    "description": ""
   },
   "tab_label_debug": {
     "message": "Debug Config",
     "description": ""
   },
+  "aside_label_helper": {
+    "message": "Wiki",
+    "description": ""
+  },
   "aside_label_setting": {
     "message": "General Settings",
+    "description": ""
+  },
+  "aside_label_temp_rules": {
+    "message": "Temporary Rules",
     "description": ""
   },
   "aside_label_alltabs": {
@@ -137,6 +166,10 @@
     "message": "Current",
     "description": ""
   },
+  "form_label_merge": {
+    "message": "Merge",
+    "description": ""
+  },
   "form_label_target_config": {
     "message": "Update",
     "description": ""
@@ -146,7 +179,7 @@
     "description": ""
   },
   "form_label_reject": {
-    "message": "Reject Addr",
+    "message": "Reject Addr.",
     "description": ""
   },
   "form_label_rule": {
@@ -165,8 +198,12 @@
     "message": "Filter",
     "description": ""
   },
+  "form_label_auto_refresh": {
+    "message": "Auto Reload",
+    "description": ""
+  },
   "form_label_rule_update": {
-    "message": "Update URLs",
+    "message": "Update period",
     "description": ""
   },
   "form_label_rule_valid": {
@@ -182,7 +219,11 @@
     "description": ""
   },
   "form_label_autosync": {
-    "message": "Auto-Sync",
+    "message": "Auto Sync",
+    "description": ""
+  },
+  "form_label_manualsync": {
+    "message": "Manual Sync",
     "description": ""
   },
   "form_label_host": {
@@ -206,7 +247,7 @@
     "description": ""
   },
   "form_label_pac_url": {
-    "message": "PAC Addr",
+    "message": "PAC Addr.",
     "description": ""
   },
   "form_label_pac_script": {
@@ -218,11 +259,11 @@
     "description": ""
   },
   "form_label_rule_url": {
-    "message": "Rule Addr",
+    "message": "Rule Addr.",
     "description": ""
   },
   "form_label_rule_data": {
-    "message": "Rule Content",
+    "message": "Content",
     "description": ""
   },
   "form_label_policy_mode": {
@@ -242,7 +283,7 @@
     "description": ""
   },
   "form_label_iptags": {
-    "message": "IP Tags",
+    "message": "IP Labels",
     "description": ""
   },
   "form_label_ip": {
@@ -250,7 +291,7 @@
     "description": ""
   },
   "form_label_tagsname": {
-    "message": "Tags Name",
+    "message": "Label",
     "description": ""
   },
   "section_label_extention_setting": {
@@ -262,11 +303,15 @@
     "description": ""
   },
   "section_label_sync": {
-    "message": "Sync Config",
+    "message": "Sync Cloud",
     "description": ""
   },
   "section_label_request": {
     "message": "Request Display Config",
+    "description": ""
+  },
+  "section_label_iconbtn_hint": {
+    "message": "Icon Button Hint",
     "description": ""
   },
   "section_label_default_proxy": {
@@ -291,6 +336,14 @@
   },
   "section_label_internal": {
     "message": "Local Rules",
+    "description": ""
+  },
+  "section_label_site": {
+    "message": "Site Rules",
+    "description": ""
+  },
+  "section_label_menus": {
+    "message": "Context Menu",
     "description": ""
   },
   "section_label_external": {
@@ -321,12 +374,16 @@
     "message": "Auto Policy:",
     "description": ""
   },
+  "page_title_site_temprules": {
+    "message": "Temporary Rules By Site Rules",
+    "description": ""
+  },
   "page_title_pac": {
     "message": "Pac Policy:",
     "description": ""
   },
   "page_title_version": {
-    "message": "Version No.:",
+    "message": "Version No. :",
     "description": ""
   },
   "page_title_fixed": {
@@ -405,8 +462,14 @@
     "message": "Reject",
     "description": ""
   },
+  "modal_title_permission": {
+    "message": "Authorization tips"
+  },
   "modal_title_merge_autopolicy": {
     "message": "Merge auto-policy local rules"
+  },
+  "modal_title_merge_temprules": {
+    "message": "Merge temporary rules"
   },
   "modal_title_batch_update_server": {
     "message": "Batch update proxy-server for local rules"
@@ -444,6 +507,9 @@
   "modal_desc_reset": {
     "message": "Are you sure you want to discard changes?"
   },
+  "modal_desc_accept_temprules": {
+    "message": "Accept all temporary rules to the current policy?"
+  },
   "modal_desc_override_local": {
     "message": "Are you sure you want to overwrite the local configuration with cloud configuration?"
   },
@@ -456,6 +522,12 @@
   "modal_desc_resetall": {
     "message": "Are you sure you want to delete it? The configuration could not be restored after deletion, it is recommended to download the backup first."
   },
+  "desc_proxy_success": {
+    "message": "Proxy set successful"
+  },
+  "desc_proxy_failed": {
+    "message": "Failed to set proxy"
+  },
   "desc_unsaved_info": {
     "message": "There are some unsaved data, please Save or Refresh the page to discard the changes."
   },
@@ -463,10 +535,10 @@
     "message": "The configuration can't to be deleted, it is referenced by these rules:"
   },
   "desc_undeleted_iptags": {
-    "message": "The tag does not exist, please refresh the page"
+    "message": "The Label does not exist, please refresh the page"
   },
   "desc_add_iptags_info": {
-    "message": "The IP already exists tag, or IP/tag name is empty"
+    "message": "The IP Label already exists, or IP/Label is empty"
   },
   "desc_deleted_success": {
     "message": "is deleted successfully"
@@ -507,23 +579,47 @@
   "desc_clear": {
     "message": "Warning! Unable to restore after deletion."
   },
+  "desc_show_url_rule": {
+    "message": "View Link Rules"
+  },
+  "desc_add_link_rule": {
+    "message": "Add Link Rules"
+  },
+  "desc_add_site_rule": {
+    "message": "Add Site Rules"
+  },
   "desc_options": {
     "message": "Options"
   },
   "desc_monitor": {
     "message": "Monitor"
   },
+  "desc_info": {
+    "message": "Message"
+  },
   "desc_default": {
     "message": "Default"
   },
+  "desc_main_page": {
+    "message": "Main page"
+  },
+  "desc_image": {
+    "message": "Image"
+  },
+  "desc_links": {
+    "message": "Link"
+  },
   "desc_proxy_selection": {
-    "message": "Selection"
+    "message": "Proxy"
   },
   "desc_quick_add": {
     "message": "Quick Add"
   },
   "desc_add_rules": {
-    "message": "Add the following rules to the active proxy policy"
+    "message": "Quick add policy rules:"
+  },
+  "desc_add_siterules": {
+    "message": "Quick add site rules:"
   },
   "desc_active_policy": {
     "message": "Active Policy:"
@@ -543,6 +639,21 @@
   "desc_monitor_disabled": {
     "message": "Requests monitoring is not enabled"
   },
+  "desc_auto_refresh_by_switch_proxy": {
+    "message": "Automatically reload the current tab when switching proxy"
+  },
+  "desc_set_proxy_direct": {
+    "message": "Proxy switched to direct"
+  },
+  "desc_auth_success": {
+    "message": "Permission granted successfully"
+  },
+  "desc_auth_failed": {
+    "message": "Permission Granted failed"
+  },
+  "desc_auth_contextmenus": {
+    "message": "Please grant context menus permission, otherwise the context menu feature cannot be used"
+  },
   "feedback_request_failed": {
     "message": "Failed to get the content. Check your Url & the content format"
   },
@@ -556,10 +667,10 @@
     "message": "Wildcard domain error (valid character: a-zA-Z0-9.?*-)"
   },
   "feedback_ip_cidr_invalid": {
-    "message": "IP/CIDR Input Error"
+    "message": "IP/CIDR error"
   },
   "feedback_invalid": {
-    "message": "Input Error"
+    "message": "Input error"
   },
   "feedback_name_invalid": {
     "message": "The new name cannot be empty, direct, system, or reject. Or the new name already exists"
@@ -574,19 +685,19 @@
     "message": "Rule Priority: Local Rules > Reject Rules > External Rules > Default Rules"
   },
   "popover_external_rules_format": {
-    "message": "Only Auto-Proxy rules are supported"
+    "message": "Only Auto-Proxy Formatted rules are supported"
   },
   "popover_monitor": {
-    "message": "Display the request host and IP for active tabs."
+    "message": "Display the request host and IP for active tabs in popup page."
   },
   "popover_autosync": {
-    "message": "Automatic synchronization of proxy servers and proxy policy config, not include the general settings"
+    "message": "Automatically synchronize proxy servers and policy mode configurations"
   },
   "popover_reject": {
     "message": "Please ensure that the filled-in address cannot be accessed, otherwise the reject rule may fail."
   },
   "popover_update_url": {
-    "message": "Daily updated the \"External Rule Address\" and \"Reject Rule Address\""
+    "message": "Sets the frequency of updates of external rules and PAC Script's contents in the policy mode from the linked address."
   },
   "popover_fromCache": {
     "message": "From Cache"
@@ -594,11 +705,14 @@
   "popover_redirect": {
     "message": "Redirect to another Address"
   },
+  "popover_iconbtn_hint": {
+    "message": "Add the hint when the mouse hover to icon style buttons"
+  },
   "popover_copyable": {
     "message": "This column click on the cell to copy text contents"
   },
   "popover_iptags": {
-    "message": "IP Tag is used to replace IP addresses on PopUp page and request monitors"
+    "message": "IP Label is used to replace IP addresses on PopUp page and request monitor page"
   },
   "desc_unsave_toast": {
     "message": "The current page contains unsaved information, save or refresh the page to cancel"
@@ -613,10 +727,13 @@
     "message": "From Cache"
   },
   "th_col_policy": {
-    "message": "Policy (Priority Group)"
+    "message": "Policy"
   },
   "th_col_rule": {
-    "message": "Hit Rules"
+    "message": "The Rule"
+  },
+  "th_col_link_target": {
+    "message": "Type"
   },
   "th_col_ip": {
     "message": "To IP"
@@ -640,7 +757,7 @@
     "message": "Please Enter IP"
   },
   "placeholder_iptags": {
-    "message": "Please Enter Tag Name"
+    "message": "Enter Label"
   },
   "placeholder_domain": {
     "message": "Please enter a domain wildcard expression"
@@ -650,5 +767,77 @@
   },
   "placeholder_regex": {
     "message": "Please enter a regular expression for domain"
+  },
+  "input_selection_by_system": {
+    "message": "System Settings"
+  },
+  "input_selection_manual": {
+    "message": "Manual"
+  },
+  "input_selection_24h": {
+    "message": "24 hours"
+  },
+  "input_selection_12h": {
+    "message": "12 hours"
+  },
+  "input_selection_6h": {
+    "message": "6 hours"
+  },
+  "input_selection_3h": {
+    "message": "3 hours"
+  },
+  "input_selection_1h": {
+    "message": "1 hour"
+  },
+  "input_selection_15m": {
+    "message": "15 mins"
+  },
+  "input_selection_1m": {
+    "message": "1 min"
+  },
+  "input_selection_disable_all": {
+    "message": "Disable all (including proxy policy)"
+  },
+  "iconbtn_create_server": {
+    "message": "Create Server"
+  },
+  "iconbtn_create_policy": {
+    "message": "Create Policy"
+  },
+  "iconbtn_add_iptags": {
+    "message": "Add IP Label"
+  },
+  "iconbtn_save_iptag": {
+    "message": "Save IP Tag"
+  },
+  "iconbtn_delete_iptag": {
+    "message": "Remove IP Tag"
+  },
+  "iconbtn_add_rule": {
+    "message": "Add Rules"
+  },
+  "iconbtn_delete_rule": {
+    "message": "Remove"
+  },
+  "iconbtn_insert_below": {
+    "message": "Insert A New Rule Below"
+  },
+  "iconbtn_divider_rule": {
+    "message": "Insert A Separation Line"
+  },
+  "iconbtn_batch_update_server": {
+    "message": "Bulk Update Proxy Server"
+  },
+  "iconbtn_merge_auto_policy": {
+    "message": "Merge Rules"
+  },
+  "iconbtn_accept_rule": {
+    "message": "Accept"
+  },
+  "iconbtn_merge_rule": {
+    "message": "Merge"
+  },
+  "desc_list_empty": {
+    "message": "No Data"
   }
 }

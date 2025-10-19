@@ -4,11 +4,13 @@ import Tabs from './tabs.js'
 import Message from './message.js'
 import I18n from './i18n.js'
 import Action from './action.js'
+import Menus from './menus.js'
 import Runtime from './runtime.js'
 import { log } from '@/core/utils.js'
 
 const Browser = {
   Action,
+  Menus,
   Storage,
   Proxy,
   Tabs,
@@ -24,6 +26,8 @@ const Browser = {
         fileContent = JSON.stringify(obj)
       } else {
         fileContent = 'Error'
+        log.error('[-] saveFile: unsupport type[' + typeof obj + ']')
+        return
       }
       const blob = new Blob([fileContent], { type: 'application/octet-stream' })
       await chrome.downloads.download({

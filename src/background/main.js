@@ -6,17 +6,24 @@ import {
 import { startSiteRule, endSiteRule } from './site_rules.js'
 import { startAutoSync, endAutoSync, handleAutoSync } from './auto_sync.js'
 import { convertToNewVersionConfig, resetAppConfig } from '@/core/app_config.js'
+import {
+  addAllContextMenus,
+  removeAllContextMenus
+} from '@/core/context_menus.js'
 import { log } from '@/core/utils.js'
 import { clearTabBadgeText } from './badge_text.js'
 import { handleMonitor, startMonitor, endMonitor } from './request_monitor.js'
 import { setProxyAuths } from './proxy_auth.js'
-import { initContextMenus } from './context_menus.js'
 
 let current = new Date().toLocaleString()
 
 log.info('background:', current)
 
 /* section: chrome event */
+
+/*  Fired when the extension is first installed, 
+  when the extension is updated to a new version, 
+  and when Chrome is updated to a new version. */
 chrome.runtime.onInstalled.addListener(async ({ reason }) => {
   log.debug('onInstalled', reason)
   if (reason === 'install') {
@@ -28,7 +35,7 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
     const result = await chrome.storage.local.get()
     let color = '#3498db'
     if (result.status_proxyKey == undefined) {
-      color = '#3498db'
+      color = '#fff'
     } else {
       color = result[result.status_proxyKey].tagColor
     }
@@ -40,7 +47,8 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
     'config_monitor',
     'config_updateUrl',
     'config_autoSync',
-    'config_siteRules'
+    'config_siteRules',
+    'config_contextMenus'
   ])
 
   result.config_monitor ? startMonitor() : endMonitor()
@@ -49,9 +57,12 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
     : endUpdateUrl()
   result.config_autoSync ? startAutoSync() : endAutoSync()
   result.config_siteRules ? startSiteRule() : endSiteRule()
-  initContextMenus()
+  result.config_contextMenus
+    ? await addAllContextMenus()
+    : await removeAllContextMenus()
 })
 
+/* Fired when a profile that has this extension installed first starts up. */
 chrome.runtime.onStartup.addListener(async () => {
   const result = await chrome.storage.local.get(null)
   log.debug('onStartup', result)
@@ -62,6 +73,9 @@ chrome.runtime.onStartup.addListener(async () => {
     : endUpdateUrl()
   result.config_autoSync ? startAutoSync() : endAutoSync()
   result.config_siteRules ? startSiteRule() : endSiteRule()
+  result.config_contextMenus
+    ? await addAllContextMenus()
+    : await removeAllContextMenus()
 
   let color = '#3498db'
   if (
@@ -74,11 +88,10 @@ chrome.runtime.onStartup.addListener(async () => {
   }
   await chrome.action.setBadgeBackgroundColor({ color: color })
   clearTabBadgeText()
-  initContextMenus()
 })
 
-/* section: alarm event */
-chrome.storage.onChanged.addListener(function (changes, areaName) {
+/* section: storage event */
+chrome.storage.onChanged.addListener(async function (changes, areaName) {
   if (areaName === 'local') {
     if (changes.config_monitor?.newValue !== changes.config_monitor?.oldValue) {
       changes.config_monitor?.newValue ? startMonitor() : endMonitor()
@@ -104,12 +117,14 @@ chrome.storage.onChanged.addListener(function (changes, areaName) {
       changes.config_contextMenus?.newValue !==
       changes.config_contextMenus?.oldValue
     ) {
-      initContextMenus()
+      changes.config_contextMenus?.newValue
+        ? addAllContextMenus()
+        : removeAllContextMenus()
     }
   }
 })
 
-// alarms
+/* section: alarm event */
 chrome.alarms.onAlarm.addListener((alarm) => {
   log.debug('onAlarm', alarm)
   switch (alarm.name) {
@@ -141,4 +156,5 @@ chrome.proxy.onProxyError.addListener((details) => {
   log.error('onProxyError: ', details)
 })
 
-initContextMenus()
+// todo why
+// initContextMenus()

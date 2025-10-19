@@ -2,7 +2,8 @@
 import { onMounted, ref, computed } from 'vue'
 import RequestTable from './RequestTable.vue'
 import RequestTab from './RequestTab.vue'
-import { getRules, checkRules } from '@/core/rules_pretest.js'
+import { getRules, checkRules, getTempRuleList } from '@/core/rules_pretest.js'
+import { log } from '@/core/utils.js'
 import Browser from '@/Browser/main'
 
 const requestList = ref([])
@@ -41,7 +42,10 @@ onMounted(async () => {
     }
   })
   Browser.Storage.changed(function (changes, areaName) {
-    if (areaName === 'local' && changes.status_proxyKey) {
+    if (
+      (areaName === 'local' && changes.status_proxyKey) ||
+      areaName === 'session'
+    ) {
       getPolicyRules()
     }
   })
@@ -52,7 +56,8 @@ async function getPolicyRules() {
   if (!result[result.status_proxyKey]) {
     return
   }
-  activeRules.value = getRules(result[result.status_proxyKey])
+  const tempRuleList = await getTempRuleList()
+  activeRules.value = getRules(result[result.status_proxyKey], tempRuleList)
 }
 
 function filterTabsId(tabId) {
@@ -179,7 +184,7 @@ async function handleRequest(mode, details) {
       break
   }
 
-  console.log(mode, details, requestList.value)
+  log.debug(mode, details, requestList.value)
   if (requestIdx >= maxRows.value) {
     const shiftItem = requestList.value.shift()
 
@@ -216,9 +221,10 @@ async function handleRequest(mode, details) {
           </div>
         </Transition>
         <div class="input-group input-group-sm" style="width: 200px">
-          <label class="input-group-text">{{
-            Browser.I18n.getMessage('form_label_max_rows')
-          }}</label>
+          <label class="input-group-text"
+            ><i class="bi bi-list-columns me-2"></i
+            >{{ Browser.I18n.getMessage('form_label_max_rows') }}</label
+          >
           <select class="form-select form-select-sm" v-model="maxRows">
             <option value="1000">1000</option>
             <option value="2000">2000</option>
@@ -227,9 +233,10 @@ async function handleRequest(mode, details) {
           </select>
         </div>
         <div class="input-group-sm input-group" style="width: 320px">
-          <span class="input-group-text">{{
-            Browser.I18n.getMessage('form_label_filter')
-          }}</span>
+          <span class="input-group-text">
+            <i class="bi bi-filter-circle-fill me-2"></i
+            >{{ Browser.I18n.getMessage('form_label_filter') }}</span
+          >
           <input
             class="form-control form-control-sm"
             :placeholder="Browser.I18n.getMessage('placeholder_filter_request')"

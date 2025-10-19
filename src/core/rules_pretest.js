@@ -7,11 +7,11 @@ import {
 import { filterPrefixArray } from './utils.js'
 import * as ipaddr from 'ipaddr.js'
 
-export const getRules = function (proxyConfig) {
+export const getRules = function (proxyConfig, sessionRuleList = []) {
   if (proxyConfig?.mode) {
     switch (proxyConfig.mode) {
       case 'auto':
-        return getAutoRules(proxyConfig)
+        return getAutoRules(proxyConfig, sessionRuleList)
       case 'fixed_servers':
         return getFixedRules(proxyConfig)
       case 'pac_script':
@@ -28,7 +28,7 @@ export const checkRules = function (
   url,
   formattedRulesList,
   groupList = [
-    'tempRulesSet',
+    'tempRuleList',
     'localRuleList',
     'rejectRuleList',
     'rejectRulesSet',
@@ -99,10 +99,10 @@ const testRule = function (url, formattedRule) {
   }
 }
 
-const getTempRulesSet = async function () {
+export const getTempRuleList = async function () {
   const sessionObj = await Browser.Storage.getSession()
   const tempRules = filterPrefixArray(sessionObj, 'tempRule_')
-  return tempRules
+  return getRulesList(tempRules)
 }
 
 const getDefaultRules = function (defaultProxy) {
@@ -140,7 +140,7 @@ const getPacScriptRules = function (proxyConfig) {
   }
 }
 
-const getAutoRules = function (proxyConfig) {
+const getAutoRules = function (proxyConfig, tempRuleList = []) {
   const config = proxyConfig.config
   const localRulesSet = getRulesSet(config.rules.local.rulesSet)
   const rejectRulesSet = getRulesSet(config.rules.reject.rulesSet)
@@ -148,7 +148,6 @@ const getAutoRules = function (proxyConfig) {
   const localRuleList = getRulesList(config.rules.local.ruleList)
   const rejectRuleList = getRulesList(config.rules.reject.ruleList)
   const siteRuleList = getRulesList(config.rules.site.ruleList)
-  const tempRuleSet = getTempRulesSet()
   return {
     localRuleList,
     localRulesSet,
@@ -156,7 +155,7 @@ const getAutoRules = function (proxyConfig) {
     rejectRuleList,
     siteRulesSet,
     siteRuleList,
-    tempRuleSet,
+    tempRuleList,
     default: proxyConfig.config.rules.defaultProxy,
     bypass: []
   }

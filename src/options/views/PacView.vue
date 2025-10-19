@@ -63,9 +63,7 @@ function resetData() {
 async function handleUpdateUrl() {
   const key = 'proxy_' + encodeURIComponent(props.name)
   const allConfig = await Browser.Storage.getLocalAll()
-  const updateProxyConfig = await updatePacData(allConfig[key], {
-    interval: 0
-  })
+  const updateProxyConfig = await updatePacData(allConfig[key], {})
   if (JSON.stringify(updateProxyConfig) != '{}') {
     await Browser.Storage.setLocal({ [key]: updateProxyConfig })
     if (storeStatus.activeProxyKey == key) {

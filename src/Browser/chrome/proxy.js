@@ -1,4 +1,5 @@
 import { generatePacfile } from '@/core/pacfile_generator.js'
+import { setSiteRuleListToSession } from '@/core/siterules.js'
 import { subStringForName, filterPrefixArray, log } from '@/core/utils.js'
 import Storage from './storage.js'
 import Action from './action.js'
@@ -38,7 +39,14 @@ Proxy.reloadOrDirect = async function (
 
 Proxy.set = async function (proxyConfigs, key, afterSuccess = () => {}) {
   await Storage.clearSession()
-  const config = await createConfig(proxyConfigs, key)
+  let tempRules = []
+  if (proxyConfigs[key].mode == 'auto' && proxyConfigs.config_siteRules) {
+    setSiteRuleListToSession(proxyConfigs[key])
+    const sessionStorage = await Storage.getSessionAll()
+    tempRules = filterPrefixArray(sessionStorage, 'tempRule_')
+  }
+  log.debug('set proxy with tempRules', tempRules)
+  const config = await createConfig(proxyConfigs, key, tempRules)
   set(config, async () => {
     await Action.setBadgeBackgroundColor(proxyConfigs[key].tagColor)
     await Action.setBadgeText(subStringForName(proxyConfigs[key].name))
@@ -79,11 +87,7 @@ const set = async function (
   }
   chrome.proxy.settings.set({ value: config, scope: scope }, () => {
     if (chrome.runtime.lastError) {
-      // todo 换中文
-      console.error(
-        I18n.getMessage('desc_proxy_failed'),
-        chrome.runtime.lastError
-      )
+      log.error(I18n.getMessage('desc_proxy_failed'), chrome.runtime.lastError)
     } else {
       log.info(I18n.getMessage('desc_proxy_success'), config, scope)
       afterSuccess()
@@ -166,7 +170,7 @@ const fixedConfig = function (proxyConfig) {
   if (proxyConfig.rules.fallbackProxy.host) {
     config.rules[key] = getProxyServer(proxyConfig.rules.fallbackProxy)
   }
-  if (Object.keys(config.rules).length == 0) return { mode: 'direct' }
+  if (Object.keys(config.rules).length == 0) return directConfig()
   if (Object.keys(proxyConfig.rules).includes('bypassList'))
     config.rules.bypassList = JSON.parse(
       JSON.stringify(proxyConfig.rules.bypassList)
@@ -211,8 +215,10 @@ const pacConfig = (proxyConfig) => {
   const config = { mode: 'pac_script', pacScript: {} }
   if (proxyConfig.rules.data) {
     config.pacScript.data = proxyConfig.rules.data
+  } else if (pacConfig.rules.url) {
+    config.pacScript.url = proxyConfig.rules.url
   } else {
-    return { mode: 'direct' }
+    return directConfig()
   }
   return config
 }
@@ -224,7 +230,12 @@ const pacConfig = (proxyConfig) => {
  */
 const getProxyServer = function (server) {
   const proxyServer = { scheme: server.scheme, host: server.host }
-  if (server.port) {
+  if (
+    server.port &&
+    !isNaN(server.port) &&
+    server.port > 0 &&
+    server.port < 65536
+  ) {
     proxyServer.port = server.port
   }
   return proxyServer

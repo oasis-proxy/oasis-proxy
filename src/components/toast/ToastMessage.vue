@@ -1,13 +1,12 @@
 <script setup>
-import Browser from '@/Browser/main'
 import { computed, onMounted, getCurrentInstance } from 'vue'
 
 const props = defineProps(['message', 'mode'])
 
 const instance = getCurrentInstance()
 const show = function () {
-  const toast = new bootstrap.Toast(instance.refs.toast)
-  toast.show()
+  const toastMessage = new bootstrap.Toast(instance.refs.toastMessage)
+  toastMessage.show()
 }
 
 onMounted(() => {
@@ -16,17 +15,15 @@ onMounted(() => {
 
 const title = computed(() => {
   const title = {
-    icon: 'bi bi-info-circle-fill icon-btn ms-1 me-3 ',
+    icon: 'bi me-2',
     value: ''
   }
   switch (props.mode) {
     case 'info':
-      title.icon = title.icon + 'bi-info-circle-fill'
-      title.value = Browser.I18n.getMessage('modal_title_info')
+      title.icon = title.icon + ' bi-info-circle-fill'
       break
     case 'warning':
-      title.icon = title.icon + 'bi-info-circle-fill text-warning'
-      title.value = Browser.I18n.getMessage('modal_title_warning')
+      title.icon = title.icon + ' bi-info-circle-fill text-warning'
       break
     default:
       break
@@ -35,19 +32,10 @@ const title = computed(() => {
 })
 </script>
 <template>
-  <div ref="toast" class="toast position-relative">
-    <button
-      class="btn-close position-absolute"
-      style="top: 1rem; right: 1rem"
-      data-bs-dismiss="toast"
-      aria-label="Close"
-    ></button>
-    <div class="toast-body p-3">
-      <div class="mb-2 fw-bold">
-        <i :class="title.icon"></i>
-        <span>{{ title.value }}</span>
-      </div>
-      {{ props.message }}
+  <div ref="toastMessage" class="toast w-auto position-relative">
+    <div class="toast-body">
+      <i :class="title.icon"></i>
+      <span>{{ message }}</span>
     </div>
   </div>
 </template>

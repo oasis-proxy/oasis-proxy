@@ -2,8 +2,12 @@
 import { ref, onMounted, computed, getCurrentInstance, inject } from 'vue'
 import Browser from '@/Browser/main'
 import { getNextLocalVersion } from '@/core/version_control.js'
+import { useConfigStore } from '@/options/stores/config'
+import PopoverTips from '@/components/PopoverTips.vue'
 
 import * as ipaddr from 'ipaddr.js'
+
+const storeConfig = useConfigStore()
 
 const iptags = ref({})
 const isVisible = ref(false)
@@ -104,10 +108,12 @@ async function deleteTags(ip) {
               {{ Browser.I18n.getMessage('form_label_tagsname') }}
             </th>
             <th style="width: 30px">
-              <i
-                class="bi bi-plus-circle-fill icon-btn"
+              <PopoverTips
+                className="bi bi-plus-circle-fill icon-btn"
+                :content="Browser.I18n.getMessage('iconbtn_add_iptags')"
+                :hint="storeConfig.configIconBtnHint"
                 @click="showAddTags"
-              ></i>
+              ></PopoverTips>
             </th>
           </tr>
         </thead>
@@ -130,11 +136,13 @@ async function deleteTags(ip) {
               />
             </td>
             <td>
-              <i
-                class="bi bi-floppy-fill icon-btn"
+              <PopoverTips
+                iconStyle="vertical-align: sub"
+                className="bi bi-floppy-fill icon-btn"
+                :content="Browser.I18n.getMessage('iconbtn_save_iptag')"
+                :hint="storeConfig.configIconBtnHint"
                 @click="addTags"
-                style="vertical-align: sub"
-              ></i>
+              ></PopoverTips>
             </td>
           </tr>
           <tr v-for="(item, index) in list" class="text-nowrap" :key="index">
@@ -145,10 +153,13 @@ async function deleteTags(ip) {
               {{ iptags[item] }}
             </td>
             <td>
-              <i
-                class="bi bi-trash-fill icon-btn"
+              <PopoverTips
+                style="vertical-align: sub"
+                className="bi bi-trash-fill icon-btn"
+                :content="Browser.I18n.getMessage('iconbtn_delete_iptag')"
+                :hint="storeConfig.configIconBtnHint"
                 @click="deleteTags(item)"
-              ></i>
+              ></PopoverTips>
             </td>
           </tr>
         </tbody>

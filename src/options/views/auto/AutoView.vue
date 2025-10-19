@@ -12,7 +12,6 @@ import { useConfigStore } from '@/options/stores/config'
 import { saveForAuto } from '@/core/proxy_config.js'
 import { generatePacfile } from '@/core/pacfile_generator.js'
 import { getNextLocalVersion } from '@/core/version_control.js'
-import { formatCode } from '@/core/utils'
 import AutoSiteRulesGroup from './AutoSiteRulesGroup.vue'
 
 const props = defineProps(['name'])
@@ -338,14 +337,16 @@ function handleCancel() {
           aria-controls="v-pills-site"
           aria-selected="false"
         >
-          <i class="fa-solid fa-flask me-1"></i>
-          {{ Browser.I18n.getMessage('tab_label_site') }}
+          {{ Browser.I18n.getMessage('tab_label_site')
+          }}<i class="bi bi-flask-fill ms-2"></i>
         </button>
         <div class="ms-auto d-flex align-items-center">
-          <i
-            class="fa-solid fa-code-merge icon-btn me-2"
+          <PopoverTips
+            class-name="bi bi-sign-merge-left-fill icon-btn me-2"
+            :content="Browser.I18n.getMessage('iconbtn_merge_auto_policy')"
+            :hint="storeConfig.configIconBtnHint"
             @click="openMergeRulesDialog"
-          ></i>
+          ></PopoverTips>
           <PopoverTips
             className="bi bi-question-circle-fill icon-btn"
             :content="Browser.I18n.getMessage('popover_priority')"

@@ -9,11 +9,13 @@ import ProxySelect from '@/components/ProxySelect.vue'
 import RuleItem from '../../components/InternalRuleGroup.vue'
 
 import Browser from '@/Browser/main'
+import { useConfigStore } from '@/options/stores/config'
 import { useStatusStore } from '@/options/stores/status'
 import { updateRulesSetData } from '@/core/proxy_config.js'
 
 const route = useRoute()
 const storeStatus = useStatusStore()
+const storeConfig = useConfigStore()
 const batchUpdateServerModal = ref(null)
 const instance = getCurrentInstance()
 const toast = instance?.appContext.config.globalProperties.$toast
@@ -121,11 +123,18 @@ function setUnsaved() {
       <span class="fw-bold"
         >{{ Browser.I18n.getMessage('section_label_site') }}
       </span>
-      <i class="bi bi-plus-circle-fill icon-btn ms-2" @click="insertRule()"></i>
-      <i
-        class="bi bi-ui-checks icon-btn ms-2"
+      <PopoverTips
+        class-name="bi bi-plus-circle-fill icon-btn ms-2"
+        :content="Browser.I18n.getMessage('iconbtn_add_rule')"
+        :hint="storeConfig.configIconBtnHint"
+        @click="insertRule()"
+      ></PopoverTips>
+      <PopoverTips
+        class-name="bi bi-ui-checks icon-btn ms-2"
+        :content="Browser.I18n.getMessage('iconbtn_batch_update_server')"
+        :hint="storeConfig.configIconBtnHint"
         @click="openBatchUpdateServerDialog"
-      ></i>
+      ></PopoverTips>
     </div>
     <div class="card-body">
       <div id="siteRuleList">
@@ -145,26 +154,35 @@ function setUnsaved() {
               @clearFousText="setFocusText(null)"
             >
               <template #operation>
-                <i
-                  class="bi bi-layer-backward icon-btn me-2 mt-1"
+                <PopoverTips
+                  class-name="bi bi-layer-backward icon-btn me-2 mt-1"
+                  :content="Browser.I18n.getMessage('iconbtn_insert_below')"
+                  :hint="storeConfig.configIconBtnHint"
                   @click="insertRule(index)"
-                ></i>
-                <i
-                  class="bi bi-inboxes-fill icon-btn me-2 mt-1"
+                ></PopoverTips>
+                <PopoverTips
+                  class-name="bi bi-inboxes-fill icon-btn me-2 mt-1"
+                  :content="Browser.I18n.getMessage('iconbtn_divider_rule')"
+                  :hint="storeConfig.configIconBtnHint"
                   @click="insertDivider(index)"
-                ></i
+                ></PopoverTips
               ></template>
               <template #delete>
-                <i
-                  class="bi bi-trash-fill icon-btn mt-1"
+                <PopoverTips
+                  class-name="bi bi-trash-fill icon-btn mt-1"
+                  :content="Browser.I18n.getMessage('iconbtn_delete_rule')"
+                  :hint="storeConfig.configIconBtnHint"
                   @click="removeRule(index)"
-                ></i
+                ></PopoverTips
               ></template>
             </RuleItem>
           </template>
         </draggable>
+        <div v-show="siteRuleList.length == 0" class="text-center text-muted">
+          {{ Browser.I18n.getMessage('desc_list_empty') }}
+        </div>
       </div>
-      <div>
+      <!-- <div>
         <div class="hstack gap-2 mb-2">
           <span class="ms-auto">{{
             Browser.I18n.getMessage('desc_external_rules')
@@ -179,10 +197,10 @@ function setUnsaved() {
           <i class="bi bi-trash-fill icon-btn" style="visibility: hidden"></i>
           <i class="bi bi-trash-fill icon-btn" style="visibility: hidden"></i>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
-  <div class="card">
+  <!-- <div class="card">
     <div class="card-header">
       <span class="fw-bold">{{
         Browser.I18n.getMessage('section_label_external')
@@ -195,7 +213,7 @@ function setUnsaved() {
     <div class="card-body">
       <LinkTextItem
         :urlTitle="Browser.I18n.getMessage('form_label_rule_url')"
-        :urlUpdatedAtTitle="Browser.I18n.getMessage('form_label_update_date')"
+        :urlUpdatedAtTitle="Browser.I18n.getMessage('form_label_rule_update')"
         :validTitle="Browser.I18n.getMessage('form_label_rule_valid')"
         :dataTitle="Browser.I18n.getMessage('form_label_rule_data')"
         @updateRulesSetData="handleUpdateUrl('site')"
@@ -203,6 +221,6 @@ function setUnsaved() {
         v-model:isUrlValid="urlValid"
       ></LinkTextItem>
     </div>
-  </div>
+  </div> -->
   <BatchUpdateServerModal ref="batchUpdateServerModal"></BatchUpdateServerModal>
 </template>

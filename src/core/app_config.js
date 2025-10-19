@@ -120,11 +120,11 @@ const newVersionConfigTo2_3 = async function () {
     })
     await Browser.Storage.setLocal({
       config_app_version: LASTEST_VERSION_NUMBER,
-      config_updateUrl: '24h',
+      config_updateUrl: oldAppConfig.config_updateUrl ? '24h' : 'disableAll',
       config_autoRefresh: true,
       config_siteRules: false,
       config_contextMenus: false,
-      config_siteRules_autoRefresh: true
+      config_iconBtnHint: true
     })
   }
 
@@ -136,11 +136,12 @@ const newVersionConfigTo2_3 = async function () {
     })
     await Browser.Storage.setSync({
       config_app_version: LASTEST_VERSION_NUMBER,
-      config_updateUrl: '24h',
+      config_updateUrl: oldSyncAppConfig.config_updateUrl
+        ? '24h'
+        : 'disableAll',
       config_autoRefresh: true,
       config_siteRules: false,
-      config_contextMenus: false,
-      config_siteRules_autoRefresh: true
+      config_iconBtnHint: true
     })
   }
 }
@@ -157,7 +158,7 @@ export const resetAppConfig = function () {
     config_version: 1,
     config_iptags: [],
     config_siteRules: false,
-    config_siteRules_autoRefresh: true,
+    config_iconBtnHint: true,
     direct: {
       mode: 'direct',
       name: 'direct',

@@ -8,7 +8,8 @@ export const enumInterval = {
   '1h': 60,
   '15m': 15,
   '1m': 1,
-  manual: null
+  default: 'default',
+  manual: 'manual'
 }
 
 export const downloadUrl = async function (url, format = 'raw') {

@@ -1,7 +1,7 @@
 <script setup>
 import { getCurrentInstance } from 'vue'
 import { resetAppConfig, convertToNewVersionConfig } from '@/core/app_config.js'
-import { formatCode } from '@/core/utils'
+import { formatCode, log } from '@/core/utils'
 import Browser from '@/Browser/main'
 
 const instance = getCurrentInstance()
@@ -23,7 +23,7 @@ async function handleImportConfig(event) {
       tmpObj.config_autoSync = false
       tmpObj.status_proxyKey = 'direct'
       const result = await Browser.Storage.getLocalAll()
-      console.log(Object.keys(result))
+      log.debug(Object.keys(result))
       await Browser.Storage.removeLocal(Object.keys(result))
       await Browser.Storage.setLocal(tmpObj)
       await convertToNewVersionConfig()
@@ -33,7 +33,7 @@ async function handleImportConfig(event) {
       }, 2000)
     } catch (err) {
       toast.warning(Browser.I18n.getMessage('desc_import_config_failed'))
-      console.log('Error: ', err)
+      log.debug('Error: ', err)
     }
   }
   reader.readAsText(file)
@@ -49,7 +49,7 @@ function clearConfig() {
       await Browser.Storage.setLocal(obj)
       await Browser.Proxy.setDirect(async () => {
         await Browser.Storage.setLocal({ status_proxyKey: 'direct' })
-        toast.info(`代理切换为直连`)
+        toast.info(Browser.I18n.getMessage('desc_set_proxy_direct'))
       })
       toast.info(Browser.I18n.getMessage('desc_init_config'))
       setTimeout(() => {

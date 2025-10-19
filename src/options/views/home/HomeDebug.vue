@@ -1,7 +1,7 @@
 <script setup>
 import Browser from '@/Browser/main'
 import { ref, onMounted } from 'vue'
-import { formatCode } from '@/core/utils'
+import { formatCode, log } from '@/core/utils'
 
 const localProfile = ref('')
 const syncProfile = ref('')
@@ -35,7 +35,7 @@ async function removePermission() {
       permissions: ['contextMenus']
     },
     (removed) => {
-      console.log('permission removed', removed)
+      log.debug('permission removed', removed)
     }
   )
 }
@@ -47,7 +47,7 @@ function getPermission() {
     },
     (granted) => {
       if (granted) {
-        console.log('权限已授予，可以访问 API')
+        log.debug('权限已授予，可以访问 API')
 
         // 对链接添加菜单项
         chrome.contextMenus.create({
@@ -66,17 +66,17 @@ function getPermission() {
         // 监听点击事件
         chrome.contextMenus.onClicked.addListener((info, tab) => {
           if (info.menuItemId === 'linkMenu') {
-            console.log('点击了链接菜单:', info.linkUrl)
+            log.debug('点击了链接菜单:', info.linkUrl)
             // 你可以在这里对 info.linkUrl 执行处理，比如复制、发送、打开新标签等
           }
 
           if (info.menuItemId === 'imageMenu') {
-            console.log('点击了图片菜单:', info.srcUrl)
+            log.debug('点击了图片菜单:', info.srcUrl)
             // 你可以对图片的 srcUrl 做处理，比如保存、识别等
           }
         })
       } else {
-        console.log('用户拒绝了权限请求')
+        log.debug('用户拒绝了权限请求')
       }
     }
   )
@@ -88,7 +88,7 @@ function open() {
     chrome.action.getPopup({ tabId: currentTab.id }, function (popupUrl) {
       const url = new URL(popupUrl)
 
-      console.log('当前 popup URL:', url)
+      log.debug('当前 popup URL:', url)
 
       chrome.action.setPopup({
         popup: '/popup.html#/info?redirect=' + encodeURIComponent('/monitor')
@@ -106,7 +106,7 @@ function open() {
         <span class="fw-bold">Session</span>
         <div>
           <button class="btn btn-primary btn-sm" @click="clearSync">
-            清除云端
+            clear Sync
           </button>
           <button class="btn btn-primary btn-sm" @click="open">Open</button>
           <button class="btn btn-primary btn-sm" @click="getPermission">

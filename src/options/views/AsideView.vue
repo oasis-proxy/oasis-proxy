@@ -3,6 +3,7 @@ import { computed, getCurrentInstance, inject } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useConfigStore } from '@/options/stores/config'
 import { useStatusStore } from '@/options/stores/status'
+import PopoverTips from '@/components/PopoverTips.vue'
 
 import Browser from '@/Browser/main'
 
@@ -16,7 +17,6 @@ const storeStatus = useStatusStore()
 const instance = getCurrentInstance()
 const toast = instance?.appContext.config.globalProperties.$toast
 
-const isDebug = import.meta.env.VITE_APP_DEBUG == 'debug'
 const proxyNamesObj = computed(() => {
   const fixed = []
   const pac = []
@@ -58,6 +58,10 @@ function toPath(path) {
   }
   router.push(path)
 }
+
+function toGithubWiki() {
+  window.open('https://github.com/oasis-proxy/oasis-proxy/wiki', '_blank')
+}
 </script>
 <template>
   <div class="w-100 mb-4 d-flex justify-content-center">
@@ -97,13 +101,19 @@ function toPath(path) {
             >
           </a>
         </li>
-        <li
-          class="nav-item"
-          v-if="
-            isDebug ||
-            (storeStatus.isTempRuleValid && storeConfig.configSiteRules)
-          "
-        >
+        <li class="nav-item">
+          <a class="nav-link" @click="toGithubWiki">
+            <span>
+              <i class="bi bi-lightbulb-fill me-3"></i>
+              <span>{{ Browser.I18n.getMessage('aside_label_helper') }}</span>
+              <i
+                class="bi bi-link-45deg ms-1"
+                style="vertical-align: middle"
+              ></i>
+            </span>
+          </a>
+        </li>
+        <li class="nav-item" v-if="storeConfig.configSiteRules">
           <a
             :class="route.path == '/temp' ? 'nav-link active' : 'nav-link'"
             @click="toPath('/temp')"
@@ -124,10 +134,12 @@ function toPath(path) {
       <div class="fw-bold">
         {{ Browser.I18n.getMessage('aside_label_proxy_server') }}
       </div>
-      <i
-        class="bi bi-plus-circle-fill ms-auto icon-btn"
+      <PopoverTips
+        className="bi bi-plus-circle-fill ms-auto icon-btn"
+        :content="Browser.I18n.getMessage('iconbtn_create_server')"
+        :hint="storeConfig.configIconBtnHint"
         @click="handleNewConfig('servers')"
-      ></i>
+      ></PopoverTips>
     </div>
     <div class="card-body">
       <ul class="nav nav-pills flex-column">
@@ -166,11 +178,13 @@ function toPath(path) {
       <div class="fw-bold">
         {{ Browser.I18n.getMessage('aside_label_proxy_policy') }}
       </div>
-      <i
-        class="bi bi-plus-circle-fill icon-btn ms-auto"
+      <PopoverTips
+        className="bi bi-plus-circle-fill icon-btn ms-auto"
+        :content="Browser.I18n.getMessage('iconbtn_create_policy')"
+        :hint="storeConfig.configIconBtnHint"
         @click="handleNewConfig('policy')"
       >
-      </i>
+      </PopoverTips>
     </div>
     <div class="card-body">
       <ul class="nav nav-pills flex-column">

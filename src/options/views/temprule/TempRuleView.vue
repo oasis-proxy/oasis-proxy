@@ -7,7 +7,7 @@ import Browser from '@/Browser/main'
     <div class="hstack gap-3 pb-4 mb-3">
       <div><i class="bi bi-clock-fill fs-4"></i></div>
       <div class="fs-5 fw-bold text-truncate" id="title">
-        {{ Browser.I18n.getMessage('aside_label_temp_rules') }}
+        {{ Browser.I18n.getMessage('page_title_site_temprules') }}
       </div>
     </div>
     <div>
@@ -21,7 +21,7 @@ import Browser from '@/Browser/main'
           aria-controls="v-pills-default"
           aria-selected="true"
         >
-          {{ Browser.I18n.getMessage('section_label_site') }}
+          {{ Browser.I18n.getMessage('tab_label_default') }}
         </button>
       </div>
       <div class="tab-content" id="v-pills-tabContent">

@@ -7,7 +7,6 @@ import router from './router'
 import toastPlugin from '@/components/toast/Toast.js'
 import ConfirmModal from '@/components/modal/ConfirmModal.vue'
 import { useStatusStore } from '@/options/stores/status'
-import '@fortawesome/fontawesome-free/css/all.min.css'
 
 const pinia = createPinia()
 const app = createApp(App)

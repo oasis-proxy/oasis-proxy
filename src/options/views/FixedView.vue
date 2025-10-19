@@ -6,6 +6,7 @@ import Browser from '@/Browser/main'
 import { useStatusStore } from '@/options/stores/status'
 import { saveForFixed, proxyUses } from '@/core/proxy_config.js'
 import { getNextLocalVersion } from '@/core/version_control.js'
+import { log } from '@/core/utils.js'
 
 const props = defineProps(['name'])
 
@@ -148,7 +149,7 @@ async function handleSubmit() {
 
   toast.info(`${props.name} ${Browser.I18n.getMessage('desc_save_success')}`)
   storeStatus.resetUnsaved()
-  console.log(storeStatus.activeProxyKey)
+  log.debug(storeStatus.activeProxyKey)
   if (storeStatus.activeProxyKey == key) {
     await Browser.Proxy.reloadOrDirect(() => {
       toast.info(Browser.I18n.getMessage('desc_proxy_update'))

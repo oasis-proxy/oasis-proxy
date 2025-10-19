@@ -44,6 +44,7 @@ onMounted(async () => {
   storeConfig.configAutoSync = result.config_autoSync
   storeConfig.configMonitor = result.config_monitor
   storeConfig.configUpdateUrl = result.config_updateUrl
+  storeConfig.configIconBtnHint = result.config_iconBtnHint
 
   if (storeConfig.configAutoSync) {
     switch (await getSyncDownloadStatus()) {
@@ -65,7 +66,6 @@ onMounted(async () => {
 
   // init site rules
   storeConfig.configSiteRules = result.config_siteRules
-  storeConfig.configSiteRulesAutoRefresh = result.config_siteRules_autoRefresh
   if (storeConfig.configSiteRules) {
     storeStatus.setTempRuleValid()
   }
@@ -82,7 +82,7 @@ onMounted(async () => {
   })
 
   Browser.Storage.changed(function (changes, areaName) {
-    log.info('storage changed:', changes)
+    log.info('storage changed:', changes, areaName)
     if (areaName === 'local') {
       if (changes.status_proxyKey) {
         storeStatus.activeProxyKey = changes.status_proxyKey.newValue

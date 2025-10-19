@@ -58,10 +58,6 @@
 
 `Boolean`，站点规则功能标志，默认关闭。（实验配置-站点规则）
 
-## config_siteRules_autoRefresh
-
-`Boolean`, 在命中siteRules添加临时规则后，是否自动刷新标签页
-
 ## direct
 
 `Object`，直连代理默认配置。（固定值）
@@ -233,22 +229,22 @@
 
 # 本地/云端同步
 
-| key                          | local | sync |
-| ---------------------------- | ----- | ---- |
-| config_app_version           | [x]   | [x]  |
-| config_ui                    | [x]   | []   |
-| config_updateUrl             | [x]   | [x]  |
-| config_autoRefresh           | [x]   | [x]  |
-| config_monitor               | [x]   | []   |
-| config_autoSync              | [x]   | []   |
-| config_version               | [x]   | [x]  |
-| config_syncTime              | [x]   | [x]  |
-| config_iptags                | [x]   | [x]  |
-| config_contextMenus          | [x]   | [x]  |
-| config_siteRules             | [x]   | [x]  |
-| config_siteRules_autoRefresh | [x]   | [x]  |
-| direct                       | [x]   | []   |
-| system                       | [x]   | []   |
-| reject                       | [x]   | []   |
-| proxy_xxxx                   | [x]   | [x]  |
-| status_proxyKey              | [x]   | []   |
+| key                 | local | sync |
+| ------------------- | ----- | ---- |
+| config_app_version  | [x]   | [x]  |
+| config_ui           | [x]   | []   |
+| config_updateUrl    | [x]   | [x]  |
+| config_autoRefresh  | [x]   | [x]  |
+| config_monitor      | [x]   | []   |
+| config_autoSync     | [x]   | []   |
+| config_version      | [x]   | [x]  |
+| config_syncTime     | [x]   | [x]  |
+| config_iptags       | [x]   | [x]  |
+| config_contextMenus | [x]   | []   |
+| config_siteRules    | [x]   | [x]  |
+| config_iconBtnHint  | [x]   | [x]  |
+| direct              | [x]   | []   |
+| system              | [x]   | []   |
+| reject              | [x]   | []   |
+| proxy_xxxx          | [x]   | [x]  |
+| status_proxyKey     | [x]   | []   |

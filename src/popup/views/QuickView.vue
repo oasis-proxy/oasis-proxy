@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import ProxySelect from '../../components/ProxySelect.vue'
-import { addLocalRuleItemForAuto } from '@/core/proxy_config.js'
+import { addRuleItemForAuto } from '@/core/proxy_config.js'
 import { getSuffix } from '@/core/utils'
 import Browser from '@/Browser/main'
 import {
@@ -11,13 +11,14 @@ import {
   overWriteToCloud
 } from '@/core/version_control.js'
 
-const router = useRouter()
+const route = useRoute()
 
 const selectedProxy = ref('direct')
 const domains = ref([])
 const activeProxyLabel = ref('')
 const checkedDomains = ref([])
 const autoRefresh = ref(false)
+const rulesType = ref('link') // link, site
 
 onMounted(async () => {
   const result = await Browser.Storage.getLocal([
@@ -30,7 +31,36 @@ onMounted(async () => {
       Browser.I18n.getMessage('desc_active_policy') +
       decodeURIComponent(result.status_proxyKey.substring(6))
   }
+  if (route.query.source === 'menus') {
+    loadQuickAddByContextMenus()
+  } else {
+    await loadQuickAdd()
+  }
 
+  const resLocal = await Browser.Storage.getLocal('config_monitor')
+  if (resLocal.config_monitor) {
+    chrome.action.setPopup({ popup: '/popup.html#/monitor' })
+  } else {
+    chrome.action.setPopup({ popup: '/popup.html#/' })
+  }
+})
+
+async function loadQuickAddByContextMenus() {
+  const sessionRes = await Browser.Storage.getSession('contextMenus_rules')
+  if (sessionRes.contextMenus_rules == null) {
+    return
+  }
+  rulesType.value = sessionRes.contextMenus_rules.rulesType
+  sessionRes.contextMenus_rules.hosts.forEach((hostname) => {
+    if (!domains.value.includes(hostname)) {
+      domains.value.push(hostname)
+      checkedDomains.value.push(hostname)
+    }
+  })
+  await Browser.Storage.removeSession('contextMenus_rules')
+}
+
+async function loadQuickAdd() {
   const tabs = await Browser.Tabs.getActiveTab()
 
   const activeTabId = 'tabId_' + tabs[0].id.toString()
@@ -47,9 +77,9 @@ onMounted(async () => {
       }
     }
   })
-})
+}
 
-async function quickAddLocalRuleList() {
+async function submit() {
   const result = await Browser.Storage.getLocalAll()
   const newRules = []
   checkedDomains.value.forEach((item) => {
@@ -60,16 +90,19 @@ async function quickAddLocalRuleList() {
       valid: true
     })
   })
-  const newProxyConfig = addLocalRuleItemForAuto(
+  const newProxyConfig = addRuleItemForAuto(
     newRules,
-    result[result.status_proxyKey]
+    result[result.status_proxyKey],
+    rulesType.value === 'site' ? 'site' : 'local'
   )
   const version = await getNextLocalVersion()
   await Browser.Storage.setLocal({
     [result.status_proxyKey]: newProxyConfig,
-    config_version: version
+    config_version: version,
+    config_syncTime: new Date().getTime()
   })
   const newResult = await Browser.Storage.getLocalAll()
+  // set proxy with a clean config without tempRules
   Browser.Proxy.set(newResult, newResult.status_proxyKey)
   if (newResult.config_autoSync) {
     const url =
@@ -107,22 +140,23 @@ async function quickAddLocalRuleList() {
 </script>
 
 <template>
-  <div class="position-fixed w-100 bg-body shadow-sm">
-    <div class="hstack px-3 py-2 mt-1">
-      <div
-        class="d-flex align-items-center cursor-point"
-        @click="router.push('/monitor')"
-      >
-        <i class="bi bi-speedometer me-2"></i>
-        <span>{{ Browser.I18n.getMessage('desc_monitor') }}</span>
-      </div>
-      <div class="ms-auto text-truncate" style="max-width: 50%">
-        {{ activeProxyLabel }}
-      </div>
+  <div class="px-3 py-2 vstack gap-2 mb-1 mt-1">
+    <div v-if="rulesType === 'link'">
+      {{
+        Browser.I18n.getMessage('desc_add_rules') +
+        '（' +
+        activeProxyLabel +
+        '）'
+      }}
     </div>
-  </div>
-  <div class="px-3 py-2 vstack gap-2 mb-1 mt-5">
-    <div>{{ Browser.I18n.getMessage('desc_add_rules') }}</div>
+    <div v-else>
+      {{
+        Browser.I18n.getMessage('desc_add_siterules') +
+        '（' +
+        activeProxyLabel +
+        '）'
+      }}
+    </div>
     <div id="domainList" class="vstack gap-2">
       <div
         class="form-check-sm d-flex align-items-center"
@@ -148,11 +182,7 @@ async function quickAddLocalRuleList() {
         </div>
       </div>
       <div class="ms-auto">
-        <button
-          type="button"
-          class="btn btn-sm btn-primary"
-          @click="quickAddLocalRuleList"
-        >
+        <button type="button" class="btn btn-sm btn-primary" @click="submit">
           <i class="bi bi-check-circle-fill me-2"></i>
           <span>{{ Browser.I18n.getMessage('btn_label_add_config') }}</span>
         </button>

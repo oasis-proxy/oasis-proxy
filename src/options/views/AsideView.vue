@@ -64,6 +64,7 @@ function toGithubWiki() {
 }
 </script>
 <template>
+  <!-- Banner Image-->
   <div class="w-100 mb-4 d-flex justify-content-center">
     <img
       v-show="storeConfig.computedTheme == 'dark'"
@@ -78,6 +79,7 @@ function toGithubWiki() {
       style="width: 193px"
     />
   </div>
+  <!-- Plugin Setting -->
   <div class="card">
     <div class="card-header hstack">
       <div class="fw-bold">
@@ -129,6 +131,7 @@ function toGithubWiki() {
       </ul>
     </div>
   </div>
+  <!-- Proxy Server -->
   <div class="card">
     <div class="card-header hstack">
       <div class="fw-bold">
@@ -160,7 +163,9 @@ function toGithubWiki() {
                 class="bi bi-pc-display me-3"
                 :style="'color: ' + item.tagColor"
               ></i
-              ><span>{{ decodeURIComponent(item.name) }}</span
+              ><span class="d-inline-block text-truncate">{{
+                decodeURIComponent(item.name)
+              }}</span
               ><span
                 v-if="storeStatus.activeProxyKey == 'proxy_' + item.name"
                 class="badge rounded-pill bg-info ms-3"
@@ -173,6 +178,7 @@ function toGithubWiki() {
       </ul>
     </div>
   </div>
+  <!-- Proxy Policy -->
   <div class="card">
     <div class="card-header hstack">
       <div class="fw-bold">
@@ -205,7 +211,9 @@ function toGithubWiki() {
                 class="bi bi-file-earmark-ppt-fill me-3"
                 :style="'color: ' + item.tagColor"
               ></i
-              ><span>{{ decodeURIComponent(item.name) }}</span
+              ><span class="d-inline-block text-truncate">{{
+                decodeURIComponent(item.name)
+              }}</span
               ><span
                 v-if="storeStatus.activeProxyKey == 'proxy_' + item.name"
                 class="badge rounded-pill bg-info ms-3"
@@ -232,7 +240,9 @@ function toGithubWiki() {
                 class="bi bi-signpost-split-fill me-3"
                 :style="'color: ' + item.tagColor"
               ></i>
-              <span>{{ decodeURIComponent(item.name) }}</span
+              <span class="d-inline-block text-truncate">{{
+                decodeURIComponent(item.name)
+              }}</span
               ><span
                 v-if="storeStatus.activeProxyKey == 'proxy_' + item.name"
                 class="badge rounded-pill bg-info ms-3"

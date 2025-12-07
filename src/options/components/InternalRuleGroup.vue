@@ -33,7 +33,7 @@ const isDataValid = ref(true)
 const dataClassName = computed(() => {
   return isDataValid.value
     ? 'form-control form-control-sm'
-    : 'form-control is-invalid form-control-sm'
+    : 'form-control form-control-sm is-invalid'
 })
 
 const placeholder = computed(() => {

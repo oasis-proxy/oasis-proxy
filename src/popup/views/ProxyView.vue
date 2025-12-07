@@ -84,7 +84,7 @@ function goToEditPage(name) {
 </script>
 <template>
   <ul id="proxyList" class="nav nav-pills flex-column pb-1 mt-1">
-    <li class="nav-item">
+    <li class="nav-item w-100">
       <a
         :class="activeProxyKey == 'direct' ? activeClassName : className"
         @click="setProxy(proxyConfigs, 'direct')"
@@ -92,7 +92,7 @@ function goToEditPage(name) {
         ><span>{{ Browser.I18n.getMessage('input_label_direct') }}</span></a
       >
     </li>
-    <li class="nav-item">
+    <li class="nav-item w-100">
       <a
         :class="activeProxyKey == 'system' ? activeClassName : className"
         @click="setProxy(proxyConfigs, 'system')"
@@ -102,7 +102,7 @@ function goToEditPage(name) {
     </li>
     <hr class="my-1" />
     <li
-      class="nav-item"
+      class="nav-item w-100"
       v-for="(item, index) in fixed"
       :key="index"
       @click="setProxy(proxyConfigs, 'proxy_' + item.name)"
@@ -123,7 +123,7 @@ function goToEditPage(name) {
       </a>
     </li>
     <li
-      class="nav-item"
+      class="nav-item w-100"
       v-for="(item, index) in pac"
       :key="index"
       @click="setProxy(proxyConfigs, 'proxy_' + item.name)"
@@ -147,7 +147,7 @@ function goToEditPage(name) {
       </a>
     </li>
     <li
-      class="nav-item"
+      class="nav-item w-100"
       v-for="(item, index) in auto"
       :key="index"
       @click="setProxy(proxyConfigs, 'proxy_' + item.name)"

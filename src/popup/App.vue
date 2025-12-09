@@ -51,6 +51,9 @@ onMounted(async () => {
   document.body.setAttribute('data-bs-theme', theme)
 
   await updateNavList()
+  chrome.runtime.onMessage.addListener(function (request) {
+    if (request.instruction == 'updateList') updateNavList()
+  })
 })
 
 async function updateNavList() {

@@ -49,9 +49,15 @@ export const updateTabBadgeText = async () => {
         tabs.length > 0 &&
         tabs[0].id != chrome.tabs.TAB_ID_NONE
       ) {
+        const tabInfo = await Browser.Tabs.get(tabs[0].id)
         const activeTabId = 'tabId_' + tabs[0].id.toString()
         const requestSession = await Browser.Storage.getSession(activeTabId)
-        if (requestSession[activeTabId] != null) {
+
+        if (
+          requestSession[activeTabId] != null &&
+          (tabInfo.url.startsWith('http://') ||
+            tabInfo.url.startsWith('https://'))
+        ) {
           let numText = Object.keys(
             requestSession[activeTabId]
           ).length.toString()

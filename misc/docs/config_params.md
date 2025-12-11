@@ -58,6 +58,10 @@
 
 `Boolean`，站点规则功能标志，默认关闭。（实验配置-站点规则）
 
+## config_iconBtnHint
+
+`Boolean`，图标按钮提示功能标志，默认开启。
+
 ## direct
 
 `Object`，直连代理默认配置。（固定值）

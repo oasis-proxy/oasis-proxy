@@ -114,7 +114,6 @@ const newVersionConfigTo2_3 = async function () {
   const oldAppConfig = await Browser.Storage.getLocalAll()
   if (oldAppConfig['config_app_version'] == 2.2) {
     const updatedProxyConfigList = transformAddSiteRuleConfig(oldAppConfig)
-    console.log(updatedProxyConfigList)
     updatedProxyConfigList.forEach(async (item) => {
       await Browser.Storage.setLocal(item)
     })
@@ -293,6 +292,9 @@ function transformAddSiteRuleConfig(appConfig) {
         )
         delete resObj.config.rules.singleProxy
       }
+      updatedProxyConfigList.push({ [key]: resObj })
+    } else if (resObj.mode == 'pac_script') {
+      resObj.config.rules.updateInterval = 'default'
       updatedProxyConfigList.push({ [key]: resObj })
     }
   })

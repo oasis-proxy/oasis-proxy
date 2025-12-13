@@ -1,31 +1,39 @@
 <script setup>
-import { ref, inject, getCurrentInstance, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import {
+  ref,
+  inject,
+  //  getCurrentInstance,
+  watch
+} from 'vue'
+// import { useRoute } from 'vue-router'
 import draggable from 'vuedraggable'
 import BatchUpdateServerModal from './BatchUpdateServerModal.vue'
 import PopoverTips from '@/components/PopoverTips.vue'
-import LinkTextItem from '../../components/LinkTextItem.vue'
-import ProxySelect from '@/components/ProxySelect.vue'
+// import LinkTextItem from '../../components/LinkTextItem.vue'
+// import ProxySelect from '@/components/ProxySelect.vue'
 import RuleItem from '../../components/InternalRuleGroup.vue'
 
 import Browser from '@/Browser/main'
 import { useConfigStore } from '@/options/stores/config'
 import { useStatusStore } from '@/options/stores/status'
-import { updateRulesSetData } from '@/core/proxy_config.js'
+// import { updateRulesSetData } from '@/core/proxy_config.js'
 
-const route = useRoute()
+// const route = useRoute()
 const storeStatus = useStatusStore()
 const storeConfig = useConfigStore()
 const batchUpdateServerModal = ref(null)
-const instance = getCurrentInstance()
-const toast = instance?.appContext.config.globalProperties.$toast
+// const instance = getCurrentInstance()
+// const toast = instance?.appContext.config.globalProperties.$toast
 
-const { siteRuleList, siteRulesSet } = inject('autoConfig')
+const {
+  siteRuleList
+  // siteRulesSet
+} = inject('autoConfig')
 const { siteRuleChanged } = inject('status')
-const emit = defineEmits(['load'])
+// const emit = defineEmits(['load'])
 
 const focusText = ref('')
-const urlValid = ref(true)
+// const urlValid = ref(true)
 const ruleItemTmpl = {
   mode: 'domain',
   data: '',
@@ -87,24 +95,24 @@ function inputClassName(item) {
   return name.join(' ')
 }
 
-async function handleUpdateUrl() {
-  const key = 'proxy_' + encodeURIComponent(route.params.name)
-  const allConfig = await Browser.Storage.getLocalAll()
-  const updateProxyConfig = await updateRulesSetData(allConfig[key], {
-    subjectList: ['site']
-  })
-  if (JSON.stringify(updateProxyConfig) != '{}') {
-    await Browser.Storage.setLocal({ [key]: updateProxyConfig })
-    if (storeStatus.activeProxyKey == key) {
-      await Browser.Proxy.reloadOrDirect(() => {
-        toast.info(Browser.I18n.getMessage('desc_proxy_update'))
-      }, true)
-    }
-    emit('load', key)
-  } else {
-    urlValid.value = false
-  }
-}
+// async function handleUpdateUrl() {
+//   const key = 'proxy_' + encodeURIComponent(route.params.name)
+//   const allConfig = await Browser.Storage.getLocalAll()
+//   const updateProxyConfig = await updateRulesSetData(allConfig[key], {
+//     subjectList: ['site']
+//   })
+//   if (JSON.stringify(updateProxyConfig) != '{}') {
+//     await Browser.Storage.setLocal({ [key]: updateProxyConfig })
+//     if (storeStatus.activeProxyKey == key) {
+//       await Browser.Proxy.reloadOrDirect(() => {
+//         toast.info(Browser.I18n.getMessage('desc_proxy_update'))
+//       }, true)
+//     }
+//     emit('load', key)
+//   } else {
+//     urlValid.value = false
+//   }
+// }
 
 async function openBatchUpdateServerDialog() {
   if (batchUpdateServerModal.value) {

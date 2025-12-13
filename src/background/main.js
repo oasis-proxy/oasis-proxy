@@ -155,6 +155,3 @@ if (!chrome.webRequest.onAuthRequired.hasListener()) {
 chrome.proxy.onProxyError.addListener((details) => {
   log.error('onProxyError: ', details)
 })
-
-// todo why
-// initContextMenus()

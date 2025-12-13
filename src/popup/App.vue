@@ -107,6 +107,10 @@ async function updateNavList() {
     })
   }
 
+  if (result[result.status_proxyKey]?.mode != 'auto') {
+    quickEnabled.value = false
+  }
+
   const path = route.path
   if (path == '/info') {
     navList.value = [

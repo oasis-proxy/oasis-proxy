@@ -42,19 +42,7 @@ export const handleUpdateUrl = async function () {
     if (JSON.stringify(proxyConfig) != '{}') {
       await Browser.Storage.setLocal({ [key]: proxyConfig })
       if (key == result.status_proxyKey) {
-        const afterUpdateResult = await Browser.Storage.getLocalAll()
-        // todo set proxy with a clean config without tempRules
-        Browser.Proxy.set(
-          afterUpdateResult,
-          afterUpdateResult.status_proxyKey,
-          async () => {
-            log.info(
-              'Proxy updated after url updated',
-              afterUpdateResult,
-              afterUpdateResult.status_proxyKey
-            )
-          }
-        )
+        Browser.Proxy.reloadOrDirect()
       }
     }
   }

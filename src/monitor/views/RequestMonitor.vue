@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, onUnmounted } from 'vue'
 import RequestTable from './RequestTable.vue'
 import RequestTab from './RequestTab.vue'
 import { getRules, checkRules, getTempRuleList } from '@/core/rules_pretest.js'
@@ -35,21 +35,30 @@ onMounted(async () => {
     const index = tabList.value.findIndex((e) => e.tabId == tabId)
     tabList.value[index].valid = false
   })
-  Browser.Tabs.addUpdatedListener((tabId, changeInfo) => {
-    if (changeInfo.title != null) {
-      const index = tabList.value.findIndex((e) => e.tabId == tabId)
-      tabList.value[index].title = changeInfo.title
-    }
-  })
-  Browser.Storage.changed(function (changes, areaName) {
-    if (
-      (areaName === 'local' && changes.status_proxyKey) ||
-      areaName === 'session'
-    ) {
-      getPolicyRules()
-    }
-  })
+  Browser.Tabs.addUpdatedListener(handleTabUpdated)
+  Browser.Storage.addChangedListener(handleStorageChanged)
 })
+
+onUnmounted(() => {
+  Browser.Storage.removeChangedListener(handleStorageChanged)
+  Browser.Tabs.removeRemovedListener(handleTabUpdated)
+})
+
+function handleTabUpdated(tabId, changeInfo) {
+  if (changeInfo.title != null) {
+    const index = tabList.value.findIndex((e) => e.tabId == tabId)
+    tabList.value[index].title = changeInfo.title
+  }
+}
+
+function handleStorageChanged(changes, areaName) {
+  if (
+    (areaName === 'local' && changes.status_proxyKey) ||
+    areaName === 'session'
+  ) {
+    getPolicyRules()
+  }
+}
 
 async function getPolicyRules() {
   const result = await Browser.Storage.getLocalAll()

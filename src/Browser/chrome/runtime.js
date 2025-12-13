@@ -15,4 +15,8 @@ Runtime.addMessageListener = function (func) {
   chrome.runtime.onMessage.addListener(func)
 }
 
+Runtime.removeMessageListener = function (func) {
+  chrome.runtime.onMessage.removeListener(func)
+}
+
 export default Runtime

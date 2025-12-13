@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, getCurrentInstance } from 'vue'
+import { ref, onMounted, getCurrentInstance, onUnmounted } from 'vue'
 
 import Browser from '@/Browser/main'
 
@@ -12,10 +12,16 @@ const iptags = ref({})
 onMounted(async () => {
   await getIptags()
   await getMessage()
-  chrome.runtime.onMessage.addListener(function (request) {
-    if (request.instruction == 'updateList') getMessage()
-    if (request.instruction == 'clearList') clearMessage()
-  })
+  Browser.Runtime.addMessageListener(handleMessageReceived)
+})
+
+function handleMessageReceived(request) {
+  if (request.instruction == 'updateList') getMessage()
+  else if (request.instruction == 'clearList') clearMessage()
+}
+
+onUnmounted(() => {
+  Browser.Runtime.removeMessageListener(handleMessageReceived)
 })
 
 async function getIptags() {

@@ -1,5 +1,5 @@
 <script setup>
-import { getCurrentInstance, ref, onMounted, inject } from 'vue'
+import { getCurrentInstance, ref, onMounted, inject, onUnmounted } from 'vue'
 import RuleItem from '../../components/InternalRuleGroup.vue'
 import Browser from '@/Browser/main'
 import { getNextLocalVersion } from '@/core/version_control.js'
@@ -20,35 +20,40 @@ const ruleList = ref([])
 
 onMounted(() => {
   load()
+  Browser.Storage.addChangedListener(handleStorageChanged)
+})
 
-  chrome.storage.onChanged.addListener(function (changes, areaName) {
-    if (areaName !== 'session') {
+onUnmounted(() => {
+  Browser.Storage.removeChangedListener(handleStorageChanged)
+})
+
+function handleStorageChanged(changes, areaName) {
+  if (areaName !== 'session') {
+    return
+  }
+  Object.keys(changes).forEach((key) => {
+    if (!key.startsWith('tempRule_')) {
       return
     }
-    Object.keys(changes).forEach((key) => {
-      if (!key.startsWith('tempRule_')) {
-        return
+    if (changes[key].newValue && changes[key].newValue.valid) {
+      // insert into list
+      const i = tempRules.value.findIndex(
+        (rule) => sortDomain(changes[key].newValue.data, rule.data) < 0
+      )
+      if (i == -1) {
+        tempRules.value.push(changes[key].newValue)
+      } else {
+        tempRules.value.splice(i, 0, changes[key].newValue)
       }
-      if (changes[key].newValue && changes[key].newValue.valid) {
-        // insert into list
-        const i = tempRules.value.findIndex(
-          (rule) => sortDomain(changes[key].newValue.data, rule.data) < 0
-        )
-        if (i == -1) {
-          tempRules.value.push(changes[key].newValue)
-        } else {
-          tempRules.value.splice(i, 0, changes[key].newValue)
-        }
-      } else if (changes[key].oldValue && changes[key].oldValue.valid) {
-        // remove from list
-        const i = tempRules.value.findIndex(
-          (rule) => rule.data == changes[key].oldValue.data
-        )
-        tempRules.value.splice(i, 1)
-      }
-    })
+    } else if (changes[key].oldValue && changes[key].oldValue.valid) {
+      // remove from list
+      const i = tempRules.value.findIndex(
+        (rule) => rule.data == changes[key].oldValue.data
+      )
+      tempRules.value.splice(i, 1)
+    }
   })
-})
+}
 
 async function load() {
   const result = await Browser.Storage.getSession()

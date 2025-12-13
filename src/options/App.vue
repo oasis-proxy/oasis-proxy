@@ -1,7 +1,14 @@
 <script setup>
 import Browser from '@/Browser/main'
 import { log } from '@/core/utils.js'
-import { provide, ref, getCurrentInstance, onMounted, watch } from 'vue'
+import {
+  provide,
+  ref,
+  getCurrentInstance,
+  onMounted,
+  onUnmounted,
+  watch
+} from 'vue'
 import { useRoute, useRouter, RouterView } from 'vue-router'
 import AsideView from './views/AsideView.vue'
 import BasicConfigModal from './views/dialog/BasicConfigModal.vue'
@@ -81,28 +88,33 @@ onMounted(async () => {
     }
   })
 
-  Browser.Storage.changed(function (changes, areaName) {
-    log.info('storage changed:', changes, areaName)
-    if (areaName === 'local') {
-      if (changes.status_proxyKey) {
-        storeStatus.activeProxyKey = changes.status_proxyKey.newValue
-      }
-      if (changes.reject) {
-        storeStatus.proxyConfigs.reject = changes.reject.newValue
-      }
-      Object.keys(changes).forEach((key) => {
-        if (key.startsWith('proxy_')) {
-          if (changes[key].newValue) {
-            storeStatus.proxyConfigs[key] = changes[key].newValue
-          } else {
-            delete storeStatus.proxyConfigs[key]
-          }
-        }
-      })
-    }
-  })
+  Browser.Storage.addChangedListener(handleStorageChanged)
 })
 
+onUnmounted(() => {
+  Browser.Storage.removeChangedListener(handleStorageChanged)
+})
+
+function handleStorageChanged(changes, areaName) {
+  log.info('storage changed:', changes, areaName)
+  if (areaName === 'local') {
+    if (changes.status_proxyKey) {
+      storeStatus.activeProxyKey = changes.status_proxyKey.newValue
+    }
+    if (changes.reject) {
+      storeStatus.proxyConfigs.reject = changes.reject.newValue
+    }
+    Object.keys(changes).forEach((key) => {
+      if (key.startsWith('proxy_')) {
+        if (changes[key].newValue) {
+          storeStatus.proxyConfigs[key] = changes[key].newValue
+        } else {
+          delete storeStatus.proxyConfigs[key]
+        }
+      }
+    })
+  }
+}
 function handleDelete() {
   confirmModal.createConfirm(
     Browser.I18n.getMessage('modal_title_delete') + route.params.name,

@@ -1,7 +1,11 @@
 const Storage = {}
 
-Storage.changed = function (callback = function () {}) {
+Storage.addChangedListener = function (callback = function () {}) {
   chrome.storage.onChanged.addListener(callback)
+}
+
+Storage.removeChangedListener = function (callback = function () {}) {
+  chrome.storage.onChanged.removeListener(callback)
 }
 
 Storage.getLocal = function (obj) {

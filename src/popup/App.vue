@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, RouterView } from 'vue-router'
 import Browser from '@/Browser/main'
 import { log } from '@/core/utils.js'
@@ -51,10 +51,16 @@ onMounted(async () => {
   document.body.setAttribute('data-bs-theme', theme)
 
   await updateNavList()
-  chrome.runtime.onMessage.addListener(function (request) {
-    if (request.instruction == 'updateList') updateNavList()
-  })
+  Browser.Runtime.addMessageListener(handleMessageReceived)
 })
+
+onUnmounted(() => {
+  Browser.Runtime.removeMessageListener(handleMessageReceived)
+})
+
+function handleMessageReceived(request) {
+  if (request.instruction == 'updateList') updateNavList()
+}
 
 async function updateNavList() {
   const result = await Browser.Storage.getLocal(['config_monitor'])

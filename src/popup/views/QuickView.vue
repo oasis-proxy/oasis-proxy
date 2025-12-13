@@ -102,8 +102,7 @@ async function submit() {
     config_syncTime: new Date().getTime()
   })
   const newResult = await Browser.Storage.getLocalAll()
-  // set proxy with a clean config without tempRules
-  Browser.Proxy.set(newResult, newResult.status_proxyKey)
+  Browser.Proxy.reloadOrDirect()
   if (newResult.config_autoSync) {
     const url =
       Browser.Runtime.getURL('options.html') +

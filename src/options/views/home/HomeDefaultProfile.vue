@@ -28,6 +28,10 @@ async function handleImportConfig(event) {
       await Browser.Storage.setLocal(tmpObj)
       await convertToNewVersionConfig()
       toast.info(Browser.I18n.getMessage('desc_import_config_success'))
+      await Browser.Proxy.setDirect(async () => {
+        await Browser.Storage.setLocal({ status_proxyKey: 'direct' })
+        toast.info(Browser.I18n.getMessage('desc_set_proxy_direct'))
+      })
       setTimeout(() => {
         location.reload()
       }, 2000)

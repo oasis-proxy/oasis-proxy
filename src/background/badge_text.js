@@ -55,8 +55,8 @@ export const updateTabBadgeText = async () => {
 
         if (
           requestSession[activeTabId] != null &&
-          (tabInfo.url.startsWith('http://') ||
-            tabInfo.url.startsWith('https://'))
+          (tabInfo.url?.startsWith('http://') ||
+            tabInfo.url?.startsWith('https://'))
         ) {
           let numText = Object.keys(
             requestSession[activeTabId]
@@ -76,6 +76,9 @@ export const updateTabBadgeText = async () => {
       }
     } else {
       await chrome.action.setPopup({ popup: '/popup.html#/' })
+      chrome.action.setBadgeText({
+        text: subStringForName(result[activeProxyKey].name)
+      })
     }
   } catch (err) {
     console.error('updateTabBadgeText', err)

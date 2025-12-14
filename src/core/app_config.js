@@ -276,6 +276,7 @@ function transformAddSiteRuleConfig(appConfig) {
         rulesSet: {
           format: 'base64',
           url: '',
+          updateInterval: 'default',
           urlUpdatedAt: '',
           data: '',
           proxy: 'direct',
@@ -284,6 +285,8 @@ function transformAddSiteRuleConfig(appConfig) {
         },
         ruleList: []
       }
+      resObj.config.rules.reject.rulesSet.updateInterval = 'default'
+      resObj.config.rules.local.rulesSet.updateInterval = 'default'
       updatedProxyConfigList.push({ [key]: resObj })
     } else if (resObj.mode == 'fixed_servers') {
       if (resObj.config.rules.singleProxy) {

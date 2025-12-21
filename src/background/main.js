@@ -8,6 +8,7 @@ import { startAutoSync, endAutoSync, handleAutoSync } from './auto_sync.js'
 import { convertToNewVersionConfig, resetAppConfig } from '@/core/app_config.js'
 import {
   addAllContextMenus,
+  contextMenusClick,
   removeAllContextMenus
 } from '@/core/context_menus.js'
 import { log } from '@/core/utils.js'
@@ -155,3 +156,5 @@ if (!chrome.webRequest.onAuthRequired.hasListener()) {
 chrome.proxy.onProxyError.addListener((details) => {
   log.error('onProxyError: ', details)
 })
+
+chrome.contextMenus.onClicked.addListener(contextMenusClick)

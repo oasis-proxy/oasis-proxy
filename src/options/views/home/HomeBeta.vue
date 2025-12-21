@@ -1,10 +1,9 @@
 <script setup>
-import { inject, getCurrentInstance } from 'vue'
+import { inject } from 'vue'
 import PopoverTips from '@/components/PopoverTips.vue'
 import { useConfigStore } from '@/options/stores/config'
 import Browser from '@/Browser/main'
 import { getNextLocalVersion } from '@/core/version_control.js'
-import { log } from '@/core/utils.js'
 import {
   addQuickAddSiteRulesContextMenus,
   removeQuickAddSiteRulesContextMenus
@@ -13,9 +12,6 @@ import {
 const showUploadConflictModal = inject('showUploadConflictModal')
 
 const storeConfig = useConfigStore()
-const instance = getCurrentInstance()
-const confirmModal = instance?.appContext.config.globalProperties.$confirm
-const toast = instance?.appContext.config.globalProperties.$toast
 
 async function handleSiteRulesChange() {
   const version = await getNextLocalVersion()
@@ -34,44 +30,10 @@ async function handleSiteRulesChange() {
   showUploadConflictModal()
 }
 
-async function handleContextPermission() {
-  const contextMenusAllowed = await chrome.permissions.contains({
-    permissions: ['contextMenus']
-  })
-  if (contextMenusAllowed) return
-  const granted = await chrome.permissions.request({
-    permissions: ['contextMenus']
-  })
-  if (granted) {
-    toast.warning(Browser.I18n.getMessage('desc_auth_success'))
-    storeConfig.configContextMenus = true
-    await Browser.Storage.setLocal({
-      config_contextMenus: storeConfig.configContextMenus
-    })
-  } else {
-    toast.warning(Browser.I18n.getMessage('desc_auth_failed'))
-  }
-}
-
 async function handleContextMenusChanged() {
-  const contextMenusAllowed = await chrome.permissions.contains({
-    permissions: ['contextMenus']
+  await Browser.Storage.setLocal({
+    config_contextMenus: storeConfig.configContextMenus
   })
-  if (contextMenusAllowed) {
-    await Browser.Storage.setLocal({
-      config_contextMenus: storeConfig.configContextMenus
-    })
-  } else {
-    const configContextMenus = await Browser.Storage.getLocal(
-      'config_contextMenus'
-    )
-    storeConfig.configContextMenus = configContextMenus.config_contextMenus
-    confirmModal.createConfirm(
-      Browser.I18n.getMessage('modal_title_permission'),
-      Browser.I18n.getMessage('desc_auth_contextmenus'),
-      handleContextPermission
-    )
-  }
 }
 </script>
 
@@ -97,7 +59,7 @@ async function handleContextMenusChanged() {
                   type="checkbox"
                   role="switch"
                   v-model="storeConfig.configContextMenus"
-                  @click="handleContextMenusChanged"
+                  @change="handleContextMenusChanged"
                 />
                 <span>{{
                   storeConfig.configContextMenus

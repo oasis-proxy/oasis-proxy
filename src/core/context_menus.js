@@ -20,49 +20,40 @@ const CONTEXTMENUS_QUICKADDSITERULES = {
   documentUrlPatterns: ['http://*/*', 'https://*/*'],
   contexts: ['link', 'image', 'page']
 }
+// const CONTEXTMENUS_QUICKADDFORDOWNLOADS = {
+//   id: 'quickAddForDownloads',
+//   title: Browser.I18n.getMessage('desc_show_download_rule'),
+//   documentUrlPatterns: ['chrome://downloads/*'],
+//   contexts: ['link', 'image', 'page']
+// }
 
 export const addAllContextMenus = async function () {
-  const contextMenusAllowed = await chrome.permissions.contains({
-    permissions: ['contextMenus']
-  })
-  if (!contextMenusAllowed) return
+  log.debug('addAllContextMenus')
 
   await Browser.Menus.removeAll()
   await Browser.Menus.create(CONTEXTMENUS_GETLINKRULES)
   await Browser.Menus.create(CONTEXTMENUS_QUICKADDLINKRULES)
   await Browser.Menus.create(CONTEXTMENUS_QUICKADDSITERULES)
+  // await Browser.Menus.create(CONTEXTMENUS_QUICKADDFORDOWNLOADS)
   Browser.Menus.onClickedBind(contextMenusClick)
 }
 
 export const removeAllContextMenus = async function () {
-  const contextMenusAllowed = await chrome.permissions.contains({
-    permissions: ['contextMenus']
-  })
-  if (!contextMenusAllowed) return
+  log.debug('removeAllContextMenus')
 
   await Browser.Menus.onClickedRemove()
   await Browser.Menus.removeAll()
 }
 
 export const removeQuickAddSiteRulesContextMenus = async function () {
-  const contextMenusAllowed = await chrome.permissions.contains({
-    permissions: ['contextMenus']
-  })
-  if (!contextMenusAllowed) return
-
   await Browser.Menus.remove(CONTEXTMENUS_QUICKADDSITERULES.id)
 }
 
 export const addQuickAddSiteRulesContextMenus = async function () {
-  const contextMenusAllowed = await chrome.permissions.contains({
-    permissions: ['contextMenus']
-  })
-  if (!contextMenusAllowed) return
-
   await Browser.Menus.create(CONTEXTMENUS_QUICKADDSITERULES)
 }
 
-const contextMenusClick = async (info, tab) => {
+export const contextMenusClick = async (info, tab) => {
   log.debug('contextMenusClick', info, tab)
   switch (info.menuItemId) {
     case 'quickAddSiteRules':

@@ -13,20 +13,16 @@
     "service_worker": "background.js",
     "type": "module"
   },
-  "host_permissions": [
-    "*://*/*"
-  ],
+  "host_permissions": ["*://*/*"],
   "permissions": [
     "alarms",
+    "contextMenus",
     "downloads",
     "webRequest",
     "webRequestAuthProvider",
     "unlimitedStorage",
     "storage",
     "proxy"
-  ],
-  "optional_permissions": [
-    "contextMenus"
   ],
   "incognito": "split",
   "action": {

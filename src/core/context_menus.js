@@ -20,22 +20,27 @@ const CONTEXTMENUS_QUICKADDSITERULES = {
   documentUrlPatterns: ['http://*/*', 'https://*/*'],
   contexts: ['link', 'image', 'page']
 }
-// const CONTEXTMENUS_QUICKADDFORDOWNLOADS = {
-//   id: 'quickAddForDownloads',
-//   title: Browser.I18n.getMessage('desc_show_download_rule'),
-//   documentUrlPatterns: ['chrome://downloads/*'],
-//   contexts: ['link', 'image', 'page']
-// }
+const CONTEXTMENUS_QUICKADDFORDOWNLOADS = {
+  id: 'sidepanelForDownloads',
+  title: Browser.I18n.getMessage('desc_show_download_sidepanel'),
+  documentUrlPatterns: ['chrome://downloads/*']
+}
 
 export const addAllContextMenus = async function () {
   log.debug('addAllContextMenus')
-
+  const menusList = [
+    CONTEXTMENUS_GETLINKRULES,
+    CONTEXTMENUS_QUICKADDLINKRULES,
+    CONTEXTMENUS_QUICKADDFORDOWNLOADS
+  ]
+  const result = await Browser.Storage.getLocal('config_siteRules')
+  if (result.config_siteRules) {
+    menusList.push(CONTEXTMENUS_QUICKADDSITERULES)
+  }
   await Browser.Menus.removeAll()
-  await Browser.Menus.create(CONTEXTMENUS_GETLINKRULES)
-  await Browser.Menus.create(CONTEXTMENUS_QUICKADDLINKRULES)
-  await Browser.Menus.create(CONTEXTMENUS_QUICKADDSITERULES)
-  // await Browser.Menus.create(CONTEXTMENUS_QUICKADDFORDOWNLOADS)
-  Browser.Menus.onClickedBind(contextMenusClick)
+  for (const item of menusList) {
+    await Browser.Menus.create(item)
+  }
 }
 
 export const removeAllContextMenus = async function () {

@@ -588,6 +588,9 @@
   "desc_add_site_rule": {
     "message": "Add Site Rules"
   },
+  "desc_show_download_sidepanel": {
+    "message": "Show download sidepanel"
+  },
   "desc_options": {
     "message": "Options"
   },

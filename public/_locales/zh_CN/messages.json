@@ -588,6 +588,9 @@
   "desc_add_site_rule": {
     "message": "添加站点规则"
   },
+  "desc_show_download_sidepanel": {
+    "message": "下载侧边栏"
+  },
   "desc_options": {
     "message": "选项设置"
   },
@@ -616,10 +619,10 @@
     "message": "快速添加"
   },
   "desc_add_rules": {
-    "message": "快速添加链接规则："
+    "message": "添加链接规则"
   },
   "desc_add_siterules": {
-    "message": "快速添加站点规则："
+    "message": "添加站点规则"
   },
   "desc_active_policy": {
     "message": "当前策略："
